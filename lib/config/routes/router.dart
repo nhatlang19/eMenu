@@ -1,4 +1,7 @@
-import 'package:emenu/screens/main_page.dart';
+import 'package:emenu/modules/auth/main_page.dart';
+import 'package:emenu/modules/cart/cart_page.dart';
+import 'package:emenu/modules/order/order_page.dart';
+import 'package:emenu/modules/table/table_page.dart';
 import 'package:flutter/material.dart';
 
 class Router {
@@ -7,11 +10,11 @@ class Router {
       case 'MainPage':
         return MaterialPageRoute(builder: (_) => const MainPage());
       case 'TablePage':
-        return MaterialPageRoute(builder: (_) => const MainPage());
+        return MaterialPageRoute(builder: (_) => const TablePage());
       case 'OrderPage':
-        return MaterialPageRoute(builder: (_) => const MainPage());
+        return MaterialPageRoute(builder: (_) => const OrderPage());
       case 'CartPage':
-        return MaterialPageRoute(builder: (_) => const MainPage());
+        return MaterialPageRoute(builder: (_) => const CartPage());
       default:
         return MaterialPageRoute(
             builder: (_) => Scaffold(
