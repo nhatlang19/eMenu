@@ -3,7 +3,7 @@ import 'soap_api_client.dart';
 class UserProvider extends SoapApiClient {
   UserProvider({required super.serviceUrl});
 
-  Future<List?> loginAction(String username, String password) async {
+  Future<Map<String, dynamic>?> loginAction(String username, String password) async {
     const String soapAction = 'http://tempuri.org/GetUser';
     final String soapBody = '''<GetUser xmlns="http://tempuri.org/">
                                 <username>$username</username>
@@ -12,7 +12,8 @@ class UserProvider extends SoapApiClient {
 
     final response = await callSoapService(soapAction, soapBody);
     if (response != null) {
-      return parseSoapResponseToJson(response);
+      final jsonResult = parseSoapResponseToJson(response);
+      return jsonResult.first['Table'] as Map<String, dynamic>;
     }
     return null;
   }
