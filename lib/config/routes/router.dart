@@ -1,6 +1,7 @@
 import 'package:emenu/modules/auth/main_page.dart';
 import 'package:emenu/modules/cart/cart_page.dart';
 import 'package:emenu/modules/order/order_page.dart';
+import 'package:emenu/modules/setting/setting_page.dart';
 import 'package:emenu/modules/table/table_page.dart';
 import 'package:flutter/material.dart';
 
@@ -15,6 +16,8 @@ class Router {
         return MaterialPageRoute(builder: (_) => const OrderPage());
       case 'CartPage':
         return MaterialPageRoute(builder: (_) => const CartPage());
+      case 'SettingPage':
+        return MaterialPageRoute(builder: (_) => const SettingPage());
       default:
         return MaterialPageRoute(
             builder: (_) => Scaffold(

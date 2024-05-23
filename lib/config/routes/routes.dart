@@ -6,4 +6,6 @@ class Routes {
   static const String orderPage = 'OrderPage';
 
   static const String cartPage = 'CartPage';
+
+  static const String settingPage = 'SettingPage';
 }

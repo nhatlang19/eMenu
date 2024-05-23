@@ -3,6 +3,7 @@ import 'package:emenu/modules/auth/bloc/login_bloc.dart';
 import 'package:emenu/modules/auth/widgets/login_button.dart';
 import 'package:emenu/modules/auth/widgets/password_input.dart';
 import 'package:emenu/modules/auth/widgets/username_input.dart';
+import 'package:emenu/utils/global.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
@@ -25,16 +26,17 @@ class _LoginFormState extends State<LoginForm> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<LoginBloc, LoginState>(
-        listener: (context, state) async  {
+        listener: (context, state) async {
           if (state.status.isFailure) {
             ScaffoldMessenger.of(context)
-                ..hideCurrentSnackBar()
-                ..showSnackBar(
-                  const SnackBar(content: Text('Authentication Failure')),
-                );
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                const SnackBar(content: Text('Authentication Failure')),
+              );
           }
 
           if (state.status.isSuccess) {
+            Global.setCashier(state.user);
             await Navigator.pushNamed(context, 'TablePage');
             context.read<LoginBloc>().add(const LogoutSubmitted());
           }
@@ -43,10 +45,16 @@ class _LoginFormState extends State<LoginForm> {
   }
 
   Row _buildVersion() {
-    return const Row(
-      mainAxisAlignment: MainAxisAlignment.end,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text('Forgot Password?'),
+        TextButton(
+          onPressed: () {
+            Navigator.pushNamed(context, 'SettingPage');
+          },
+          child: const Text('Settings'),
+        ),
+        const Text('Version: 0.1.0'),
       ],
     );
   }

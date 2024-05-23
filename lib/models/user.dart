@@ -23,5 +23,13 @@ class User extends Equatable {
 
   const User({required this.cashierID, required this.cashierName, required this.cashierPwd, required this.userGroup});
 
-   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+
+   Map<String, dynamic> toJson() =>
+    {
+      'cashierID': cashierID,
+      'cashierName': cashierName,
+      'cashierPwd': cashierPwd,
+      'userGroup': userGroup
+    };
 }

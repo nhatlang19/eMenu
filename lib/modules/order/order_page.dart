@@ -10,14 +10,17 @@ class OrderPage extends StatefulWidget {
 class _OrderPageState extends State<OrderPage> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Text('Order page'),
-        ],
-      ),
-    ));
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text('Order'),
+        ),
+        body: const Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text('Order page'),
+            ],
+          ),
+        ));
   }
 }

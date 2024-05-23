@@ -1,4 +1,9 @@
-import 'package:emenu/modules/auth/bloc/login_bloc.dart';
+import 'package:emenu/modules/table/bloc/section_bloc.dart';
+import 'package:emenu/modules/table/bloc/table_bloc.dart';
+import 'package:emenu/modules/table/widgets/table_view.dart';
+import 'package:emenu/repositories/section_repository.dart';
+import 'package:emenu/repositories/table_repository.dart';
+import 'package:emenu/utils/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -10,16 +15,48 @@ class TablePage extends StatefulWidget {
 }
 
 class _TablePageState extends State<TablePage> {
+  late final SectionRepository sectionRepository;
+  late final TableRepository tableRepository;
+
+   @override
+  void initState() {
+    super.initState();
+    sectionRepository = SectionRepository();
+    tableRepository = TableRepository();
+  }
+
+  Future<String> _getSettings() async {
+    var settings = Settings();
+    var setting = await settings.read();
+    return setting.section;
+  }
+  
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-        length: 3,
-        child: Scaffold(
+    return Scaffold(
           appBar: AppBar(
-            title: const Text('Tabs Demo'),
+            title: const Text('Table'),
           ),
-          body: Center(child: Text('saa'),)
-        ),
+          body: FutureBuilder<String>(
+            future: _getSettings(),
+            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+               if (snapshot.hasData) {
+                  return MultiBlocProvider(
+                    providers: [
+                      BlocProvider<SectionBloc>(
+                        create: (BuildContext context) => SectionBloc(sectionRepository: sectionRepository)..add(FetchSection(section: '${snapshot.data}')),
+                      ),
+                      BlocProvider<TableBloc>(
+                        create: (BuildContext context) => TableBloc(tableRepository: tableRepository),
+                      ),
+                    ],
+                    child: const TableView()
+                  );
+               }
+               return const Center(child: Text('null'));
+            }
+          ),
+          
     );
   }
 }

@@ -1,7 +1,7 @@
 import 'soap_api_client.dart';
 
 class UserProvider extends SoapApiClient {
-  UserProvider({required super.serviceUrl});
+  UserProvider();
 
   Future<Map<String, dynamic>?> loginAction(String username, String password) async {
     const String soapAction = 'http://tempuri.org/GetUser';

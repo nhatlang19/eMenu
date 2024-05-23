@@ -44,8 +44,7 @@ class _MainAppState extends State<MainApp> {
   }
   
   @override
-  Widget build(BuildContext context) {
-    
+  Widget build(BuildContext context) { 
     return RepositoryProvider.value(
       value: _authenticationRepository,
       child: BlocProvider(

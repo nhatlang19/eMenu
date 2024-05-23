@@ -2,8 +2,6 @@ import 'dart:async';
 
 import 'package:emenu/providers/user_provider.dart';
 
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-
 import '../models/user.dart';
 
 enum AuthenticationStatus { unknown, authenticated, unauthenticated }
@@ -21,9 +19,7 @@ class AuthRepository {
     required String username,
     required String password,
   }) async {
-    final userProvider = UserProvider(
-      serviceUrl: dotenv.get('SERVICE_URL'),
-    );
+    final userProvider = UserProvider();
 
     var jsonUser = await userProvider.loginAction(username, password);
     if (jsonUser == null) {

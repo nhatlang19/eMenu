@@ -1,14 +1,20 @@
 import 'dart:convert';
 
+import 'package:emenu/utils/settings.dart';
 import 'package:http/http.dart' as http;
 import 'package:xml/xml.dart' as xml;
 
 import 'package:xml2json/xml2json.dart';
 
 abstract class SoapApiClient {
-  final String serviceUrl;
+  SoapApiClient();
 
-  SoapApiClient({required this.serviceUrl});
+  Future<String> getServiceUrl() async {
+    var settings = Settings();
+    var setting = await settings.read();
+    var serverIp = setting.serverIP;
+    return "http://$serverIp/V6BOService/V6BOService.asmx";
+  }
 
   Future<String?> callSoapService(String soapAction, String soapBody) async {
     final String soapEnvelope = '''<?xml version="1.0" encoding="utf-8"?>
@@ -18,6 +24,7 @@ abstract class SoapApiClient {
       </soap:Body>
     </soap:Envelope>''';
 
+    var serviceUrl = await getServiceUrl();
     final response = await http.post(
       Uri.parse(serviceUrl),
       headers: {

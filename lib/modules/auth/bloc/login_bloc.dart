@@ -67,6 +67,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   }
 
   void _onLogout(LogoutSubmitted event, Emitter<LoginState> emit) {
+    _authenticationRepository.logOut();
     emit(state.copyWith(status: FormzSubmissionStatus.initial));
   }
 }
