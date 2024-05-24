@@ -18,7 +18,7 @@ class Table extends Equatable {
   final String? SalesCode;
 
   @override
-  List<Object> get props => [TableNo, Status!, OpenBy!, Desciption!, SalesCode!];
+  List<Object> get props => [TableNo, Status ?? '', OpenBy ?? '', Desciption ?? '', SalesCode ?? ''];
 
   static const empty =
       Table(TableNo: '', Status: '', OpenBy: null, Desciption: '', SalesCode: '');

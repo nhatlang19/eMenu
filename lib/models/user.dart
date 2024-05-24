@@ -6,22 +6,22 @@ part 'user.g.dart';
 @JsonSerializable()
 class User extends Equatable {
   @JsonKey(name: 'CashierID')
-  final String cashierID;
+  final String? cashierID;
   @JsonKey(name: 'CashierName')
-  final String cashierName;
+  final String? cashierName;
   @JsonKey(name: 'CashierPwd')
-  final String cashierPwd;
+  final String? cashierPwd;
   @JsonKey(name: 'UserGroup')
-  final String userGroup;
+  final String? userGroup;
 
   
 
   @override
-  List<Object> get props => [cashierID, cashierName, cashierPwd, userGroup];
+  List<Object> get props => [cashierID ?? '', cashierName ?? '', cashierPwd ?? '', userGroup ?? ''];
 
   static const empty = User(cashierID: '', cashierName: '', cashierPwd: '', userGroup: '');
 
-  const User({required this.cashierID, required this.cashierName, required this.cashierPwd, required this.userGroup});
+  const User({this.cashierID, this.cashierName, this.cashierPwd, this.userGroup});
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 

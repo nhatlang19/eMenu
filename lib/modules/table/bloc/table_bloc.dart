@@ -12,10 +12,10 @@ class TableBloc extends Bloc<TableEvent, TableState> {
   TableBloc({required TableRepository tableRepository})
       : _tableRepository = tableRepository,
         super(const TableState()) {
-    on<FetchTable>(_onFetchTables);
+    on<FetchTable>(_onFetchUsers);
   }
 
-  Future<void> _onFetchTables(
+  Future<void> _onFetchUsers(
       FetchTable event, Emitter<TableState> emit) async {
     try {
       List<Table> tables =

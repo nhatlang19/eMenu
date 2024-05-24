@@ -1,3 +1,4 @@
+import 'package:emenu/providers/user_provider.dart';
 import 'package:uuid/uuid.dart';
 
 import '../models/user.dart';
@@ -13,4 +14,16 @@ class UserRepository {
     );
   }
 
+  Future<List<User>> getUserList() async {
+    final provider = UserProvider();
+
+    var json = await provider.getUserList();
+
+    final List<User> result = [];
+    json.forEach((data) {
+      result.add(User.fromJson(data['Table'] as Map<String, dynamic>));
+    });
+     
+    return result;
+  }
 }

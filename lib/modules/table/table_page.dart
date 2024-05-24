@@ -1,8 +1,10 @@
 import 'package:emenu/modules/table/bloc/section_bloc.dart';
 import 'package:emenu/modules/table/bloc/table_bloc.dart';
+import 'package:emenu/modules/table/bloc/user_bloc.dart';
 import 'package:emenu/modules/table/widgets/table_view.dart';
 import 'package:emenu/repositories/section_repository.dart';
 import 'package:emenu/repositories/table_repository.dart';
+import 'package:emenu/repositories/user_repository.dart';
 import 'package:emenu/utils/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,12 +19,14 @@ class TablePage extends StatefulWidget {
 class _TablePageState extends State<TablePage> {
   late final SectionRepository sectionRepository;
   late final TableRepository tableRepository;
+  late final UserRepository userRepository;
 
    @override
   void initState() {
     super.initState();
     sectionRepository = SectionRepository();
     tableRepository = TableRepository();
+    userRepository = UserRepository();
   }
 
   Future<String> _getSettings() async {
@@ -48,6 +52,9 @@ class _TablePageState extends State<TablePage> {
                       ),
                       BlocProvider<TableBloc>(
                         create: (BuildContext context) => TableBloc(tableRepository: tableRepository),
+                      ),
+                      BlocProvider<UserBloc>(
+                        create: (BuildContext context) => UserBloc(userRepository: userRepository)..add(const FetchUsers()),
                       ),
                     ],
                     child: const TableView()

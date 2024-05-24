@@ -17,4 +17,16 @@ class UserProvider extends SoapApiClient {
     }
     return null;
   }
+
+  Future<List<dynamic>> getUserList() async {
+    const String soapAction = 'http://tempuri.org/GetUserList';
+    const String soapBody =
+        '''<GetUserList xmlns="http://tempuri.org/" />''';
+
+    final response = await callSoapService(soapAction, soapBody);
+    if (response != null) {
+      return parseSoapResponseToJson(response);
+    }
+    return [];
+  }
 }

@@ -1,5 +1,6 @@
 import 'package:emenu/modules/table/bloc/section_bloc.dart';
 import 'package:emenu/modules/table/bloc/table_bloc.dart';
+import 'package:emenu/modules/table/bloc/user_bloc.dart';
 import 'package:emenu/modules/table/widgets/section_filter.dart';
 import 'package:emenu/modules/table/widgets/table_grid.dart';
 import 'package:flutter/material.dart';
@@ -24,14 +25,18 @@ class _TableViewState extends State<TableView> {
             }
           },
         ),
-        BlocListener<TableBloc, TableState>(
-          listener: (context, state) {
-            // @TODO: not implemented yet
-          },
+        // BlocListener<TableBloc, TableState>(
+        //   listener: (context, state) {
+        //     // @TODO: not implemented yet
+        //   },
       
-        ),
+        // ),
+        // BlocListener<UserBloc, UserState>(
+        //   listener: (context, state) {
+        //   },
+        // ),
       ],
-      child: Column(
+      child: const Column(
         children: [
           SectionFilter(),
           TableGrid()

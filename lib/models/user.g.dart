@@ -13,10 +13,10 @@ User _$UserFromJson(Map<String, dynamic> json) => $checkedCreate(
       json,
       ($checkedConvert) {
         final val = User(
-          cashierID: $checkedConvert('CashierID', (v) => v as String),
-          cashierName: $checkedConvert('CashierName', (v) => v as String),
-          cashierPwd: $checkedConvert('CashierPwd', (v) => v as String),
-          userGroup: $checkedConvert('UserGroup', (v) => v as String),
+          cashierID: $checkedConvert('CashierID', (v) => v as String?),
+          cashierName: $checkedConvert('CashierName', (v) => v as String?),
+          cashierPwd: $checkedConvert('CashierPwd', (v) => v as String?),
+          userGroup: $checkedConvert('UserGroup', (v) => v as String?),
         );
         return val;
       },

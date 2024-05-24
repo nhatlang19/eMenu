@@ -19,9 +19,6 @@ class SectionBloc extends Bloc<SectionEvent, SectionState> {
   }
 
   Future<void> _onFetchSections(FetchSection event, Emitter<SectionState> emit) async {
-    List<Section> sections = await _sectionRepository.getSection(section: event.section);
-    emit(state.copyWith(sections: sections));
-
     try {
       if (state.status == SectionStatus.initial) {
         List<Section> sections = await _sectionRepository.getSection(

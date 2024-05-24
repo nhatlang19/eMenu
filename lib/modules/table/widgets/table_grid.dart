@@ -1,5 +1,7 @@
 import 'package:emenu/config/themes/app_text_styles.dart';
 import 'package:emenu/modules/table/bloc/table_bloc.dart';
+import 'package:emenu/modules/table/bloc/user_bloc.dart';
+import 'package:emenu/modules/table/widgets/cashier_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -26,7 +28,7 @@ class TableGrid extends StatelessWidget {
                     var table = state.tables[index];
                     return InkWell(
                         onTap: () {
-                          Navigator.pushNamed(context, 'OrderPage');
+                          _showCustomDialog(context);
                         },
                         child: Card(
                           shape: const RoundedRectangleBorder(
@@ -46,6 +48,62 @@ class TableGrid extends StatelessWidget {
                         ));
                   },
                 )));
+      },
+    );
+  }
+
+  void _showCustomDialog(BuildContext parentContext) {
+    showDialog(
+      context: parentContext,
+      useRootNavigator: false,
+      builder: (BuildContext context) {
+        return BlocProvider.value(
+          value: BlocProvider.of<UserBloc>(parentContext),
+          child: Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.8, // Custom width
+                padding: EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Custom Width Dialog',
+                      style: AppTextStyles.dialogTitle,
+                    ),
+                    SizedBox(height: 16),
+                    CashierDropdown(),
+                    SizedBox(height: 24),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text('Save'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text('Close'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            Navigator.pushNamed(context, 'OrderPage');
+                          },
+                          child: Text('OK'),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+        ));
       },
     );
   }
