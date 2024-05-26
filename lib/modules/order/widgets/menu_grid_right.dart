@@ -1,3 +1,4 @@
+import 'package:emenu/config/themes/app_colors.dart';
 import 'package:emenu/config/themes/app_text_styles.dart';
 import 'package:emenu/modules/order/bloc/menu_bloc.dart';
 import 'package:emenu/modules/order/bloc/submenu_bloc.dart';
@@ -15,7 +16,7 @@ class MenuGridRight extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            color: Colors.blue,
+            color: AppColors.mainBLue,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
