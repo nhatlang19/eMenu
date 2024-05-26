@@ -53,7 +53,7 @@ class _OrderPageState extends State<OrderPage> {
                     child: const OrderView()
                   );
                }
-               return const Placeholder();
+               return const CircularProgressIndicator();
             }
           ));
   }

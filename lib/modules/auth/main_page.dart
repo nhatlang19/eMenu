@@ -32,16 +32,18 @@ class _MainPageState extends State<MainPage> {
     return Scaffold(
       backgroundColor: Colors.grey[200],
       body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: BlocProvider(
-            create: (context) {
-              return LoginBloc(
-                authenticationRepository: 
-                    RepositoryProvider.of<AuthRepository>(context),
-              );
-            },
-            child: const LoginForm(),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: BlocProvider(
+              create: (context) {
+                return LoginBloc(
+                  authenticationRepository: 
+                      RepositoryProvider.of<AuthRepository>(context),
+                );
+              },
+              child: const LoginForm(),
+            ),
           ),
         ),
       ),

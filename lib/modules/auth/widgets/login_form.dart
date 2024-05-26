@@ -60,37 +60,39 @@ class _LoginFormState extends State<LoginForm> {
   }
 
   Widget _buildUI() {
-    return Form(
-      key: _formKey,
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 400),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Center(
-              child: Image.asset(
-                AssetPath.loginLogo,
-                height: 100,
+    return Expanded(
+      child: Form(
+        key: _formKey,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 400),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Center(
+                child: Image.asset(
+                  AssetPath.loginLogo,
+                  height: 100,
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'Welcome!',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
+              const SizedBox(height: 20),
+              const Text(
+                'Welcome!',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
-            UsernameInput(),
-            const SizedBox(height: 20),
-            PasswordInput(),
-            const SizedBox(height: 20),
-            LoginButton(),
-            _buildVersion()
-          ],
+              const SizedBox(height: 20),
+              UsernameInput(),
+              const SizedBox(height: 20),
+              PasswordInput(),
+              const SizedBox(height: 20),
+              LoginButton(),
+              _buildVersion()
+            ],
+          ),
         ),
       ),
     );

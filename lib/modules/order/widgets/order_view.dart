@@ -39,7 +39,7 @@ class OrderView extends StatelessWidget {
                   ),
                 ));
           }
-          return const Placeholder();
+          return const CircularProgressIndicator();
         });
   }
 }
