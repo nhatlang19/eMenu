@@ -18,27 +18,33 @@ class Table extends Equatable {
   final String? SalesCode;
 
   @override
-  List<Object> get props => [TableNo, Status ?? '', OpenBy ?? '', Desciption ?? '', SalesCode ?? ''];
+  List<Object> get props =>
+      [TableNo, Status ?? '', OpenBy ?? '', Desciption ?? '', SalesCode ?? ''];
 
-  static const empty =
-      Table(TableNo: '', Status: '', OpenBy: null, Desciption: '', SalesCode: '');
+  static const empty = Table(
+      TableNo: '', Status: '', OpenBy: null, Desciption: '', SalesCode: '');
 
   const Table(
       {required this.TableNo,
-       this.Status,
+      this.Status,
       this.OpenBy,
-       this.Desciption,
-       this.SalesCode});
+      this.Desciption,
+      this.SalesCode});
 
-      factory Table.fromJson(Map<String, dynamic> json) => _$TableFromJson(json);
+  factory Table.fromJson(Map<String, dynamic> json) => _$TableFromJson(json);
 
   getColor() {
-    switch(Status) {
-       case 'A': return AppColors.item_a;
-       case 'B': return AppColors.item_b;
-       case 'R': return AppColors.item_r;
-       case 'O': return AppColors.item_o;
-       default: return AppColors.item_a;
+    switch (Status) {
+      case 'A':
+        return AppColors.item_a;
+      case 'B':
+        return AppColors.item_b;
+      case 'R':
+        return AppColors.item_r;
+      case 'O':
+        return AppColors.item_o;
+      default:
+        return AppColors.item_a;
     }
   }
 }

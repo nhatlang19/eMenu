@@ -13,13 +13,13 @@ class Section extends Equatable {
   @override
   List<Object> get props => [section, description1];
 
-  static const empty =
-      Section(section: '', description1: '');
+  static const empty = Section(section: '', description1: '');
 
-  const Section(
-      {required this.section,
-      required this.description1,
-     });
+  const Section({
+    required this.section,
+    required this.description1,
+  });
 
-      factory Section.fromJson(Map<String, dynamic> json) => _$SectionFromJson(json);
+  factory Section.fromJson(Map<String, dynamic> json) =>
+      _$SectionFromJson(json);
 }

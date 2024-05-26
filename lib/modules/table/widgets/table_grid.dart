@@ -77,26 +77,34 @@ class TableGrid extends StatelessWidget {
                     CashierDropdown(),
                     SizedBox(height: 24),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: Text('Save'),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text('Save'),
+                          ),
                         ),
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: Text('Close'),
+                        SizedBox(width: 10,),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text('Close'),
+                          ),
                         ),
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            Navigator.pushNamed(context, 'OrderPage');
-                          },
-                          child: Text('OK'),
+                        SizedBox(width: 10,),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              Navigator.pushNamed(context, 'OrderPage');
+                            },
+                            child: Text('OK'),
+                          ),
                         ),
                       ],
                     )
