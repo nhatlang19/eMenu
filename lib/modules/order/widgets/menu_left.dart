@@ -38,7 +38,7 @@ class MenuLeft extends StatelessWidget {
                       textAlign: TextAlign.center,
                     )),
                     IconButton(
-                      iconSize: 54.0,
+                      iconSize: 50.0,
                       icon: Icon(Icons.menu),
                       color: Colors.white,
                       onPressed: () {

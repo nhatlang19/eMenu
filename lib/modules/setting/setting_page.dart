@@ -13,8 +13,10 @@ class _SettingPageState extends State<SettingPage> {
   final _formKey = GlobalKey<FormState>();
 
   final _serverIpController = TextEditingController();
+  final _storeNoController = TextEditingController();
   final _posGroupController = TextEditingController();
   final _posIdController = TextEditingController();
+  final _vatController = TextEditingController();
   final _typeController = TextEditingController();
   final _sectionController = TextEditingController();
 
@@ -27,6 +29,8 @@ class _SettingPageState extends State<SettingPage> {
     _posIdController.dispose();
     _typeController.dispose();
     _sectionController.dispose();
+    _storeNoController.dispose();
+    _vatController.dispose();
     super.dispose();
   }
 
@@ -45,7 +49,8 @@ class _SettingPageState extends State<SettingPage> {
     _posGroupController.text = setting.posGroup;
     _posIdController.text = setting.posId;
     _typeController.text = setting.type;
-    _sectionController.text = setting.section;
+    _storeNoController.text = setting.storeNo;
+    _vatController.text = setting.vat;
   }
 
   void _save() async {
@@ -57,7 +62,8 @@ class _SettingPageState extends State<SettingPage> {
           posGroup: _posGroupController.text,
           posId: _posIdController.text,
           type: _typeController.text,
-          section: _sectionController.text);
+          storeNo: _storeNoController.text,
+          vat: _vatController.text);
       var settings = Settings();
       await settings.write(setting);
 
@@ -88,6 +94,13 @@ class _SettingPageState extends State<SettingPage> {
                   return null;
                 },
               ),
+               TextFormField(
+                controller: _storeNoController,
+                decoration: InputDecoration(labelText: 'StoreNo'),
+                validator: (value) {
+                  return null;
+                },
+              ),
               TextFormField(
                 controller: _posGroupController,
                 decoration: InputDecoration(labelText: 'POS Group'),
@@ -110,8 +123,8 @@ class _SettingPageState extends State<SettingPage> {
                 },
               ),
               TextFormField(
-                controller: _sectionController,
-                decoration: InputDecoration(labelText: 'Section'),
+                controller: _vatController,
+                decoration: InputDecoration(labelText: 'VAT'),
                 validator: (value) {
                   return null;
                 },

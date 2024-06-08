@@ -1,16 +1,19 @@
-import 'package:emenu/models/user.dart';
-import 'package:emenu/modules/table/bloc/user_bloc.dart';
+import 'package:emenu/models/sales_code.dart';
+import 'package:emenu/modules/table/bloc/salescode_bloc.dart';
+import 'package:emenu/modules/table/bloc/table_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class CashierDropdown extends StatelessWidget {
-  const CashierDropdown({super.key});
+import 'package:emenu/models/table.dart' as MyTable;
+
+class SalesCodeDropdown extends StatelessWidget {
+  const SalesCodeDropdown({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<UserBloc, UserState>(
+    return BlocBuilder<SalesCodeBloc, SalesCodeState>(
       buildWhen: (previous, current) =>
-          previous.selectedUser.cashierID != current.selectedUser.cashierID,
+          previous.selectedCode.code != current.selectedCode.code,
       builder: (context, state) {
         return Padding(
             padding: const EdgeInsets.all(8.0),
@@ -19,7 +22,7 @@ class CashierDropdown extends StatelessWidget {
                 const Expanded(
                     flex: 1,
                     child: Text(
-                      'Cashier: ',
+                      'SalesCode: ',
                     )),
                 Expanded(
                   flex: 4,
@@ -31,17 +34,16 @@ class CashierDropdown extends StatelessWidget {
                       padding:
                           EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       child: DropdownButtonHideUnderline(
-                          child: DropdownButton<User>(
-                        value: state.selectedUser,
-                        onChanged: (User? newValue) {
-                          context.read<UserBloc>().add(ChangeSelectUser(
-                              user: newValue ?? state.selectedUser));
+                          child: DropdownButton<SalesCode>(
+                        value: state.selectedCode,
+                        onChanged: (SalesCode? newValue) {
+                          context.read<SalesCodeBloc>().add(ChangeSelectSalesCode(code: newValue ?? state.selectedCode));
                         },
-                        items: state.users
-                            .map<DropdownMenuItem<User>>((User user) {
-                          return DropdownMenuItem<User>(
-                            value: user,
-                            child: Text(user.cashierName ?? ''),
+                        items: state.salescodes
+                            .map<DropdownMenuItem<SalesCode>>((SalesCode code) {
+                          return DropdownMenuItem<SalesCode>(
+                            value: code,
+                            child: Text(code.description ?? 'N/A'),
                           );
                         }).toList(),
                       ))),

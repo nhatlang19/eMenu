@@ -13,7 +13,7 @@ abstract class SoapApiClient {
     var settings = Settings();
     var setting = await settings.read();
     var serverIp = setting.serverIP;
-    return "http://$serverIp/V6BOService/V6BOService.asmx";
+    return "http://$serverIp/V6BOService.asmx";
   }
 
   Future<String?> callSoapService(String soapAction, String soapBody) async {
@@ -49,8 +49,8 @@ abstract class SoapApiClient {
     final List<dynamic>  jsonResult = [];
     final myTransformer = Xml2Json();
 
-    elements.forEach((element) {
-      myTransformer.parse(element.toXmlString());
+    elements.forEach((elm) {
+      myTransformer.parse(elm.toXmlString());
       jsonResult.add(jsonDecode(myTransformer.toParker()));
     });
     return jsonResult;

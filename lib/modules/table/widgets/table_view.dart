@@ -1,6 +1,5 @@
 import 'package:emenu/modules/table/bloc/section_bloc.dart';
 import 'package:emenu/modules/table/bloc/table_bloc.dart';
-import 'package:emenu/modules/table/bloc/user_bloc.dart';
 import 'package:emenu/modules/table/widgets/section_filter.dart';
 import 'package:emenu/modules/table/widgets/table_grid.dart';
 import 'package:flutter/material.dart';

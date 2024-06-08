@@ -12,3 +12,16 @@ class FetchTable extends TableEvent {
 
   const FetchTable({required this.section});
 }
+
+
+class ChangeSelectGroup extends TableEvent {
+  final Table group;
+
+  const ChangeSelectGroup({required this.group});
+}
+
+class ChangeIsAddNew extends TableEvent {
+  final bool isAddNew;
+
+  const ChangeIsAddNew({required this.isAddNew});
+}

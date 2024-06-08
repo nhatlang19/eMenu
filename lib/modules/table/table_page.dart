@@ -1,7 +1,9 @@
+import 'package:emenu/modules/table/bloc/salescode_bloc.dart';
 import 'package:emenu/modules/table/bloc/section_bloc.dart';
 import 'package:emenu/modules/table/bloc/table_bloc.dart';
 import 'package:emenu/modules/table/bloc/user_bloc.dart';
 import 'package:emenu/modules/table/widgets/table_view.dart';
+import 'package:emenu/repositories/sales_code_repository.dart';
 import 'package:emenu/repositories/section_repository.dart';
 import 'package:emenu/repositories/table_repository.dart';
 import 'package:emenu/repositories/user_repository.dart';
@@ -20,6 +22,7 @@ class _TablePageState extends State<TablePage> {
   late final SectionRepository sectionRepository;
   late final TableRepository tableRepository;
   late final UserRepository userRepository;
+  late final SalesCodeRepository salesCodeRepository;
 
    @override
   void initState() {
@@ -27,14 +30,9 @@ class _TablePageState extends State<TablePage> {
     sectionRepository = SectionRepository();
     tableRepository = TableRepository();
     userRepository = UserRepository();
+    salesCodeRepository = SalesCodeRepository();
   }
 
-  Future<String> _getSettings() async {
-    var settings = Settings();
-    var setting = await settings.read();
-    return setting.section;
-  }
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,29 +40,24 @@ class _TablePageState extends State<TablePage> {
           appBar: AppBar(
             title: const Text('Table'),
           ),
-          body: FutureBuilder<String>(
-            future: _getSettings(),
-            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-               if (snapshot.hasData) {
-                  return MultiBlocProvider(
+          body: MultiBlocProvider(
                     providers: [
                       BlocProvider<SectionBloc>(
-                        create: (BuildContext context) => SectionBloc(sectionRepository: sectionRepository)..add(FetchSection(section: '${snapshot.data}')),
+                        create: (BuildContext context) => SectionBloc(sectionRepository: sectionRepository)..add(FetchSection()),
                       ),
                       BlocProvider<TableBloc>(
                         create: (BuildContext context) => TableBloc(tableRepository: tableRepository),
                       ),
-                      BlocProvider<UserBloc>(
-                        create: (BuildContext context) => UserBloc(userRepository: userRepository)..add(const FetchUsers()),
+                      // BlocProvider<UserBloc>(
+                      //   create: (BuildContext context) => UserBloc(userRepository: userRepository)..add(const FetchUsers()),
+                      // ),
+                      BlocProvider<SalesCodeBloc>(
+                        create: (BuildContext context) => SalesCodeBloc(salesCodeRepository: salesCodeRepository)..add(const FetchSalesCode()),
                       ),
                     ],
                     child: const TableView()
-                  );
-               }
-               return const Center(child: Text('null'));
-            }
-          ),
-          
-    );
+                  )
+               
+          );
   }
 }

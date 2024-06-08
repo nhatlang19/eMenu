@@ -13,9 +13,6 @@ class TableRepository {
     final provider = TableProvider();
 
     var json = await provider.getTableListBySection(section);
-    if (json == null) {
-        throw Exception("Something wrongs!!!");
-    }
 
     final List<Table> result = [];
     json.forEach((data) {

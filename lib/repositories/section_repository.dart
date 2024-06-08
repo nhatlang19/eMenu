@@ -4,15 +4,11 @@ import 'package:emenu/models/section.dart';
 import 'package:emenu/providers/section_provider.dart';
 
 
-enum AuthenticationStatus { unknown, authenticated, unauthenticated }
-
 class SectionRepository {
-  Future<List<Section>> getSection({
-    required String section
-  }) async {
+  Future<List<Section>> getSection() async {
     final provider = SectionProvider();
 
-    var json = await provider.getSection(section);
+    var json = await provider.getSection();
     final List<Section> result = [];
     json.forEach((json) {
       result.add(Section.fromJson(json['Table'] as Map<String, dynamic>));

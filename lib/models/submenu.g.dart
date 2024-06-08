@@ -14,8 +14,8 @@ Submenu _$SubmenuFromJson(Map<String, dynamic> json) => $checkedCreate(
       ($checkedConvert) {
         final val = Submenu(
           description: $checkedConvert('Description', (v) => v as String),
-          btnColor: $checkedConvert('BtnColor', (v) => v as String),
-          fontColor: $checkedConvert('FontColor', (v) => v as String),
+          btnColor: $checkedConvert('BtnColor', (v) => v as String?),
+          fontColor: $checkedConvert('FontColor', (v) => v as String?),
           defaultValue: $checkedConvert('DefaultValue', (v) => v as String),
           seqNum: $checkedConvert('SeqNum', (v) => v as String),
         );

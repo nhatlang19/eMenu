@@ -23,7 +23,8 @@ class Table extends Equatable {
 
   static const empty = Table(
       TableNo: '', Status: '', OpenBy: null, Desciption: '', SalesCode: '');
-
+      
+      
   const Table(
       {required this.TableNo,
       this.Status,
@@ -32,6 +33,10 @@ class Table extends Equatable {
       this.SalesCode});
 
   factory Table.fromJson(Map<String, dynamic> json) => _$TableFromJson(json);
+
+  bool openByIsEmpty() {
+    return OpenBy == null || OpenBy == '' || (OpenBy != null && OpenBy!.isEmpty) || (OpenBy != null && OpenBy!.trim() == "null");
+  }
 
   getColor() {
     switch (Status) {

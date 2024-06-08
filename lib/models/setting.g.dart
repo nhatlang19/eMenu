@@ -17,7 +17,8 @@ Setting _$SettingFromJson(Map<String, dynamic> json) => $checkedCreate(
           posGroup: $checkedConvert('posGroup', (v) => v as String),
           posId: $checkedConvert('posId', (v) => v as String),
           type: $checkedConvert('type', (v) => v as String),
-          section: $checkedConvert('section', (v) => v as String),
+          storeNo: $checkedConvert('storeNo', (v) => v as String),
+          vat: $checkedConvert('vat', (v) => v as String),
         );
         return val;
       },

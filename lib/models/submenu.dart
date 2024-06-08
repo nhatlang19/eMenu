@@ -7,18 +7,18 @@ part 'submenu.g.dart';
 @JsonSerializable()
 class Submenu extends Equatable {
   @JsonKey(name: 'BtnColor')
-  final String btnColor;
+  final String? btnColor;
   @JsonKey(name: 'Description')
   final String description;
   @JsonKey(name: 'FontColor')
-  final String fontColor;
+  final String? fontColor;
   @JsonKey(name: 'DefaultValue')
   final String defaultValue;
   @JsonKey(name: 'SeqNum')
   final String seqNum;
 
   @override
-  List<Object> get props => [description, btnColor, fontColor, defaultValue, seqNum];
+  List<Object> get props => [description, btnColor ?? '', fontColor ?? '', defaultValue, seqNum];
 
   static const empty =
       Submenu(description: '', btnColor: '', fontColor: '', defaultValue: '', seqNum: '');

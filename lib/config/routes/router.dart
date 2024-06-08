@@ -7,13 +7,16 @@ import 'package:flutter/material.dart';
 
 class Router {
   static Route<dynamic> generateRoute(RouteSettings settings) {
+   
+    
     switch (settings.name) {
       case 'MainPage':
         return MaterialPageRoute(builder: (_) => const MainPage());
       case 'TablePage':
         return MaterialPageRoute(builder: (_) => const TablePage());
       case 'OrderPage':
-        return MaterialPageRoute(builder: (_) => const OrderPage());
+        Map args = settings.arguments as Map;
+        return MaterialPageRoute(builder: (_) => OrderPage(args));
       case 'CartPage':
         return MaterialPageRoute(builder: (_) => const CartPage());
       case 'SettingPage':

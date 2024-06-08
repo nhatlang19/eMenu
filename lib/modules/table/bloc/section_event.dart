@@ -8,9 +8,8 @@ sealed class SectionEvent extends Equatable {
 }
 
 class FetchSection extends SectionEvent {
-  final String section;
 
-  const FetchSection({required this.section});
+  const FetchSection();
 }
 
 class ChangeSection extends SectionEvent {
