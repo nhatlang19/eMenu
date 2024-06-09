@@ -18,3 +18,31 @@ class AddToCart extends CartEvent {
   @override
    List<Object> get props => [currSubItem, qty, priceLevel!];
 }
+
+class Increase extends CartEvent {
+  final int position;
+
+  const Increase({required this.position});
+
+  @override
+   List<Object> get props => [position];
+}
+
+class Decrease extends CartEvent {
+  final int position;
+
+  const Decrease({required this.position});
+
+  @override
+   List<Object> get props => [position];
+}
+
+class UpdateQuantity extends CartEvent {
+  final int position;
+  final int value;
+
+  const UpdateQuantity({required this.position, required this.value});
+
+  @override
+   List<Object> get props => [position];
+}

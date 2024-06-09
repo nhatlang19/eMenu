@@ -7,6 +7,9 @@ class ScreenUtil {
   }
 
   static String formatPrice(dynamic amount) {
-    return NumberFormat.currency(locale: 'en_US', symbol: '').format(amount);
+    if (amount is String) {
+      amount = double.parse(amount);
+    }
+    return NumberFormat.currency(locale: 'en_US', symbol: '', decimalDigits: 0).format(amount);
   }
 }
