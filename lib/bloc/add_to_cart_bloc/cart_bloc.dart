@@ -33,10 +33,13 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       final index = list.indexWhere((element) => element.item.itemCode == item.itemCode);
       if (index >= 0) {
         state.cartItems[index].qty += 1;
-        emit(state.copyWith(cartItems: state.cartItems, status: CartStatus.success));
+        double total = list.fold(0, (tot, item) => tot.toDouble() + (double.parse(item.item.unitSellPrice) * item.qty - double.parse(item.item.promoPrice)));
+        emit(state.copyWith(cartItems: state.cartItems, status: CartStatus.success, total: total));
       } else {
         final data = List<CartItem>.from(state.cartItems)..add(CartItem(item: item, qty: qty));
-        emit(state.copyWith(cartItems: data, status: CartStatus.success));
+        double total = data.fold(0, (tot, item) => tot.toDouble() + (double.parse(item.item.unitSellPrice) * item.qty - double.parse(item.item.promoPrice)));
+        
+        emit(state.copyWith(cartItems: data, status: CartStatus.success, total: total));
       }
     } catch (_) {
       emit(state.copyWith(status: CartStatus.failure));

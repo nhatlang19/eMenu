@@ -68,10 +68,6 @@ class _OrderPageState extends State<OrderPage> {
                     create: (BuildContext context) =>
                         SubMenuBloc(menuRepository: menuRepository),
                   ),
-                  BlocProvider<CartBloc>(
-                    create: (BuildContext context) =>
-                        CartBloc(itemRepository: itemRepository),
-                  ),
                 ], child: const OrderView());
               }
               return const CircularProgressIndicator();

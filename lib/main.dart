@@ -1,15 +1,17 @@
+import 'package:emenu/bloc/add_to_cart_bloc/cart_bloc.dart';
 import 'package:emenu/config/routes/router.dart' as router;
 import 'package:emenu/config/routes/routes.dart';
 import 'package:emenu/config/themes/app_colors.dart';
 import 'package:emenu/modules/auth/bloc/auth_bloc.dart';
 import 'package:emenu/repositories/auth_repository.dart';
+import 'package:emenu/repositories/item_repository.dart';
 import 'package:emenu/repositories/user_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
-void main() async  {
+void main() async {
   await dotenv.load(fileName: ".env");
 
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -29,12 +31,14 @@ class MainApp extends StatefulWidget {
 class _MainAppState extends State<MainApp> {
   late final AuthRepository _authenticationRepository;
   late final UserRepository _userRepository;
+  late final ItemRepository _itemRepository;
 
   @override
   void initState() {
     super.initState();
     _authenticationRepository = AuthRepository();
     _userRepository = UserRepository();
+    _itemRepository = ItemRepository();
   }
 
   @override
@@ -42,19 +46,23 @@ class _MainAppState extends State<MainApp> {
     _authenticationRepository.dispose();
     super.dispose();
   }
-  
+
   @override
-  Widget build(BuildContext context) { 
+  Widget build(BuildContext context) {
     return RepositoryProvider.value(
-      value: _authenticationRepository,
-      child: BlocProvider(
-        create: (_) => AuthBloc(
-          authenticationRepository: _authenticationRepository,
-          userRepository: _userRepository,
-        ),
-        child: const AppView(),
-      ),
-    );
+        value: _authenticationRepository,
+        child: MultiBlocProvider(providers: [
+          BlocProvider<AuthBloc>(
+            create: (_) => AuthBloc(
+              authenticationRepository: _authenticationRepository,
+              userRepository: _userRepository,
+            ),
+          ),
+          BlocProvider<CartBloc>(
+            create: (BuildContext context) =>
+                CartBloc(itemRepository: _itemRepository),
+          ),
+        ], child: const AppView()));
   }
 }
 
@@ -76,13 +84,12 @@ class _AppViewState extends State<AppView> {
       debugShowCheckedModeBanner: false,
       title: 'EMenu',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-        appBarTheme: AppBarTheme(
-          backgroundColor: AppColors.mainBLue,
-          foregroundColor: Colors.white,
-        )
-      ),
+          primarySwatch: Colors.blue,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+          appBarTheme: AppBarTheme(
+            backgroundColor: AppColors.mainBLue,
+            foregroundColor: Colors.white,
+          )),
       initialRoute: Routes.mainPage,
       onGenerateRoute: router.Router.generateRoute,
       navigatorKey: _navigatorKey,
