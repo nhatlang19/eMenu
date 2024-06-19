@@ -19,6 +19,13 @@ class AddToCart extends CartEvent {
    List<Object> get props => [currSubItem, qty, priceLevel!];
 }
 
+class Toogle extends CartEvent {
+  const Toogle();
+
+  @override
+   List<Object> get props => [];
+}
+
 class Increase extends CartEvent {
   final int position;
 

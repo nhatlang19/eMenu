@@ -4,6 +4,7 @@ import 'package:emenu/modules/table/bloc/salescode_bloc.dart';
 import 'package:emenu/modules/table/bloc/table_bloc.dart';
 import 'package:emenu/modules/table/widgets/group_dropdown.dart';
 import 'package:emenu/modules/table/widgets/sales_code_dropdown.dart';
+import 'package:emenu/utils/screen_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -21,11 +22,11 @@ class TableGrid extends StatelessWidget {
             child: Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 4, // Change this for more/less columns
-                    childAspectRatio: 2,
-                    crossAxisSpacing: 20,
-                    mainAxisSpacing: 20,
+                    childAspectRatio: ScreenUtil.isPortrait(context) ?  2 : 2.5,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
                   ),
                   itemCount: state.tables.length,
                   itemBuilder: (context, index) {
@@ -107,7 +108,7 @@ class TableGrid extends StatelessWidget {
             borderRadius: BorderRadius.circular(10.0),
           ),
           child: Container(
-            width: MediaQuery.of(context).size.width * 0.8, // Custom width
+            width: MediaQuery.of(context).size.width * 0.5, // Custom width
             padding: const EdgeInsets.all(16.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,

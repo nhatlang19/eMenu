@@ -45,7 +45,7 @@ class _CartPageState extends State<CartPage> {
                                       fontSize: 24.0,
                                       fontWeight: FontWeight.bold)),
                               subtitle: Text(
-                                  '${ScreenUtil.formatPrice(item.item.unitSellPrice)} VND ()',
+                                  '${ScreenUtil.formatPrice(item.item.unitSellPrice)} VND',
                                   style: const TextStyle(
                                       fontSize: 20.0,
                                       fontWeight: FontWeight.w400)),

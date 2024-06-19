@@ -1,5 +1,6 @@
 import 'package:emenu/constants/asset_path.dart';
 import 'package:emenu/modules/auth/bloc/login_bloc.dart';
+import 'package:emenu/modules/auth/widgets/exit_button.dart';
 import 'package:emenu/modules/auth/widgets/login_button.dart';
 import 'package:emenu/modules/auth/widgets/password_input.dart';
 import 'package:emenu/modules/auth/widgets/username_input.dart';
@@ -85,11 +86,23 @@ class _LoginFormState extends State<LoginForm> {
                 ),
               ),
               const SizedBox(height: 20),
-              UsernameInput(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(child: UsernameInput()),
+                  const SizedBox(width: 20),
+                  Expanded(child: PasswordInput()),
+                ],
+              ),
               const SizedBox(height: 20),
-              PasswordInput(),
-              const SizedBox(height: 20),
-              LoginButton(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(child: ExitButton()),
+                  const SizedBox(width: 20),
+                  Expanded(child: LoginButton()),
+                ],
+              ),
               _buildVersion()
             ],
           ),

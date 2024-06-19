@@ -15,6 +15,9 @@ class PasswordInput extends StatelessWidget {
               context.read<LoginBloc>().add(LoginPasswordChanged(password)),
           decoration: InputDecoration(
             labelText: 'Password',
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(0),
+            ),
             errorText:
                 state.password.displayError != null ? 'invalid password' : null,
           ),

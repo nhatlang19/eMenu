@@ -19,10 +19,12 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<Increase>(_onIncrease);
     on<Decrease>(_onDecrease);
     on<UpdateQuantity>(_onUpdateQuantity);
+    on<Toogle>(_onToogle);
   }
 
   Future<void> _onAddToCart(AddToCart event, Emitter<CartState> emit) async {
     try {
+      emit(state.copyWith(status: CartStatus.initial));
       var settings = Settings();
       var setting = await settings.read();
       var qty = 0;
@@ -123,5 +125,9 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         status: CartStatus.updatedQuantity,
         total: total));
     emit(state.copyWith(status: CartStatus.initial));
+  }
+
+  void _onToogle(Toogle event, Emitter<CartState> emit) {
+    emit(state.copyWith(toogle: !state.toogle));
   }
 }
