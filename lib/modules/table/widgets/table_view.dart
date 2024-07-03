@@ -41,43 +41,50 @@ class _TableViewState extends State<TableView> {
           children: [
             Row(
               children: [
-                Expanded(child: SectionFilter()),
-                InkWell(
-                  onTap: () {
-                    
-                  },
-                  splashColor: Colors.blue, // splash color on tap
-                  child: Container(
-                    padding: EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.blue),
-                      borderRadius:
-                          BorderRadius.circular(8), // button border radius
-                      color: Colors.blueAccent, // button background color
-                    ),
-                    child: Text(
-                      'Refresh',
-                      style: TextStyle(color: Colors.white),
+                Expanded(flex: 2,child: SectionFilter()),
+                Expanded(flex: 1,
+                  child: InkWell(
+                    onTap: () {
+                      
+                    },
+                    splashColor: Colors.blue, // splash color on tap
+                    child: Container(
+                      padding: EdgeInsets.only(bottom: 14, top: 14),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.blue),
+                        borderRadius:
+                            BorderRadius.circular(8), // button border radius
+                        color: Colors.blueAccent, // button background color
+                      ),
+                      child: Text(
+                        textAlign: TextAlign.center,
+                        'Refresh',
+                        style: TextStyle(color: Colors.white, fontSize: 20),
+                      ),
                     ),
                   ),
                 ),
                 SizedBox(width: 10),
-                InkWell(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  splashColor: Colors.red, // splash color on tap
-                  child: Container(
-                    padding: EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.red),
-                      borderRadius:
-                          BorderRadius.circular(8), // button border radius
-                      color: Colors.redAccent, // button background color
-                    ),
-                    child: Text(
-                      'Exit',
-                      style: TextStyle(color: Colors.white),
+                Expanded(
+                  flex: 1,
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    splashColor: Colors.red, // splash color on tap
+                    child: Container(
+                      padding: EdgeInsets.only(bottom: 14, top: 14),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.red),
+                        borderRadius:
+                            BorderRadius.circular(8), // button border radius
+                        color: Colors.redAccent, // button background color
+                      ),
+                      child: Text(
+                        textAlign: TextAlign.center,
+                        'Exit',
+                        style: TextStyle(color: Colors.white, fontSize: 20),
+                      ),
                     ),
                   ),
                 ),

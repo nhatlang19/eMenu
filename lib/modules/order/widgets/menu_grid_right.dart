@@ -9,6 +9,7 @@ import 'package:emenu/modules/order/bloc/order_bloc.dart';
 import 'package:emenu/modules/order/bloc/submenu_bloc.dart';
 import 'package:emenu/modules/order/widgets/grid_item.dart';
 import 'package:emenu/utils/screen_util.dart';
+import 'package:emenu/widgets/number_keyboards.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -19,6 +20,7 @@ class MenuGridRight extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    late OverlayEntry overlayEntry;
     return Expanded(
       flex: 4,
       child: Column(
@@ -36,6 +38,56 @@ class MenuGridRight extends StatelessWidget {
                     Navigator.pop(context);
                   },
                 ),
+                SizedBox.fromSize(
+                  size: Size(40, 40), // button width and height
+                  child: ClipOval(
+                    child: Material(
+                      color: Colors.orange, // button color
+                      child: GestureDetector(
+                        // splashColor: Colors.green, // splash color
+                        onTapDown: (details) {
+                          OverlayState overlayState = Overlay.of(context);
+                           overlayEntry = OverlayEntry(builder: (context) {
+                            return Positioned(
+        top: details.globalPosition.dy + 10,
+        left: details.globalPosition.dx + 10,
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            color: Colors.white,
+            padding: EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                NumberKeyboards(
+                  onKeyPressed: (value) {
+                    if (value == 'C') {
+                    } else if (value == '←') {
+                    } else {
+                    }
+                  },
+                   onClose: () {
+                    overlayEntry?.remove();
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+                          });
+                          overlayState.insert(overlayEntry);
+                        }, // button pressed
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text("0"), // text
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
                 BlocBuilder<MenuBloc, MenuState>(
                     buildWhen: (previous, current) =>
                         previous.menu.defaultValue != current.menu.defaultValue,
@@ -47,6 +99,21 @@ class MenuGridRight extends StatelessWidget {
                         style: AppTextStyles.tableTitleWhite,
                       )));
                     }),
+                    BlocBuilder<CartBloc, CartState>(
+                            buildWhen: (previous, current) =>
+                                previous.cartItems.length !=
+                                current.cartItems.length || current.status == CartStatus.updatedQuantity || current.status == CartStatus.success,
+                            builder: (context, state) {
+                              var total = ScreenUtil.formatPrice(state.total);
+                              return Padding(
+                                padding: const EdgeInsets.only(right: 40.0),
+                                child: Text('${total} VND',
+                                    style: const TextStyle(
+                                        fontSize: 24.0,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white)),
+                              );
+                            }),
                 Padding(
                   padding: const EdgeInsets.only(right: 20),
                   child: Row(
