@@ -21,6 +21,16 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<UpdateQuantity>(_onUpdateQuantity);
     on<Toogle>(_onToogle);
     on<UpdateNoPeople>(_onUpdateNoPeople);
+    on<ResetCart>(_onResetCart);
+  }
+
+  void _onResetCart(ResetCart event, Emitter<CartState> emit) {
+    emit(state.copyWith(
+        status: CartStatus.initial,
+        cartItems: [],
+        total: 0,
+        toogle: false,
+        noPeople: "1"));
   }
 
   Future<void> _onAddToCart(AddToCart event, Emitter<CartState> emit) async {
@@ -32,7 +42,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       if (setting.type != "1") {
         qty = 1;
       }
-      
+
       if (state.noPeople == '0') {
         qty = 1;
       } else {
@@ -142,12 +152,13 @@ class CartBloc extends Bloc<CartEvent, CartState> {
 
   void _onUpdateNoPeople(UpdateNoPeople event, Emitter<CartState> emit) {
     if (event.value == 'C') {
-      emit(state.copyWith(noPeople: "1"));                             
+      emit(state.copyWith(noPeople: "1"));
     } else if (event.value == '←') {
       if (state.noPeople.length == 1) {
-        emit(state.copyWith(noPeople: "0")); 
+        emit(state.copyWith(noPeople: "0"));
       } else {
-        emit(state.copyWith(noPeople: state.noPeople.substring(0, state.noPeople.length - 1))); 
+        emit(state.copyWith(
+            noPeople: state.noPeople.substring(0, state.noPeople.length - 1)));
       }
     } else {
       if (state.noPeople == '0') {

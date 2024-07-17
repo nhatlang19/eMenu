@@ -7,23 +7,30 @@ sealed class CartEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class ResetCart extends CartEvent {
+  const ResetCart();
+
+  @override
+  List<Object> get props => [];
+}
+
 class AddToCart extends CartEvent {
   final Submenu currSubItem;
   final int qty;
   final String? priceLevel;
 
-
-  const AddToCart({required this.currSubItem, required this.qty,  this.priceLevel});
+  const AddToCart(
+      {required this.currSubItem, required this.qty, this.priceLevel});
 
   @override
-   List<Object> get props => [currSubItem, qty, priceLevel!];
+  List<Object> get props => [currSubItem, qty, priceLevel!];
 }
 
 class Toogle extends CartEvent {
   const Toogle();
 
   @override
-   List<Object> get props => [];
+  List<Object> get props => [];
 }
 
 class Increase extends CartEvent {
@@ -32,7 +39,7 @@ class Increase extends CartEvent {
   const Increase({required this.position});
 
   @override
-   List<Object> get props => [position];
+  List<Object> get props => [position];
 }
 
 class Decrease extends CartEvent {
@@ -41,7 +48,7 @@ class Decrease extends CartEvent {
   const Decrease({required this.position});
 
   @override
-   List<Object> get props => [position];
+  List<Object> get props => [position];
 }
 
 class UpdateQuantity extends CartEvent {
@@ -51,7 +58,7 @@ class UpdateQuantity extends CartEvent {
   const UpdateQuantity({required this.position, required this.value});
 
   @override
-   List<Object> get props => [position];
+  List<Object> get props => [position];
 }
 
 class UpdateNoPeople extends CartEvent {
@@ -60,5 +67,5 @@ class UpdateNoPeople extends CartEvent {
   const UpdateNoPeople({required this.value});
 
   @override
-   List<Object> get props => [value];
+  List<Object> get props => [value];
 }

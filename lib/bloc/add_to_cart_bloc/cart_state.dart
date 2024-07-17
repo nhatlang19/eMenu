@@ -9,13 +9,12 @@ class CartState extends Equatable {
   final bool toogle;
   final String noPeople;
 
-  const CartState({
-    this.cartItems = const <CartItem>[],
-    this.status = CartStatus.initial,
-    this.total = 0,
-    this.toogle = false,
-    this.noPeople = "1"
-  });
+  const CartState(
+      {this.cartItems = const <CartItem>[],
+      this.status = CartStatus.initial,
+      this.total = 0,
+      this.toogle = false,
+      this.noPeople = "1"});
 
   CartState copyWith({
     CartStatus? status,
@@ -25,12 +24,11 @@ class CartState extends Equatable {
     String? noPeople,
   }) {
     return CartState(
-      status: status ?? this.status,
-      cartItems: cartItems ?? this.cartItems,
-      total: total ?? this.total,
-      toogle: toogle ?? this.toogle,
-      noPeople: noPeople ?? this.noPeople
-    );
+        status: status ?? this.status,
+        cartItems: cartItems ?? this.cartItems,
+        total: total ?? this.total,
+        toogle: toogle ?? this.toogle,
+        noPeople: noPeople ?? this.noPeople);
   }
 
   @override

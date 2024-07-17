@@ -35,6 +35,7 @@ class MenuGridRight extends StatelessWidget {
                   icon: Icon(Icons.arrow_back_ios),
                   color: Colors.white,
                   onPressed: () {
+                    context.read<CartBloc>().add(ResetCart());
                     Navigator.pop(context);
                   },
                 ),
