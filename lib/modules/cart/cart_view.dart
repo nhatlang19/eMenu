@@ -167,7 +167,7 @@ class _CartViewState extends State<CartView> {
                                     8.0), // Optional padding around the button
                                 child: OutlinedButton(
                                   onPressed: () {
-                                    // Your onPressed logic here
+                                    context.read<CartBloc>().add(SendOrder());
                                   },
                                   child: const Text('SEND ORDER',
                                       style: TextStyle(

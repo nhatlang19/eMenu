@@ -1,6 +1,6 @@
 part of 'cart_bloc.dart';
 
-enum CartStatus { initial, addToCart, failure, success, updatedQuantity }
+enum CartStatus { initial, addToCart, failure, success, updatedQuantity, sendOrderInitial, sendOrderSuccess, sendOrderFail }
 
 class CartState extends Equatable {
   final List<CartItem> cartItems;

@@ -69,3 +69,10 @@ class UpdateNoPeople extends CartEvent {
   @override
   List<Object> get props => [value];
 }
+
+class SendOrder extends CartEvent {
+  const SendOrder();
+
+  @override
+  List<Object> get props => [];
+}

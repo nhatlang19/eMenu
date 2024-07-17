@@ -4,6 +4,7 @@ import 'package:emenu/config/routes/routes.dart';
 import 'package:emenu/config/themes/app_colors.dart';
 import 'package:emenu/modules/auth/bloc/auth_bloc.dart';
 import 'package:emenu/repositories/auth_repository.dart';
+import 'package:emenu/repositories/cart_repository.dart';
 import 'package:emenu/repositories/item_repository.dart';
 import 'package:emenu/repositories/user_repository.dart';
 import 'package:flutter/material.dart';
@@ -32,6 +33,7 @@ class _MainAppState extends State<MainApp> {
   late final AuthRepository _authenticationRepository;
   late final UserRepository _userRepository;
   late final ItemRepository _itemRepository;
+  late final CartRepository _cartRepository;
 
   @override
   void initState() {
@@ -39,6 +41,7 @@ class _MainAppState extends State<MainApp> {
     _authenticationRepository = AuthRepository();
     _userRepository = UserRepository();
     _itemRepository = ItemRepository();
+    _cartRepository = CartRepository();
   }
 
   @override
@@ -60,7 +63,7 @@ class _MainAppState extends State<MainApp> {
           ),
           BlocProvider<CartBloc>(
             create: (BuildContext context) =>
-                CartBloc(itemRepository: _itemRepository),
+                CartBloc(itemRepository: _itemRepository, cartRepository: _cartRepository),
           ),
         ], child: const AppView()));
   }

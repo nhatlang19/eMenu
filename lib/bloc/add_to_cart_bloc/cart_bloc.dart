@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:emenu/bloc/add_to_cart_bloc/dto/CartItem.dart';
 import 'package:emenu/models/item.dart';
 import 'package:emenu/models/submenu.dart';
+import 'package:emenu/repositories/cart_repository.dart';
 import 'package:emenu/repositories/item_repository.dart';
 import 'package:emenu/utils/settings.dart';
 import 'package:equatable/equatable.dart';
@@ -11,9 +12,10 @@ part 'cart_state.dart';
 
 class CartBloc extends Bloc<CartEvent, CartState> {
   final ItemRepository _itemRepository;
+  final CartRepository _cartRepository;
 
-  CartBloc({required ItemRepository itemRepository})
-      : _itemRepository = itemRepository,
+  CartBloc({required ItemRepository itemRepository, required CartRepository cartRepository})
+      : _itemRepository = itemRepository, _cartRepository = cartRepository,
         super(CartState()) {
     on<AddToCart>(_onAddToCart);
     on<Increase>(_onIncrease);
@@ -22,6 +24,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<Toogle>(_onToogle);
     on<UpdateNoPeople>(_onUpdateNoPeople);
     on<ResetCart>(_onResetCart);
+    on<SendOrder>(_onSendOrder);
   }
 
   void _onResetCart(ResetCart event, Emitter<CartState> emit) {
@@ -59,6 +62,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
           list.indexWhere((element) => element.item.itemCode == item.itemCode);
       if (index >= 0) {
         state.cartItems[index].qty += 1;
+        state.cartItems[index].updateData();
         double total = list.fold(
             0,
             (tot, item) =>
@@ -71,7 +75,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
             total: total));
       } else {
         final data = List<CartItem>.from(state.cartItems)
-          ..add(CartItem(item: item, qty: qty));
+          ..add(CartItem(item: item, qty: qty, segNo: state.cartItems.length + 1));
         double total = data.fold(
             0,
             (tot, item) =>
@@ -91,7 +95,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
 
   void _onIncrease(Increase event, Emitter<CartState> emit) {
     state.cartItems[event.position].qty += 1;
-
+    state.cartItems[event.position].updateData();
     emit(state.copyWith(status: CartStatus.initial));
     double total = state.cartItems.fold(
         0,
@@ -111,6 +115,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     var item = state.cartItems[event.position];
     if (item.qty > 1) {
       state.cartItems[event.position].qty -= 1;
+      state.cartItems[event.position].updateData();
     } else {
       state.cartItems.removeAt(event.position);
     }
@@ -131,6 +136,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     emit(state.copyWith(status: CartStatus.initial));
     if (event.value > 0) {
       state.cartItems[event.position].qty = event.value;
+      state.cartItems[event.position].updateData();
     }
 
     double total = state.cartItems.fold(
@@ -169,6 +175,22 @@ class CartBloc extends Bloc<CartEvent, CartState> {
           emit(state.copyWith(noPeople: newValue));
         }
       }
+    }
+  }
+
+  Future<void> _onSendOrder(SendOrder event, Emitter<CartState> emit) async {
+    try {
+      var settings = Settings();
+      var setting = await settings.read();
+      String posNo = setting.posId;
+      String orderNo = await _cartRepository.getNewOrderNumberByPOS(posNo);
+
+      emit(state.copyWith(status: CartStatus.sendOrderInitial));
+      String reSendOrder = "0";
+      // _cartRepository.sendOrder()
+      emit(state.copyWith(status: CartStatus.sendOrderSuccess));
+    } catch(_) {
+      emit(state.copyWith(status: CartStatus.sendOrderFail));
     }
   }
 }
