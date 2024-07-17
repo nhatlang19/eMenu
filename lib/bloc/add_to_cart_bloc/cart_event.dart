@@ -53,3 +53,12 @@ class UpdateQuantity extends CartEvent {
   @override
    List<Object> get props => [position];
 }
+
+class UpdateNoPeople extends CartEvent {
+  final String value;
+
+  const UpdateNoPeople({required this.value});
+
+  @override
+   List<Object> get props => [value];
+}

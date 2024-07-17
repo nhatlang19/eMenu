@@ -49,39 +49,41 @@ class MenuGridRight extends StatelessWidget {
                           OverlayState overlayState = Overlay.of(context);
                            overlayEntry = OverlayEntry(builder: (context) {
                             return Positioned(
-        top: details.globalPosition.dy + 10,
-        left: details.globalPosition.dx + 10,
-        child: Material(
-          color: Colors.transparent,
-          child: Container(
-            color: Colors.white,
-            padding: EdgeInsets.all(8.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                NumberKeyboards(
-                  onKeyPressed: (value) {
-                    if (value == 'C') {
-                    } else if (value == '←') {
-                    } else {
-                    }
-                  },
-                   onClose: () {
-                    overlayEntry?.remove();
-                  },
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
+                              top: details.globalPosition.dy + 10,
+                              left: details.globalPosition.dx + 10,
+                              child: Material(
+                                color: Colors.transparent,
+                                child: Container(
+                                  color: Colors.white,
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      NumberKeyboards(
+                                        onKeyPressed: (value) {
+                                          context.read<CartBloc>().add(UpdateNoPeople(value: value));
+                                        },
+                                        onClose: () {
+                                          overlayEntry?.remove();
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
                           });
                           overlayState.insert(overlayEntry);
                         }, // button pressed
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            Text("0"), // text
+                            BlocBuilder<CartBloc, CartState>(
+                              buildWhen: (previous, current) =>
+                                  previous.noPeople != current.noPeople,
+                              builder: (context, state) {
+                                return Text(state.noPeople);
+                              }), // text
                           ],
                         ),
                       ),

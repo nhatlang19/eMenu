@@ -85,7 +85,7 @@ class _CartViewState extends State<CartView> {
                                         border: Border.all(color: Colors.grey),
                                         borderRadius: BorderRadius.circular(0),
                                       ),
-                                      width: 20,
+                                      width: 40,
                                       margin: EdgeInsets.only(top: 13, bottom: 13),
                                       child: TextField(
                                         decoration: const InputDecoration(
@@ -105,7 +105,6 @@ class _CartViewState extends State<CartView> {
                                           if (newQuantity != null &&
                                               newQuantity > 0) {
                                             context.read<CartBloc>().add(UpdateQuantity(position: index, value: newQuantity));
-                                            
                                           }
                                         },
                                       ),

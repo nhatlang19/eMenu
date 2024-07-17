@@ -20,6 +20,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<Decrease>(_onDecrease);
     on<UpdateQuantity>(_onUpdateQuantity);
     on<Toogle>(_onToogle);
+    on<UpdateNoPeople>(_onUpdateNoPeople);
   }
 
   Future<void> _onAddToCart(AddToCart event, Emitter<CartState> emit) async {
@@ -30,6 +31,12 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       var qty = 0;
       if (setting.type != "1") {
         qty = 1;
+      }
+      
+      if (state.noPeople == '0') {
+        qty = 1;
+      } else {
+        qty = int.parse(state.noPeople);
       }
 
       Item item = await _itemRepository.getItemBySubMenuSelected(
@@ -65,8 +72,10 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         emit(state.copyWith(
             cartItems: data, status: CartStatus.success, total: total));
       }
+      emit(state.copyWith(noPeople: "1"));
     } catch (_) {
       emit(state.copyWith(status: CartStatus.failure));
+      emit(state.copyWith(noPeople: "1"));
     }
   }
 
@@ -129,5 +138,26 @@ class CartBloc extends Bloc<CartEvent, CartState> {
 
   void _onToogle(Toogle event, Emitter<CartState> emit) {
     emit(state.copyWith(toogle: !state.toogle));
+  }
+
+  void _onUpdateNoPeople(UpdateNoPeople event, Emitter<CartState> emit) {
+    if (event.value == 'C') {
+      emit(state.copyWith(noPeople: "1"));                             
+    } else if (event.value == '←') {
+      if (state.noPeople.length == 1) {
+        emit(state.copyWith(noPeople: "0")); 
+      } else {
+        emit(state.copyWith(noPeople: state.noPeople.substring(0, state.noPeople.length - 1))); 
+      }
+    } else {
+      if (state.noPeople == '0') {
+        emit(state.copyWith(noPeople: event.value));
+      } else {
+        var newValue = state.noPeople + event.value;
+        if (newValue.isNotEmpty && newValue.length <= 2) {
+          emit(state.copyWith(noPeople: newValue));
+        }
+      }
+    }
   }
 }
