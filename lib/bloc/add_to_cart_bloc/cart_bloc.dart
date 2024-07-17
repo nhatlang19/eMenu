@@ -86,10 +86,10 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         emit(state.copyWith(
             cartItems: data, status: CartStatus.success, total: total));
       }
-      emit(state.copyWith(noPeople: "1"));
+      emit(state.copyWith(noPeople: "0"));
     } catch (_) {
       emit(state.copyWith(status: CartStatus.failure));
-      emit(state.copyWith(noPeople: "1"));
+      emit(state.copyWith(noPeople: "0"));
     }
   }
 

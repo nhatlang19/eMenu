@@ -14,7 +14,7 @@ class CartState extends Equatable {
       this.status = CartStatus.initial,
       this.total = 0,
       this.toogle = false,
-      this.noPeople = "1"});
+      this.noPeople = "0"});
 
   CartState copyWith({
     CartStatus? status,

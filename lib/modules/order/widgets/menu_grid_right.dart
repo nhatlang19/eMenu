@@ -5,14 +5,12 @@ import 'package:emenu/config/themes/app_colors.dart';
 import 'package:emenu/config/themes/app_text_styles.dart';
 import 'package:emenu/modules/cart/cart_view.dart';
 import 'package:emenu/modules/order/bloc/menu_bloc.dart';
-import 'package:emenu/modules/order/bloc/order_bloc.dart';
 import 'package:emenu/modules/order/bloc/submenu_bloc.dart';
 import 'package:emenu/modules/order/widgets/grid_item.dart';
 import 'package:emenu/utils/screen_util.dart';
 import 'package:emenu/widgets/number_keyboards.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:badges/badges.dart' as badges;
 
 class MenuGridRight extends StatelessWidget {
@@ -65,7 +63,11 @@ class MenuGridRight extends StatelessWidget {
                                           context.read<CartBloc>().add(UpdateNoPeople(value: value));
                                         },
                                         onClose: () {
-                                          overlayEntry?.remove();
+                                          try {
+                                            overlayEntry?.remove();
+                                          } catch(_) {
+
+                                          }
                                         },
                                       ),
                                     ],

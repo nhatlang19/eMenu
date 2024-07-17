@@ -6,18 +6,18 @@ class CartItem {
   String status = '';
   String instruction = '';
   int segNo = 0;
-  int total = 0;
-  int taxAmt = 0;
+  double total = 0;
+  double taxAmt = 0;
 
   static const String SEPARATE = "|";
 
   CartItem({required this.item, required this.qty, required this.segNo}) {
-    this.updateData();
+    updateData();
   }
 
-  void updateData() {
-    this.total = (int.parse(this.item.unitSellPrice) * this.qty) - int.parse(this.item.promoPrice);
-    this.taxAmt = ((this.total * int.parse(this.item.tax ?? '0')) / 100) as int;
+  Future<void> updateData() async {
+    total = (double.parse(item.unitSellPrice) * qty) - double.parse(item.promoPrice);
+    taxAmt = (total * double.parse(item.tax ?? '0')) / 100;
   }
 
 	String toString() {
