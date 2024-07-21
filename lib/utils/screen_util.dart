@@ -12,4 +12,11 @@ class ScreenUtil {
     }
     return NumberFormat.currency(locale: 'en_US', symbol: '', decimalDigits: 0).format(amount);
   }
+
+  static String getCurrentDate(String format) {
+		DateTime now = DateTime.now();
+    DateFormat formatter = DateFormat(format);
+    String formattedDate = formatter.format(now);
+    return formattedDate;
+	}
 }

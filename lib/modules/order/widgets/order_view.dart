@@ -1,5 +1,7 @@
+import 'package:emenu/bloc/add_to_cart_bloc/cart_bloc.dart';
 import 'package:emenu/modules/order/bloc/menu_bloc.dart';
 import 'package:emenu/modules/order/bloc/submenu_bloc.dart';
+import 'package:emenu/modules/order/widgets/combo_bottom.dart';
 import 'package:emenu/modules/order/widgets/menu_grid_right.dart';
 import 'package:emenu/modules/order/widgets/menu_left.dart';
 import 'package:emenu/utils/settings.dart';
@@ -29,6 +31,22 @@ class OrderView extends StatelessWidget {
                         context.read<SubMenuBloc>().add(FetchSubmenu(
                             selectedPosMenu: state.menu.defaultValue,
                             posGroup: '${snapshot.data}'));
+                      }
+                    },
+                  ),
+                  BlocListener<CartBloc, CartState>(
+                    listener: (context, state) {
+                      if (state.showCombo == true) {
+                        showModalBottomSheet(
+                          isDismissible: false,
+                          enableDrag: false,
+                          context: context,
+                          isScrollControlled: true,
+                          useSafeArea: true,
+                          builder: (context) {
+                            return ComboBottom();
+                          },
+                        );
                       }
                     },
                   ),

@@ -1,3 +1,4 @@
+import 'package:emenu/models/item_combo.dart';
 import 'package:equatable/equatable.dart';
 
 import 'package:json_annotation/json_annotation.dart';

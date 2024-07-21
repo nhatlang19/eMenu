@@ -1,6 +1,11 @@
 import 'package:bloc/bloc.dart';
 import 'package:emenu/bloc/add_to_cart_bloc/dto/CartItem.dart';
+import 'package:emenu/bloc/add_to_cart_bloc/dto/CartItemCombo.dart';
+import 'package:emenu/bloc/add_to_cart_bloc/dto/CartItemModifier.dart';
+import 'package:emenu/constants/item_combo_pack.dart';
 import 'package:emenu/models/item.dart';
+import 'package:emenu/models/item_combo.dart';
+import 'package:emenu/models/item_modifier.dart';
 import 'package:emenu/models/submenu.dart';
 import 'package:emenu/repositories/cart_repository.dart';
 import 'package:emenu/repositories/item_repository.dart';
@@ -14,10 +19,15 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   final ItemRepository _itemRepository;
   final CartRepository _cartRepository;
 
-  CartBloc({required ItemRepository itemRepository, required CartRepository cartRepository})
-      : _itemRepository = itemRepository, _cartRepository = cartRepository,
+  CartBloc(
+      {required ItemRepository itemRepository,
+      required CartRepository cartRepository})
+      : _itemRepository = itemRepository,
+        _cartRepository = cartRepository,
         super(CartState()) {
     on<AddToCart>(_onAddToCart);
+    on<AddToCartWithCombo>(_onAddToCartWithCombo);
+    on<HideShowCombo>(_onHideShowCombo);
     on<Increase>(_onIncrease);
     on<Decrease>(_onDecrease);
     on<UpdateQuantity>(_onUpdateQuantity);
@@ -56,41 +66,122 @@ class CartBloc extends Bloc<CartEvent, CartState> {
           currSubItem: event.currSubItem.defaultValue,
           qty: qty,
           priceLevel: "");
-      var list = List<CartItem>.from(state.cartItems);
 
-      final index =
-          list.indexWhere((element) => element.item.itemCode == item.itemCode);
-      if (index >= 0) {
-        state.cartItems[index].qty += 1;
-        state.cartItems[index].updateData();
-        double total = list.fold(
-            0,
-            (tot, item) =>
-                tot.toDouble() +
-                (double.parse(item.item.unitSellPrice) * item.qty -
-                    double.parse(item.item.promoPrice)));
-        emit(state.copyWith(
-            cartItems: state.cartItems,
-            status: CartStatus.success,
-            total: total));
-      } else {
-        final data = List<CartItem>.from(state.cartItems)
-          ..add(CartItem(item: item, qty: qty, segNo: state.cartItems.length + 1));
-        double total = data.fold(
-            0,
-            (tot, item) =>
-                tot.toDouble() +
-                (double.parse(item.item.unitSellPrice) * item.qty -
-                    double.parse(item.item.promoPrice)));
+      if (item.comboPack == ItemComboPack.N ||
+          item.comboPack == ItemComboPack.R) {
+        var list = List<CartItem>.from(state.cartItems);
 
-        emit(state.copyWith(
-            cartItems: data, status: CartStatus.success, total: total));
+        final index = list
+            .indexWhere((element) => element.item.itemCode == item.itemCode);
+        if (index >= 0) {
+          state.cartItems[index].qty += 1;
+          state.cartItems[index].updateData();
+          double total = list.fold(
+              0,
+              (tot, item) =>
+                  tot.toDouble() +
+                  (double.parse(item.item.unitSellPrice) * item.qty -
+                      double.parse(item.item.promoPrice)));
+          emit(state.copyWith(
+              cartItems: state.cartItems,
+              status: CartStatus.success,
+              total: total));
+        } else {
+          final data = List<CartItem>.from(state.cartItems)
+            ..add(CartItem(
+                item: item, qty: qty, segNo: state.cartItems.length + 1));
+          double total = data.fold(
+              0,
+              (tot, item) =>
+                  tot.toDouble() +
+                  (double.parse(item.item.unitSellPrice) * item.qty -
+                      double.parse(item.item.promoPrice)));
+
+          emit(state.copyWith(
+              cartItems: data, status: CartStatus.success, total: total));
+        }
+      } else if (item.comboPack == ItemComboPack.C) {
+        List<ItemCombo> itemComboList =
+            await _itemRepository.getItemComboBySubMenuSelected(
+                currSubItem: event.currSubItem.defaultValue);
+        List<CartItemModifier> cartItemModifierList = [];
+        for (var itemCombo in itemComboList) {
+          if (itemCombo.modClass == null) {
+            ItemModifier child = ItemModifier(
+                itemCode: itemCombo.comboItem,
+                modCode: "0",
+                quantity: itemCombo.quantity,
+                modDesc: itemCombo.itemDesc,
+                unitPrice: "0");
+
+            CartItemModifier cartItemModifier =
+                CartItemModifier(itemModifier: child, quantity: 1);
+            final data = List<CartItemModifier>.from(cartItemModifierList)
+              ..add(cartItemModifier);
+
+            CartItemCombo cartItemCombo =
+                CartItemCombo(itemCombo: itemCombo, cartItemModifierList: data);
+            final cartItemComboList =
+                List<CartItemCombo>.from(state.cartItemTmp.cartItemComboList)
+                  ..add(cartItemCombo);
+            CartItem cartItem =
+                CartItem(item: item, qty: 1, segNo: state.cartItems.length + 1);
+            cartItem.cartItemComboList = cartItemComboList;
+            emit(state.copyWith(cartItemTmp: cartItem));
+          } else {
+            List<ItemModifier> itemModifiers =
+                await _itemRepository.getModifierByModifierItem(
+                    modifierItem: (itemCombo.modClass) as String);
+            CartItemCombo cartItemCombo =
+                CartItemCombo(itemCombo: itemCombo, cartItemModifierList: []);
+            cartItemCombo.initFromItemModifiers(itemModifiers);
+
+            final cartItemComboList =
+                List<CartItemCombo>.from(state.cartItemTmp.cartItemComboList)
+                  ..add(cartItemCombo);
+            CartItem cartItem =
+                CartItem(item: item, qty: 1, segNo: state.cartItems.length + 1);
+            cartItem.cartItemComboList = cartItemComboList;
+            emit(state.copyWith(cartItemTmp: cartItem));
+          }
+        }
+        emit(state.copyWith(showCombo: true));
       }
       emit(state.copyWith(noPeople: "0"));
     } catch (_) {
-      emit(state.copyWith(status: CartStatus.failure));
-      emit(state.copyWith(noPeople: "0"));
+      emit(state.copyWith(status: CartStatus.failure, noPeople: "0"));
     }
+  }
+
+  Future<void> _onAddToCartWithCombo(
+      AddToCartWithCombo event, Emitter<CartState> emit) async {
+    try {
+      emit(state.copyWith(status: CartStatus.initial));
+      CartItem cartItemTmp = state.cartItemTmp;
+      cartItemTmp.segNo = state.cartItems.length + 1;
+
+      final data = List<CartItem>.from(state.cartItems)..add(cartItemTmp);
+      double total = data.fold(
+          0,
+          (tot, item) =>
+              tot.toDouble() +
+              (double.parse(item.item.unitSellPrice) * item.qty -
+                  double.parse(item.item.promoPrice)));
+      emit(state.copyWith(
+          cartItemTmp: CartItem.empty,
+          cartItems: data,
+          status: CartStatus.success,
+          total: total,
+          noPeople: "0",
+          showCombo: false));
+    } catch (_) {
+      emit(state.copyWith(
+          status: CartStatus.failure, noPeople: "0", showCombo: false));
+    }
+  }
+
+  void _onHideShowCombo(HideShowCombo event, Emitter<CartState> emit) {
+    emit(state.copyWith(showCombo: false, cartItemTmp: CartItem.empty));
   }
 
   void _onIncrease(Increase event, Emitter<CartState> emit) {
@@ -186,10 +277,23 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       String orderNo = await _cartRepository.getNewOrderNumberByPOS(posNo);
 
       emit(state.copyWith(status: CartStatus.sendOrderInitial));
-      String reSendOrder = "0";
+
+      bool flag = false;
+      for (var i = state.cartItems.length - 1; !flag && i >= 0; i--) {
+        int segNo = state.cartItems[i].segNo;
+        if (segNo != i + 1) {
+          flag = true;
+        }
+      }
+      if (flag) {
+        emit(state.copyWith(status: CartStatus.sendOrderDuplicate));
+        return;
+      }
+
+      String reSendOrder = event.reSendOrder;
       // _cartRepository.sendOrder()
       emit(state.copyWith(status: CartStatus.sendOrderSuccess));
-    } catch(_) {
+    } catch (_) {
       emit(state.copyWith(status: CartStatus.sendOrderFail));
     }
   }

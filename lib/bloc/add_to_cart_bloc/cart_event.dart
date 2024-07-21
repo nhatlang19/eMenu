@@ -26,6 +26,13 @@ class AddToCart extends CartEvent {
   List<Object> get props => [currSubItem, qty, priceLevel!];
 }
 
+class AddToCartWithCombo extends CartEvent {
+  const AddToCartWithCombo();
+
+  @override
+  List<Object> get props => [];
+}
+
 class Toogle extends CartEvent {
   const Toogle();
 
@@ -71,7 +78,23 @@ class UpdateNoPeople extends CartEvent {
 }
 
 class SendOrder extends CartEvent {
-  const SendOrder();
+  final String reSendOrder;
+  final String typeLoad;
+  final String currTable;
+  final String POSBizDate;
+
+  const SendOrder(
+      {required this.reSendOrder,
+      required this.typeLoad,
+      required this.currTable,
+      required this.POSBizDate});
+
+  @override
+  List<Object> get props => [reSendOrder, typeLoad, currTable, POSBizDate];
+}
+
+class HideShowCombo extends CartEvent {
+  const HideShowCombo();
 
   @override
   List<Object> get props => [];

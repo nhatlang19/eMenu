@@ -1,3 +1,4 @@
+import 'package:emenu/bloc/add_to_cart_bloc/dto/CartItemCombo.dart';
 import 'package:emenu/models/item.dart';
 
 class CartItem {
@@ -8,16 +9,25 @@ class CartItem {
   int segNo = 0;
   double total = 0;
   double taxAmt = 0;
+  late List<CartItemCombo> cartItemComboList;
 
   static const String SEPARATE = "|";
 
+  static CartItem empty = CartItem(
+    item: Item.empty,
+    qty: 0, 
+    segNo: 0
+  );
+
   CartItem({required this.item, required this.qty, required this.segNo}) {
     updateData();
+    this.cartItemComboList = [];
   }
 
   Future<void> updateData() async {
     total = (double.parse(item.unitSellPrice) * qty) - double.parse(item.promoPrice);
     taxAmt = (total * double.parse(item.tax ?? '0')) / 100;
+    cartItemComboList = [];
   }
 
 	String toString() {
