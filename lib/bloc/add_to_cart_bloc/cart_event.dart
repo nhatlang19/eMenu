@@ -27,10 +27,11 @@ class AddToCart extends CartEvent {
 }
 
 class AddToCartWithCombo extends CartEvent {
-  const AddToCartWithCombo();
+  final Function callback;
+  const AddToCartWithCombo({required this.callback});
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [callback];
 }
 
 class Toogle extends CartEvent {

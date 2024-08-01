@@ -1,5 +1,4 @@
 import 'package:emenu/bloc/add_to_cart_bloc/cart_bloc.dart';
-import 'package:emenu/utils/screen_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -35,22 +34,20 @@ class ComboBottom extends StatelessWidget {
                     children: [
                       InkWell(
                         onTap: () {
-                          context.read<CartBloc>().add(HideShowCombo());
+                          context.read<CartBloc>().add(const HideShowCombo());
                           Navigator.pop(context);
                         },
-                        child: Icon(Icons.close, size: 30.0),
+                        child: const Icon(Icons.close, size: 30.0),
                       ),
                       Text(
                         'Add New Item: ${state.cartItemTmp.item.recptDesc} x ${state.cartItemTmp.qty}',
-                        style:
-                            TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          context.read<CartBloc>().add(AddToCartWithCombo());
-                          Navigator.pop(context);
+                          context.read<CartBloc>().add(AddToCartWithCombo(callback: () =>  Navigator.pop(context)));
                         },
-                        child: Text('Add To Cart'),
+                        child: const Text('Add To Cart'),
                       ),
                     ],
                   ),
@@ -60,20 +57,21 @@ class ComboBottom extends StatelessWidget {
                 child: ListView(
                     children:
                         state.cartItemTmp.cartItemComboList.map((parentItem) {
-                  int index =
-                      state.cartItemTmp.cartItemComboList.indexOf(parentItem) +
-                          1;
+                  // int index = state.cartItemTmp.cartItemComboList.indexOf(parentItem) + 1;
                   return Column(
                     children: [
                       Container(
                         color: Colors.grey,
                         child: ListTile(
-                          title: Text("Item $index"),
+                          // title: Text("Item $index"),
+                          title: Text(parentItem.itemCombo.itemDesc.toString()),
                         ),
                       ),
-                      Column(
-                          children:
-                              parentItem.cartItemModifierList.map((child) {
+                      Column(children: parentItem.cartItemModifierList.map((child) {
+                        int quantity = 0;
+                        if(child.hasDefaultValue) {
+                          quantity = parentItem.maxQuantity;
+                        }
                         return ListTile(
                           title: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -82,22 +80,20 @@ class ComboBottom extends StatelessWidget {
                                 flex: 4,
                                 child: Text(
                                   child.itemModifier.modDesc.toString(),
-                                  style: TextStyle(fontSize: 16.0),
+                                  style: const TextStyle(fontSize: 16.0),
                                 ),
                               ),
-                              Expanded(flex: 4, child: SizedBox(width: 8.0)),
+                              const Expanded(flex: 4, child: SizedBox(width: 8.0)),
                               Expanded(
                                 flex: 1,
                                 child: TextField(
-                                  controller: TextEditingController(
-                                      text: child.quantity.toString()),
+                                  controller: TextEditingController(text: quantity.toString()),
                                   inputFormatters: [
-                                    LengthLimitingTextInputFormatter(
-                                        2), // Limit to 2 characters
+                                    LengthLimitingTextInputFormatter(1), // Limit to 1 characters
                                   ],
                                   decoration: InputDecoration(
-                                    hintText: '${child.quantity}',
-                                    border: OutlineInputBorder(),
+                                    hintText: quantity.toString(),
+                                    border: const OutlineInputBorder(),
                                   ),
                                 ),
                               ),

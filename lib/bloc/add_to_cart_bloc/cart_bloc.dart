@@ -71,8 +71,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
           item.comboPack == ItemComboPack.R) {
         var list = List<CartItem>.from(state.cartItems);
 
-        final index = list
-            .indexWhere((element) => element.item.itemCode == item.itemCode);
+        final index = list.indexWhere((element) => element.item.itemCode == item.itemCode);
         if (index >= 0) {
           state.cartItems[index].qty += 1;
           state.cartItems[index].updateData();
@@ -82,14 +81,10 @@ class CartBloc extends Bloc<CartEvent, CartState> {
                   tot.toDouble() +
                   (double.parse(item.item.unitSellPrice) * item.qty -
                       double.parse(item.item.promoPrice)));
-          emit(state.copyWith(
-              cartItems: state.cartItems,
-              status: CartStatus.success,
-              total: total));
+          emit(state.copyWith(cartItems: state.cartItems, status: CartStatus.success, total: total));
         } else {
           final data = List<CartItem>.from(state.cartItems)
-            ..add(CartItem(
-                item: item, qty: qty, segNo: state.cartItems.length + 1));
+            ..add(CartItem(item: item, qty: qty, segNo: state.cartItems.length + 1));
           double total = data.fold(
               0,
               (tot, item) =>
@@ -97,8 +92,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
                   (double.parse(item.item.unitSellPrice) * item.qty -
                       double.parse(item.item.promoPrice)));
 
-          emit(state.copyWith(
-              cartItems: data, status: CartStatus.success, total: total));
+          emit(state.copyWith(cartItems: data, status: CartStatus.success, total: total));
         }
       } else if (item.comboPack == ItemComboPack.C) {
         List<ItemCombo> itemComboList =
@@ -114,42 +108,30 @@ class CartBloc extends Bloc<CartEvent, CartState> {
                 modDesc: itemCombo.itemDesc,
                 unitPrice: "0");
 
-            CartItemModifier cartItemModifier =
-                CartItemModifier(itemModifier: child, quantity: 1);
-            final data = List<CartItemModifier>.from(cartItemModifierList)
-              ..add(cartItemModifier);
+            CartItemModifier cartItemModifier = CartItemModifier(itemModifier: child, hasDefaultValue: true);
+            final data = List<CartItemModifier>.from(cartItemModifierList)..add(cartItemModifier);
 
-            CartItemCombo cartItemCombo =
-                CartItemCombo(itemCombo: itemCombo, cartItemModifierList: data);
-            final cartItemComboList =
-                List<CartItemCombo>.from(state.cartItemTmp.cartItemComboList)
-                  ..add(cartItemCombo);
-            CartItem cartItem =
-                CartItem(item: item, qty: 1, segNo: state.cartItems.length + 1);
+            CartItemCombo cartItemCombo = CartItemCombo(itemCombo: itemCombo, cartItemModifierList: data);
+            final cartItemComboList = List<CartItemCombo>.from(state.cartItemTmp.cartItemComboList)..add(cartItemCombo);
+            CartItem cartItem = CartItem(item: item, qty: 1, segNo: state.cartItems.length + 1);
             cartItem.cartItemComboList = cartItemComboList;
             emit(state.copyWith(cartItemTmp: cartItem));
           } else {
-            List<ItemModifier> itemModifiers =
-                await _itemRepository.getModifierByModifierItem(
-                    modifierItem: (itemCombo.modClass) as String);
-            CartItemCombo cartItemCombo =
-                CartItemCombo(itemCombo: itemCombo, cartItemModifierList: []);
+            List<ItemModifier> itemModifiers = await _itemRepository.getModifierByModifierItem(modifierItem: (itemCombo.modClass) as String);
+            CartItemCombo cartItemCombo = CartItemCombo(itemCombo: itemCombo, cartItemModifierList: []);
             cartItemCombo.initFromItemModifiers(itemModifiers);
 
-            final cartItemComboList =
-                List<CartItemCombo>.from(state.cartItemTmp.cartItemComboList)
-                  ..add(cartItemCombo);
-            CartItem cartItem =
-                CartItem(item: item, qty: 1, segNo: state.cartItems.length + 1);
+            final cartItemComboList = List<CartItemCombo>.from(state.cartItemTmp.cartItemComboList)..add(cartItemCombo);
+            CartItem cartItem = CartItem(item: item, qty: 1, segNo: state.cartItems.length + 1);
             cartItem.cartItemComboList = cartItemComboList;
             emit(state.copyWith(cartItemTmp: cartItem));
           }
         }
         emit(state.copyWith(showCombo: true));
       }
-      emit(state.copyWith(noPeople: "0"));
+      emit(state.copyWith(noPeople: "0", errorMessage: ''));
     } catch (_) {
-      emit(state.copyWith(status: CartStatus.failure, noPeople: "0"));
+      emit(state.copyWith(status: CartStatus.failure, noPeople: "0", errorMessage: ''));
     }
   }
 
@@ -157,26 +139,44 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       AddToCartWithCombo event, Emitter<CartState> emit) async {
     try {
       emit(state.copyWith(status: CartStatus.initial));
-      CartItem cartItemTmp = state.cartItemTmp;
-      cartItemTmp.segNo = state.cartItems.length + 1;
 
-      final data = List<CartItem>.from(state.cartItems)..add(cartItemTmp);
-      double total = data.fold(
-          0,
-          (tot, item) =>
-              tot.toDouble() +
-              (double.parse(item.item.unitSellPrice) * item.qty -
-                  double.parse(item.item.promoPrice)));
-      emit(state.copyWith(
-          cartItemTmp: CartItem.empty,
-          cartItems: data,
-          status: CartStatus.success,
-          total: total,
-          noPeople: "0",
-          showCombo: false));
+      bool isError = false;
+      for (var itemCombo in state.cartItemTmp.cartItemComboList) {
+          String errorMessage = itemCombo.isValid();
+          if (errorMessage.isNotEmpty) {
+            isError = true;
+            emit(state.copyWith(status: CartStatus.addToCartComboFailure, errorMessage: errorMessage));
+            break;
+          }
+      }
+      
+
+      if (!isError) {
+        CartItem cartItemTmp = state.cartItemTmp;
+        cartItemTmp.segNo = state.cartItems.length + 1;
+
+        final data = List<CartItem>.from(state.cartItems)..add(cartItemTmp);
+        double total = data.fold(
+            0,
+            (tot, item) =>
+                tot.toDouble() +
+                (double.parse(item.item.unitSellPrice) * item.qty -
+                    double.parse(item.item.promoPrice)));
+        emit(state.copyWith(
+            cartItemTmp: CartItem.empty,
+            cartItems: data,
+            errorMessage: '',
+            status: CartStatus.success,
+            total: total,
+            noPeople: "0",
+            showCombo: false));
+
+        event.callback();
+      }
     } catch (_) {
       emit(state.copyWith(
-          status: CartStatus.failure, noPeople: "0", showCombo: false));
+          status: CartStatus.failure, noPeople: "0", showCombo: false, errorMessage: ''));
+      event.callback();
     }
   }
 

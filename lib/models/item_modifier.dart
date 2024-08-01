@@ -21,7 +21,7 @@ class ItemModifier extends Equatable {
   List<Object> get props => [
         itemCode ?? '',
         modCode ?? '',
-        quantity ?? '',
+        quantity ?? '0',
         modDesc ?? '',
         unitPrice ?? '',
       ];
@@ -29,7 +29,7 @@ class ItemModifier extends Equatable {
   static const empty = ItemModifier(
       itemCode: '',
       modCode: '',
-      quantity: '',
+      quantity: '0',
       modDesc: '',
       unitPrice: '');
 

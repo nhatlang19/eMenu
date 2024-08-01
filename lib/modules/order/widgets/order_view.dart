@@ -36,7 +36,7 @@ class OrderView extends StatelessWidget {
                   ),
                   BlocListener<CartBloc, CartState>(
                     listener: (context, state) {
-                      if (state.showCombo == true) {
+                      if (state.showCombo == true && state.errorMessage.isEmpty) {
                         showModalBottomSheet(
                           isDismissible: false,
                           enableDrag: false,
@@ -46,6 +46,14 @@ class OrderView extends StatelessWidget {
                           builder: (context) {
                             return ComboBottom();
                           },
+                        );
+                      }
+
+                      if (state.errorMessage.isNotEmpty) {
+                        ScaffoldMessenger.of(context)
+                        ..hideCurrentSnackBar()
+                        ..showSnackBar(
+                          SnackBar(content: Text(state.errorMessage)),
                         );
                       }
                     },

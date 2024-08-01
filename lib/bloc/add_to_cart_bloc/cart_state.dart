@@ -5,6 +5,7 @@ enum CartStatus {
   addToCart,
   failure,
   success,
+  addToCartComboFailure,
   updatedQuantity,
   sendOrderInitial,
   sendOrderDuplicate,
@@ -20,6 +21,7 @@ class CartState extends Equatable {
   final String noPeople;
   final bool showCombo;
   late CartItem cartItemTmp;
+  final String errorMessage;
 
   CartState(
       {
@@ -28,6 +30,7 @@ class CartState extends Equatable {
       this.total = 0,
       this.toogle = false,
       this.showCombo = false,
+      this.errorMessage = '',
       this.noPeople = "0",}) {
         this.cartItemTmp = CartItem.empty;
       }
@@ -39,7 +42,8 @@ class CartState extends Equatable {
     bool? toogle,
     bool? showCombo,
     String? noPeople,
-    CartItem? cartItemTmp
+    CartItem? cartItemTmp,
+    String? errorMessage,
   }) {
     var state = CartState(
         status: status ?? this.status,
@@ -47,6 +51,7 @@ class CartState extends Equatable {
         total: total ?? this.total,
         toogle: toogle ?? this.toogle,
         showCombo: showCombo ?? this.showCombo,
+        errorMessage: errorMessage ?? this.errorMessage,
         noPeople: noPeople ?? this.noPeople);
 
     state.cartItemTmp = cartItemTmp ?? this.cartItemTmp;
@@ -67,5 +72,6 @@ class CartState extends Equatable {
         noPeople,
         showCombo,
         cartItemTmp,
+        errorMessage
       ];
 }
