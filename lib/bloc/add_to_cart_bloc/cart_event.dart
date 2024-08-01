@@ -100,3 +100,21 @@ class HideShowCombo extends CartEvent {
   @override
   List<Object> get props => [];
 }
+
+class SkipShowCombo extends CartEvent {
+  const SkipShowCombo();
+
+  @override
+  List<Object> get props => [];
+}
+
+class UpdateQuantityCombo extends CartEvent {
+  final int comboPosition;
+  final int position;
+  final int value;
+
+  const UpdateQuantityCombo({required this.comboPosition, required this.position, required this.value});
+
+  @override
+  List<Object> get props => [comboPosition, position, value];
+}

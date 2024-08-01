@@ -7,10 +7,17 @@ enum CartStatus {
   success,
   addToCartComboFailure,
   updatedQuantity,
+  updatedQuantityCombo,
   sendOrderInitial,
   sendOrderDuplicate,
   sendOrderSuccess,
   sendOrderFail
+}
+
+enum ShowCombo {
+  hide,
+  show,
+  skip
 }
 
 class CartState extends Equatable {
@@ -19,7 +26,7 @@ class CartState extends Equatable {
   final dynamic total;
   final bool toogle;
   final String noPeople;
-  final bool showCombo;
+  final ShowCombo showCombo;
   late CartItem cartItemTmp;
   final String errorMessage;
 
@@ -29,7 +36,7 @@ class CartState extends Equatable {
       this.status = CartStatus.initial,
       this.total = 0,
       this.toogle = false,
-      this.showCombo = false,
+      this.showCombo = ShowCombo.hide,
       this.errorMessage = '',
       this.noPeople = "0",}) {
         this.cartItemTmp = CartItem.empty;
@@ -40,7 +47,7 @@ class CartState extends Equatable {
     List<CartItem>? cartItems,
     dynamic? total,
     bool? toogle,
-    bool? showCombo,
+    ShowCombo? showCombo,
     String? noPeople,
     CartItem? cartItemTmp,
     String? errorMessage,

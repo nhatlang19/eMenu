@@ -10,8 +10,13 @@ class ComboBottom extends StatelessWidget {
   Widget build(BuildContext context) {
     var screenHeight = MediaQuery.of(context).size.height;
     var screenWidth = MediaQuery.of(context).size.width;
+
     return BlocBuilder<CartBloc, CartState>(
+      buildWhen: (previous, current) => current.status == CartStatus.updatedQuantityCombo
+      || current.status == CartStatus.addToCartComboFailure,
       builder: (context, state) {
+        var isFail = state.status == CartStatus.addToCartComboFailure && state.errorMessage.isNotEmpty;
+        Widget errorText = isFail ? Center(child: Text(state.errorMessage, style: const TextStyle(fontSize: 20.0, color: Colors.red))) : SizedBox(height: 0,);
         return Container(
           height: screenHeight * 0.9,
           width: screenWidth * 0.9,
@@ -53,11 +58,12 @@ class ComboBottom extends StatelessWidget {
                   ),
                 ),
               ),
+              errorText,
               Expanded(
                 child: ListView(
                     children:
                         state.cartItemTmp.cartItemComboList.map((parentItem) {
-                  // int index = state.cartItemTmp.cartItemComboList.indexOf(parentItem) + 1;
+                  int comboIndex = state.cartItemTmp.cartItemComboList.indexOf(parentItem);
                   return Column(
                     children: [
                       Container(
@@ -68,7 +74,8 @@ class ComboBottom extends StatelessWidget {
                         ),
                       ),
                       Column(children: parentItem.cartItemModifierList.map((child) {
-                        int quantity = 0;
+                        int modifierIndex = parentItem.cartItemModifierList.indexOf(child);
+                        int quantity = child.quantity;
                         if(child.hasDefaultValue) {
                           quantity = parentItem.maxQuantity;
                         }
@@ -89,12 +96,22 @@ class ComboBottom extends StatelessWidget {
                                 child: TextField(
                                   controller: TextEditingController(text: quantity.toString()),
                                   inputFormatters: [
-                                    LengthLimitingTextInputFormatter(1), // Limit to 1 characters
+                                    LengthLimitingTextInputFormatter(2), // Limit to 1 characters
                                   ],
                                   decoration: InputDecoration(
                                     hintText: quantity.toString(),
                                     border: const OutlineInputBorder(),
                                   ),
+                                  onChanged: (newValue) {
+                                    final newQuantity = int.tryParse(newValue);
+                                    if (newQuantity != null && newQuantity >= 0) {
+                                      context.read<CartBloc>().add(
+                                          UpdateQuantityCombo(
+                                              position: modifierIndex,
+                                              value: newQuantity,
+                                              comboPosition: comboIndex));
+                                    }
+                                  },
                                 ),
                               ),
                             ],

@@ -36,7 +36,7 @@ class OrderView extends StatelessWidget {
                   ),
                   BlocListener<CartBloc, CartState>(
                     listener: (context, state) {
-                      if (state.showCombo == true && state.errorMessage.isEmpty) {
+                      if (state.showCombo == ShowCombo.show && state.errorMessage.isEmpty) {
                         showModalBottomSheet(
                           isDismissible: false,
                           enableDrag: false,
@@ -44,16 +44,9 @@ class OrderView extends StatelessWidget {
                           isScrollControlled: true,
                           useSafeArea: true,
                           builder: (context) {
+                            context.read<CartBloc>().add(const SkipShowCombo());
                             return ComboBottom();
                           },
-                        );
-                      }
-
-                      if (state.errorMessage.isNotEmpty) {
-                        ScaffoldMessenger.of(context)
-                        ..hideCurrentSnackBar()
-                        ..showSnackBar(
-                          SnackBar(content: Text(state.errorMessage)),
                         );
                       }
                     },

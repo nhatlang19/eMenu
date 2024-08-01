@@ -28,6 +28,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<AddToCart>(_onAddToCart);
     on<AddToCartWithCombo>(_onAddToCartWithCombo);
     on<HideShowCombo>(_onHideShowCombo);
+    on<SkipShowCombo>(_onSkipShowCombo);
     on<Increase>(_onIncrease);
     on<Decrease>(_onDecrease);
     on<UpdateQuantity>(_onUpdateQuantity);
@@ -35,6 +36,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<UpdateNoPeople>(_onUpdateNoPeople);
     on<ResetCart>(_onResetCart);
     on<SendOrder>(_onSendOrder);
+    on<UpdateQuantityCombo>(_onUpdateQuantityCombo);
   }
 
   void _onResetCart(ResetCart event, Emitter<CartState> emit) {
@@ -127,7 +129,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
             emit(state.copyWith(cartItemTmp: cartItem));
           }
         }
-        emit(state.copyWith(showCombo: true));
+        emit(state.copyWith(showCombo: ShowCombo.show));
       }
       emit(state.copyWith(noPeople: "0", errorMessage: ''));
     } catch (_) {
@@ -141,17 +143,18 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       emit(state.copyWith(status: CartStatus.initial));
 
       bool isError = false;
+      String errorMessage = '';
       for (var itemCombo in state.cartItemTmp.cartItemComboList) {
-          String errorMessage = itemCombo.isValid();
+          errorMessage = itemCombo.isValid();
           if (errorMessage.isNotEmpty) {
             isError = true;
-            emit(state.copyWith(status: CartStatus.addToCartComboFailure, errorMessage: errorMessage));
             break;
           }
       }
       
-
-      if (!isError) {
+      if (isError) {
+        emit(state.copyWith(status: CartStatus.addToCartComboFailure, errorMessage: errorMessage));
+      } else {
         CartItem cartItemTmp = state.cartItemTmp;
         cartItemTmp.segNo = state.cartItems.length + 1;
 
@@ -169,19 +172,23 @@ class CartBloc extends Bloc<CartEvent, CartState> {
             status: CartStatus.success,
             total: total,
             noPeople: "0",
-            showCombo: false));
+            showCombo: ShowCombo.hide));
 
         event.callback();
       }
     } catch (_) {
       emit(state.copyWith(
-          status: CartStatus.failure, noPeople: "0", showCombo: false, errorMessage: ''));
+          status: CartStatus.failure, noPeople: "0", showCombo: ShowCombo.hide, errorMessage: ''));
       event.callback();
     }
   }
 
   void _onHideShowCombo(HideShowCombo event, Emitter<CartState> emit) {
-    emit(state.copyWith(showCombo: false, cartItemTmp: CartItem.empty));
+    emit(state.copyWith(showCombo: ShowCombo.hide, cartItemTmp: CartItem.empty));
+  }
+
+  void _onSkipShowCombo(SkipShowCombo event, Emitter<CartState> emit) {
+    emit(state.copyWith(showCombo: ShowCombo.skip));
   }
 
   void _onIncrease(Increase event, Emitter<CartState> emit) {
@@ -241,6 +248,14 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         status: CartStatus.updatedQuantity,
         total: total));
     emit(state.copyWith(status: CartStatus.initial));
+  }
+
+  void _onUpdateQuantityCombo(UpdateQuantityCombo event, Emitter<CartState> emit) {
+    emit(state.copyWith(status: CartStatus.initial));
+    if (event.value >= 0) {
+      state.cartItemTmp.cartItemComboList[event.comboPosition].cartItemModifierList[event.position].quantity = event.value;
+    }
+    emit(state.copyWith(cartItemTmp: state.cartItemTmp, status: CartStatus.updatedQuantityCombo));
   }
 
   void _onToogle(Toogle event, Emitter<CartState> emit) {
