@@ -24,6 +24,15 @@ class CartItem {
     this.cartItemComboList = [];
   }
 
+  String getTitle() {
+    String titles = '';
+    for(CartItemCombo item in cartItemComboList) {
+      titles += '${item.itemCombo.itemDesc},';
+    }
+
+    return titles;
+  }
+
   Future<void> updateData() async {
     total = (double.parse(item.unitSellPrice) * qty) - double.parse(item.promoPrice);
     taxAmt = (total * double.parse(item.tax ?? '0')) / 100;
