@@ -60,36 +60,19 @@ class _CartViewState extends State<CartView> {
                                 children: [
                                   Container(
                                     width: 30,
-                                    margin:
-                                        EdgeInsets.only(top: 13, bottom: 13),
+                                    margin: const EdgeInsets.only(top: 13, bottom: 13),
                                     decoration: const BoxDecoration(
                                       border: Border(
-                                        left: BorderSide(
-                                          color:
-                                              Colors.grey, // Right border color
-                                          width: 1.0, // Border width
-                                        ),
-                                        top: BorderSide(
-                                          color:
-                                              Colors.grey, // Right border color
-                                          width: 1.0, // Border width
-                                        ),
-                                        bottom: BorderSide(
-                                          color:
-                                              Colors.grey, // Right border color
-                                          width: 1.0, // Border width
-                                        ),
+                                        left: BorderSide(color: Colors.grey, width: 1.0),
+                                        top: BorderSide(color: Colors.grey, width: 1.0),
+                                        bottom: BorderSide(color: Colors.grey, width: 1.0),
                                       ),
-                                      borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(5),
-                                          bottomLeft: Radius.circular(5)),
+                                      borderRadius: BorderRadius.only(topLeft: Radius.circular(5), bottomLeft: Radius.circular(5)),
                                     ),
                                     child: IconButton(
                                       icon: const Icon(Icons.remove, size: 15),
                                       onPressed: () {
-                                        context
-                                            .read<CartBloc>()
-                                            .add(Decrease(position: index));
+                                        context.read<CartBloc>().add(Decrease(position: index));
                                       },
                                     ),
                                   ),
@@ -99,66 +82,39 @@ class _CartViewState extends State<CartView> {
                                       borderRadius: BorderRadius.circular(0),
                                     ),
                                     width: 40,
-                                    margin:
-                                        EdgeInsets.only(top: 13, bottom: 13),
+                                    margin:EdgeInsets.only(top: 13, bottom: 13),
                                     child: TextField(
                                       decoration: const InputDecoration(
-                                        border: InputBorder
-                                            .none, // Remove underline border
-                                        contentPadding: EdgeInsets.symmetric(
-                                            vertical: 11.0, horizontal: 0.0),
+                                        border: InputBorder.none, // Remove underline border
+                                        contentPadding: EdgeInsets.symmetric(vertical: 11.0, horizontal: 0.0),
                                       ),
                                       textAlign: TextAlign.center,
-                                      textAlignVertical:
-                                          TextAlignVertical.center,
+                                      textAlignVertical:TextAlignVertical.center,
                                       keyboardType: TextInputType.number,
-                                      controller: TextEditingController(
-                                          text: item.qty.toString()),
+                                      controller: TextEditingController(text: item.qty.toString()),
                                       onChanged: (newValue) {
-                                        final newQuantity =
-                                            int.tryParse(newValue);
-                                        if (newQuantity != null &&
-                                            newQuantity > 0) {
-                                          context.read<CartBloc>().add(
-                                              UpdateQuantity(
-                                                  position: index,
-                                                  value: newQuantity));
+                                        final newQuantity =int.tryParse(newValue);
+                                        if (newQuantity != null && newQuantity > 0) {
+                                          context.read<CartBloc>().add(UpdateQuantity(position: index, value: newQuantity));
                                         }
                                       },
                                     ),
                                   ),
                                   Container(
                                     width: 30,
-                                    margin:
-                                        EdgeInsets.only(top: 13, bottom: 13),
+                                    margin: const EdgeInsets.only(top: 13, bottom: 13),
                                     decoration: const BoxDecoration(
                                       border: Border(
-                                        right: BorderSide(
-                                          color:
-                                              Colors.grey, // Right border color
-                                          width: 1.0, // Border width
-                                        ),
-                                        top: BorderSide(
-                                          color:
-                                              Colors.grey, // Right border color
-                                          width: 1.0, // Border width
-                                        ),
-                                        bottom: BorderSide(
-                                          color:
-                                              Colors.grey, // Right border color
-                                          width: 1.0, // Border width
-                                        ),
+                                        right: BorderSide(color: Colors.grey, width: 1.0),
+                                        top: BorderSide(color: Colors.grey, width: 1.0),
+                                        bottom: BorderSide(color: Colors.grey, width: 1.0),
                                       ),
-                                      borderRadius: BorderRadius.only(
-                                          topRight: Radius.circular(5),
-                                          bottomRight: Radius.circular(5)),
+                                      borderRadius: BorderRadius.only(topRight: Radius.circular(5), bottomRight: Radius.circular(5)),
                                     ),
                                     child: IconButton(
                                       icon: const Icon(Icons.add, size: 15),
                                       onPressed: () {
-                                        context
-                                            .read<CartBloc>()
-                                            .add(Increase(position: index));
+                                        context.read<CartBloc>().add(Increase(position: index));
                                       },
                                     ),
                                   ),
@@ -197,18 +153,11 @@ class _CartViewState extends State<CartView> {
                                     POSBizDate: ScreenUtil.getCurrentDate('ýyyyMMdd')
                                   ));
                                 },
-                                child: const Text('SEND ORDER',
-                                    style: TextStyle(
-                                        fontSize: 22.0,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white)),
                                 style: OutlinedButton.styleFrom(
-                                  side: BorderSide
-                                      .none, // Remove the default border
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 24.0,
-                                      vertical: 12.0), // Button padding
+                                  side: BorderSide.none, // Remove the default border
+                                  padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0), // Button padding
                                 ),
+                                child: const Text('SEND ORDER', style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold, color: Colors.white)),
                               ),
                             )
                           ],
