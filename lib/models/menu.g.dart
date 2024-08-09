@@ -17,6 +17,7 @@ Menu _$MenuFromJson(Map<String, dynamic> json) => $checkedCreate(
           btnColor: $checkedConvert('BtnColor', (v) => v as String),
           fontColor: $checkedConvert('FontColor', (v) => v as String),
           defaultValue: $checkedConvert('DefaultValue', (v) => v as String),
+          bitmap: $checkedConvert('Bitmap', (v) => v as String?),
         );
         return val;
       },
@@ -24,6 +25,7 @@ Menu _$MenuFromJson(Map<String, dynamic> json) => $checkedCreate(
         'description': 'Description',
         'btnColor': 'BtnColor',
         'fontColor': 'FontColor',
-        'defaultValue': 'DefaultValue'
+        'defaultValue': 'DefaultValue',
+        'bitmap': 'Bitmap'
       },
     );

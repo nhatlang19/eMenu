@@ -23,7 +23,7 @@ class _CartViewState extends State<CartView> {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
-              const SnackBar(content: Text('Send Order failure')),
+              SnackBar(content: Text(state.errorMessage)),
             );
         }
       },
@@ -147,10 +147,14 @@ class _CartViewState extends State<CartView> {
                                 onPressed: () {
                                   var orderState = BlocProvider.of<OrderBloc>(context).state;
                                   context.read<CartBloc>().add(SendOrder(
-                                    reSendOrder: "0",
+                                    sendNewOrder: orderState.isAddNew ? "1" : "0",
+                                    reSendOrder: orderState.isAddNew ? "0" : "1",
                                     typeLoad: orderState.isAddNew ? "NewOrder" : "EditOrder",
                                     currTable: orderState.selectedTable.TableNo,
-                                    POSBizDate: ScreenUtil.getCurrentDate('ýyyyMMdd')
+                                    currTableGroup: orderState.selectedForGroup.TableNo,
+                                    noOfPerson: "1",
+                                    salesCode: orderState.selectedCode.code,
+                                    POSBizDate: ScreenUtil.getCurrentDate('yyyyMMdd')
                                   ));
                                 },
                                 style: OutlinedButton.styleFrom(

@@ -3,7 +3,7 @@ import 'soap_api_client.dart';
 class CartProvider extends SoapApiClient {
   CartProvider();
 
-  Future<String?> sendOrder(
+  Future<bool> sendOrder(
       String dataTableString, String sendNewOrder, String reSendOrder, String typeLoad,
       String posNo, String orderNo, String extNo, String splited, String currTable,
       String POSBizDate, String currTableGroup, String noOfPerson, String salesCode, String cashierID) async {
@@ -27,12 +27,10 @@ class CartProvider extends SoapApiClient {
           </SendOrder>''';
 
     final response = await callSoapService(soapAction, soapBody);
-    print(response);
-    return response;
-    // if (response != null) {
-    //   return parseSoapResponseToJson(response, element: "Table1");
-    // }
-    // return [];
+    if (response != null) {
+      return parseSoapResponseToOneValue(response, element: "SendOrderResult") == 'true';
+    }
+    return false;
   }
 
   Future<dynamic?> getNewOrderNumberByPOS(String posNo) async {

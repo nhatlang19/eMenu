@@ -20,6 +20,7 @@ enum ShowCombo {
   skip
 }
 
+// ignore: must_be_immutable
 class CartState extends Equatable {
   final List<CartItem> cartItems;
   final CartStatus status;
@@ -68,6 +69,23 @@ class CartState extends Equatable {
   CartState updateCartItemTmp(CartItem cartItemTmp) {
     this.cartItemTmp = cartItemTmp;
     return this;
+  }
+
+  String getString() {
+    List<String> lists = [];
+    var seqNo = 1;
+    for (CartItem cartItem in cartItems) {
+      cartItem.segNo = seqNo++;
+      lists.add(cartItem.toString());
+
+      var childCartItems = cartItem.convertChildToCartItems();
+      for (CartItem child in childCartItems) {
+        child.segNo = seqNo++;
+        lists.add(child.toString());
+      }
+    }
+
+    return lists.join("\n");
   }
 
   @override

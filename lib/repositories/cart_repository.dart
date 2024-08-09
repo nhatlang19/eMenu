@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:emenu/providers/cart_provider.dart';
 
 class CartRepository {
-  Future<String?> sendOrder(
+  Future<bool> sendOrder(
       {required String dataTableString,
       required String sendNewOrder,
       required String reSendOrder,

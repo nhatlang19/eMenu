@@ -1,4 +1,3 @@
-import 'package:emenu/models/item_combo.dart';
 import 'package:equatable/equatable.dart';
 
 import 'package:json_annotation/json_annotation.dart';
@@ -9,6 +8,8 @@ part 'item.g.dart';
 class Item extends Equatable {
   @JsonKey(name: 'ItemCode')
   final String itemCode;
+  @JsonKey(name: 'ItemType')
+  final String? itemType;
   @JsonKey(name: 'RecptDesc')
   final String recptDesc;
   @JsonKey(name: 'UnitSellPrice')
@@ -47,6 +48,7 @@ class Item extends Equatable {
   @override
   List<Object> get props => [
         itemCode,
+        itemType ?? '',
         recptDesc,
         unitSellPrice,
         comboPack,
@@ -63,17 +65,18 @@ class Item extends Equatable {
         pkgQty ?? '',
         pkgItems ?? '',
         blanket ?? '',
-        tax ?? '',
+        tax ?? '0',
       ];
 
   static const empty = Item(
       itemCode: '',
+      itemType: '',
       recptDesc: '',
-      unitSellPrice: '',
+      unitSellPrice: '0',
       comboPack: '',
       weightItem: '',
       onPromotion: '',
-      promoPrice: '',
+      promoPrice: '0',
       discountable: '',
       modifierInt: '',
       masterCode: '',
@@ -84,10 +87,11 @@ class Item extends Equatable {
       pkgQty: '',
       pkgItems: '',
       blanket: '',
-      tax: '' );
+      tax: '0' );
 
   const Item(
       {required this.itemCode,
+      required this.itemType,
       required this.recptDesc,
       required this.unitSellPrice,
       required this.comboPack,

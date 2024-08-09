@@ -41,8 +41,7 @@ abstract class SoapApiClient {
     }
   }
 
-  List parseSoapResponseToJson(String response,
-      {String element = "Table"}) {
+  List parseSoapResponseToJson(String response, {String element = "Table"}) {
     final document = xml.XmlDocument.parse(response);
     final elements = document.findAllElements(element);
 
@@ -56,8 +55,7 @@ abstract class SoapApiClient {
     return jsonResult;
   }
 
-  dynamic parseSoapResponseToOneValue(String response,
-      {String element = "Table"}) {
+  dynamic parseSoapResponseToOneValue(String response, {String element = "Table"}) {
     final document = xml.XmlDocument.parse(response);
     return document.findAllElements(element).first.innerText;
   }

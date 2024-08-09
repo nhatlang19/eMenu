@@ -9,6 +9,8 @@ import 'package:emenu/models/item_modifier.dart';
 import 'package:emenu/models/submenu.dart';
 import 'package:emenu/repositories/cart_repository.dart';
 import 'package:emenu/repositories/item_repository.dart';
+import 'package:emenu/utils/global.dart';
+import 'package:emenu/utils/screen_util.dart';
 import 'package:emenu/utils/settings.dart';
 import 'package:equatable/equatable.dart';
 
@@ -288,28 +290,49 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     try {
       var settings = Settings();
       var setting = await settings.read();
+      var cashier = await Global.getCashier();
       String posNo = setting.posId;
       String orderNo = await _cartRepository.getNewOrderNumberByPOS(posNo);
+      String extNo = event.sendNewOrder == "1" ? "0" : "0";
+      String dataTableString = state.getString();
+      String splited = '0';
 
       emit(state.copyWith(status: CartStatus.sendOrderInitial));
 
-      bool flag = false;
-      for (var i = state.cartItems.length - 1; !flag && i >= 0; i--) {
-        int segNo = state.cartItems[i].segNo;
-        if (segNo != i + 1) {
-          flag = true;
-        }
+      // bool flag = false;
+      // for (var i = state.cartItems.length - 1; !flag && i >= 0; i--) {
+      //   int segNo = state.cartItems[i].segNo;
+      //   if (segNo != i + 1) {
+      //     flag = true;
+      //   }
+      // }
+      // if (flag) {
+      //   emit(state.copyWith(status: CartStatus.sendOrderDuplicate));
+      //   return;
+      // }
+   
+      var result = await _cartRepository.sendOrder(
+          dataTableString: dataTableString,
+          sendNewOrder: event.sendNewOrder,
+          reSendOrder: event.reSendOrder,
+          typeLoad: event.typeLoad,
+          posNo: posNo,
+          orderNo: orderNo,
+          extNo: extNo,
+          splited: splited,
+          currTable: event.currTable,
+          POSBizDate: event.POSBizDate,
+          currTableGroup: event.currTableGroup,
+          noOfPerson: event.noOfPerson,
+          salesCode: event.salesCode,
+          cashierID: cashier.cashierID ?? '');
+      if (result) {
+        emit(state.copyWith(status: CartStatus.sendOrderSuccess));
+      } else {
+        emit(state.copyWith(status: CartStatus.sendOrderFail, errorMessage: 'Bị lỗi khi gửi đơn hàng'));
       }
-      if (flag) {
-        emit(state.copyWith(status: CartStatus.sendOrderDuplicate));
-        return;
-      }
-
-      String reSendOrder = event.reSendOrder;
-      // _cartRepository.sendOrder()
-      emit(state.copyWith(status: CartStatus.sendOrderSuccess));
-    } catch (_) {
-      emit(state.copyWith(status: CartStatus.sendOrderFail));
+    } catch (e) {
+      emit(state.copyWith(status: CartStatus.sendOrderFail, errorMessage: e.toString()));
     }
   }
 }

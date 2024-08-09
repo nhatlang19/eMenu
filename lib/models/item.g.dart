@@ -14,6 +14,7 @@ Item _$ItemFromJson(Map<String, dynamic> json) => $checkedCreate(
       ($checkedConvert) {
         final val = Item(
           itemCode: $checkedConvert('ItemCode', (v) => v as String),
+          itemType: $checkedConvert('ItemType', (v) => v as String?),
           recptDesc: $checkedConvert('RecptDesc', (v) => v as String),
           unitSellPrice: $checkedConvert('UnitSellPrice', (v) => v as String),
           comboPack: $checkedConvert('ComboPack', (v) => v as String),
@@ -36,6 +37,7 @@ Item _$ItemFromJson(Map<String, dynamic> json) => $checkedCreate(
       },
       fieldKeyMap: const {
         'itemCode': 'ItemCode',
+        'itemType': 'ItemType',
         'recptDesc': 'RecptDesc',
         'unitSellPrice': 'UnitSellPrice',
         'comboPack': 'ComboPack',

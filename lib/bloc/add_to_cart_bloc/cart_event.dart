@@ -79,19 +79,27 @@ class UpdateNoPeople extends CartEvent {
 }
 
 class SendOrder extends CartEvent {
+  final String sendNewOrder;
   final String reSendOrder;
   final String typeLoad;
   final String currTable;
+  final String currTableGroup;
   final String POSBizDate;
+  final String noOfPerson;
+  final String salesCode;
 
   const SendOrder(
-      {required this.reSendOrder,
+      {required this.sendNewOrder,
+      required this.reSendOrder,
       required this.typeLoad,
       required this.currTable,
+      required this.currTableGroup,
+      required this.noOfPerson,
+      required this.salesCode,
       required this.POSBizDate});
 
   @override
-  List<Object> get props => [reSendOrder, typeLoad, currTable, POSBizDate];
+  List<Object> get props => [sendNewOrder, reSendOrder, typeLoad, currTable, currTableGroup, noOfPerson, salesCode, POSBizDate];
 }
 
 class HideShowCombo extends CartEvent {

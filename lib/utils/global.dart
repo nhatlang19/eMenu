@@ -10,7 +10,7 @@ class Global {
     prefs.setString('cashier', json);
   }
 
-  static Future<User> getCashier(User user) async {
+  static Future<User> getCashier() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? json = prefs.getString('cashier');
     if (json != null) {

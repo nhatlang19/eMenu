@@ -14,18 +14,21 @@ class Menu extends Equatable {
   final String fontColor;
   @JsonKey(name: 'DefaultValue')
   final String defaultValue;
+  @JsonKey(name: 'Bitmap')
+  final String? bitmap;
 
   @override
-  List<Object> get props => [description, btnColor, fontColor, defaultValue];
+  List<Object> get props => [description, btnColor, fontColor, defaultValue, bitmap ?? ''];
 
   static const empty =
-      Menu(description: '', btnColor: '', fontColor: '', defaultValue: '');
+      Menu(description: '', btnColor: '', fontColor: '', defaultValue: '', bitmap: '');
 
   const Menu({
     required this.description,
     required this.btnColor,
     required this.fontColor,
     required this.defaultValue,
+    required this.bitmap,
   });
 
   factory Menu.fromJson(Map<String, dynamic> json) => _$MenuFromJson(json);
