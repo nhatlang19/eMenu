@@ -141,14 +141,8 @@ class MenuGridRight extends StatelessWidget {
                                   '$cartItemCount',
                                   style: TextStyle(color: Colors.white),
                                 ),
-                                child: Icon(
-                                  Icons.shopping_cart,
-                                  color: Colors.white,
-                                  size: 50.0,
-                                ),
-                                badgeStyle: badges.BadgeStyle(
-                                  badgeColor: Colors.red,
-                                ),
+                                child: const Icon(Icons.shopping_cart, color: Colors.white,size: 50.0),
+                                badgeStyle: const badges.BadgeStyle(badgeColor: Colors.red,),
                               );
                             }),
                       ),
@@ -168,41 +162,40 @@ class MenuGridRight extends StatelessWidget {
                     Expanded(
                       flex: 2,
                       child: Padding(
-                          padding: const EdgeInsets.all(6.0),
+                          padding: const EdgeInsets.all(2.0),
                           child: BlocBuilder<SubMenuBloc, SubmenuState>(
                               // buildWhen: (previous, current) =>
                               //     previous.menu.defaultValue != current.menu.defaultValue,
                               builder: (context, state) {
-                            return MediaQuery.removePadding(
-                              context: context,
-                              removeTop: true,
-                              removeBottom: true,
-                              child: GridView.builder(
-                                shrinkWrap: true,
-                                padding: EdgeInsets.all(0),
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: ScreenUtil.isPortrait(context)
-                                      ? 3
-                                      : (stateCart.toogle ? 3 : 5), // Number of columns in the grid
-                                  crossAxisSpacing: 0,
-                                  mainAxisSpacing: 0,
-                                  childAspectRatio: stateCart.toogle ? 1.3 : 1
-                                ),
-                                itemCount: state.submenus
-                                    .length, // Number of items in the grid
-                                itemBuilder: (context, index) {
-                                  return GridItem(index, state.submenus[index]);
-                                },
-                              ),
-                            );
+                                var crossAxisCount = ScreenUtil.isPortrait(context) ? 3 : (stateCart.toogle ? 3 : 5);
+                                return MediaQuery.removePadding(
+                                  context: context,
+                                  child: Column(
+                                    children: [
+                                      Expanded(
+                                        child: GridView.builder(
+                                          shrinkWrap: true,
+                                          padding: const EdgeInsets.all(0),
+                                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount: crossAxisCount, // Number of columns in the grid
+                                            crossAxisSpacing: 0,
+                                            mainAxisSpacing: 0,
+                                            childAspectRatio: stateCart.toogle ? 1.1 : 1
+                                          ),
+                                          itemCount: state.submenus.length, // Number of items in the grid
+                                          itemBuilder: (context, index) {
+                                            return GridItem(index, state.submenus[index]);
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
                           })),
                     ),
                     Expanded(
                         flex: stateCart.toogle ? 1 : 0,
-                        child: stateCart.toogle
-                            ? CartView()
-                            : SizedBox(width: 0))
+                        child: stateCart.toogle? const CartView(): const SizedBox(width: 0))
                   ],
                 );
               },

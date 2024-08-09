@@ -23,7 +23,7 @@ class GridItem extends StatelessWidget {
           },
           child: Card(
             color: Colors.white,
-            elevation: 0,
+            elevation: 1,
             margin: const EdgeInsets.all(2),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(0),
@@ -35,10 +35,7 @@ class GridItem extends StatelessWidget {
                 const SizedBox(height: 5),
                 Stack(children: [
                   ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(15),
-                      topRight: Radius.circular(15),
-                    ),
+                    borderRadius: const BorderRadius.all(Radius.circular(50)),
                     child: Center(
                       child: CachedNetworkImage(
                         imageUrl:
