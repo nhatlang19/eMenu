@@ -64,7 +64,7 @@ class CartItem {
             pkgQty: '',
             pkgItems: '',
             blanket: '',
-            tax: '');
+            tax: '0');
 
         cartItems.add(CartItem(item: item, qty: cartItemModifier.quantity));
       }

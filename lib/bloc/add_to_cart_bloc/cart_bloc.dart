@@ -310,7 +310,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       //   emit(state.copyWith(status: CartStatus.sendOrderDuplicate));
       //   return;
       // }
-   
+      print(dataTableString);
       var result = await _cartRepository.sendOrder(
           dataTableString: dataTableString,
           sendNewOrder: event.sendNewOrder,
