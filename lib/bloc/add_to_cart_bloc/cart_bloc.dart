@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
-import 'package:emenu/bloc/add_to_cart_bloc/dto/CartItem.dart';
-import 'package:emenu/bloc/add_to_cart_bloc/dto/CartItemCombo.dart';
-import 'package:emenu/bloc/add_to_cart_bloc/dto/CartItemModifier.dart';
+import 'package:emenu/bloc/add_to_cart_bloc/dto/cart_item.dart';
+import 'package:emenu/bloc/add_to_cart_bloc/dto/cart_item_combo.dart';
+import 'package:emenu/bloc/add_to_cart_bloc/dto/cart_item_modifier.dart';
 import 'package:emenu/constants/item_combo_pack.dart';
 import 'package:emenu/models/item.dart';
 import 'package:emenu/models/item_combo.dart';

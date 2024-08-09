@@ -19,4 +19,12 @@ class ScreenUtil {
     String formattedDate = formatter.format(now);
     return formattedDate;
 	}
+
+  static String convertDoubleToInt(String doubleString) {
+    double doubleValue = double.parse(doubleString);  // Convert to double
+    int intValue = doubleValue.toInt();  // Convert to int
+    String intString = intValue.toString();  // Convert back to string
+
+    return intString;
+  }
 }

@@ -1,8 +1,9 @@
-import 'package:emenu/bloc/add_to_cart_bloc/dto/CartItemCombo.dart';
-import 'package:emenu/bloc/add_to_cart_bloc/dto/CartItemModifier.dart';
+import 'package:emenu/bloc/add_to_cart_bloc/dto/cart_item_combo.dart';
+import 'package:emenu/bloc/add_to_cart_bloc/dto/cart_item_modifier.dart';
 import 'package:emenu/models/item.dart';
 import 'package:emenu/models/item_combo.dart';
 import 'package:emenu/models/item_modifier.dart';
+import 'package:emenu/utils/screen_util.dart';
 
 class CartItem {
   Item item;
@@ -77,9 +78,9 @@ class CartItem {
     result += qty.toString() + SEPARATE;
     result += status + SEPARATE;
     result += item.recptDesc + SEPARATE; // itemName
-    result += item.unitSellPrice + SEPARATE; // orgPrice
+    result += ScreenUtil.convertDoubleToInt(item.unitSellPrice) + SEPARATE; // orgPrice
     result += item.promoPrice + SEPARATE;
-    result += total.toString() + SEPARATE;
+    result += ScreenUtil.convertDoubleToInt(total.toString()) + SEPARATE;
     result += (item.itemType ?? '') + SEPARATE; //itemType
     result += item.itemCode + SEPARATE;
     result += (item.modifierInt ?? '') + SEPARATE;
@@ -95,7 +96,7 @@ class CartItem {
     result += (item.pkgItems ?? '') + SEPARATE;
     result += (item.blanket ?? '') + SEPARATE;
     result += (item.tax ?? '') + SEPARATE;
-    result += taxAmt.toString();
+    result += ScreenUtil.convertDoubleToInt(taxAmt.toString());
     return result;
   }
 }

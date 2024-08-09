@@ -1,4 +1,4 @@
-import 'package:emenu/bloc/add_to_cart_bloc/dto/CartItemModifier.dart';
+import 'package:emenu/bloc/add_to_cart_bloc/dto/cart_item_modifier.dart';
 import 'package:emenu/models/item_combo.dart';
 import 'package:emenu/models/item_modifier.dart';
 
