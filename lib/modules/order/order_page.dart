@@ -7,6 +7,7 @@ import 'package:emenu/modules/order/widgets/menu_left.dart';
 import 'package:emenu/modules/order/widgets/order_view.dart';
 import 'package:emenu/repositories/item_repository.dart';
 import 'package:emenu/repositories/menu_repository.dart';
+import 'package:emenu/repositories/order_repository.dart';
 import 'package:emenu/utils/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,6 +24,7 @@ class OrderPage extends StatefulWidget {
 class _OrderPageState extends State<OrderPage> {
   late final MenuRepository menuRepository;
   late final ItemRepository itemRepository;
+  late final OrderRepository orderRepository;
 
   late Map args;
   @override
@@ -31,6 +33,7 @@ class _OrderPageState extends State<OrderPage> {
     args = widget.args;
     menuRepository = MenuRepository();
     itemRepository = ItemRepository();
+    orderRepository = OrderRepository();
   }
 
   Future<String> _getSettings() async {
@@ -52,10 +55,11 @@ class _OrderPageState extends State<OrderPage> {
               if (snapshot.hasData) {
                 return MultiBlocProvider(providers: [
                   BlocProvider<OrderBloc>(
-                    create: (BuildContext context) => OrderBloc()
+                    create: (BuildContext context) => OrderBloc(orderRepository: orderRepository)
                       ..add(OrderInitPage(
                           selectedForGroup: args["tableGroup"],
                           isAddNew: args["tableStatus"],
+                          order: args["order"],
                           selectedTable: args["selectedTable"],
                           selectedCode: args["selectedCode"])),
                   ),

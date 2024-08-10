@@ -9,9 +9,7 @@ part 'section_state.dart';
 class SectionBloc extends Bloc<SectionEvent, SectionState> {
   final SectionRepository _sectionRepository;
 
-  SectionBloc(
-      {required SectionRepository sectionRepository,
-})
+  SectionBloc({required SectionRepository sectionRepository})
       : _sectionRepository = sectionRepository,
         super(const SectionState()) {
     on<FetchSection>(_onFetchSections);

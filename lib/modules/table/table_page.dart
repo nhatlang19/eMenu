@@ -1,8 +1,10 @@
+import 'package:emenu/modules/order/bloc/order_bloc.dart';
 import 'package:emenu/modules/table/bloc/salescode_bloc.dart';
 import 'package:emenu/modules/table/bloc/section_bloc.dart';
 import 'package:emenu/modules/table/bloc/table_bloc.dart';
 import 'package:emenu/modules/table/bloc/user_bloc.dart';
 import 'package:emenu/modules/table/widgets/table_view.dart';
+import 'package:emenu/repositories/order_repository.dart';
 import 'package:emenu/repositories/sales_code_repository.dart';
 import 'package:emenu/repositories/section_repository.dart';
 import 'package:emenu/repositories/table_repository.dart';
@@ -23,6 +25,7 @@ class _TablePageState extends State<TablePage> {
   late final TableRepository tableRepository;
   late final UserRepository userRepository;
   late final SalesCodeRepository salesCodeRepository;
+  late final OrderRepository orderRepository;
 
    @override
   void initState() {
@@ -31,6 +34,7 @@ class _TablePageState extends State<TablePage> {
     tableRepository = TableRepository();
     userRepository = UserRepository();
     salesCodeRepository = SalesCodeRepository();
+    orderRepository = OrderRepository();
   }
 
   @override
@@ -53,6 +57,9 @@ class _TablePageState extends State<TablePage> {
                       // ),
                       BlocProvider<SalesCodeBloc>(
                         create: (BuildContext context) => SalesCodeBloc(salesCodeRepository: salesCodeRepository)..add(const FetchSalesCode()),
+                      ),
+                      BlocProvider<OrderBloc>(
+                        create: (BuildContext context) => OrderBloc(orderRepository: orderRepository),
                       ),
                     ],
                     child: const TableView()
