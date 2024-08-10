@@ -37,7 +37,7 @@ class _LoginFormState extends State<LoginForm> {
           }
 
           if (state.status.isSuccess) {
-            Global.setCashier(state.user);
+            await Global.setCashier(state.user);
             await Navigator.pushNamed(context, 'TablePage');
             context.read<LoginBloc>().add(const LogoutSubmitted());
           }

@@ -141,9 +141,7 @@ class TableGrid extends StatelessWidget {
                         child: const Text('Save'),
                       ),
                     ),
-                    const SizedBox(
-                      width: 10,
-                    ),
+                    const SizedBox(width: 10,),
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () {
@@ -152,9 +150,7 @@ class TableGrid extends StatelessWidget {
                         child: const Text('Close'),
                       ),
                     ),
-                    const SizedBox(
-                      width: 10,
-                    ),
+                    const SizedBox(width: 10,),
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () {

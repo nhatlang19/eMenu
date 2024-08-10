@@ -15,15 +15,13 @@ class TableBloc extends Bloc<TableEvent, TableState> {
         super(const TableState()) {
     on<FetchTable>(_onFetchTable);
     on<ChangeSelectGroup>(_onChange);
-     on<ChangeIsAddNew>(_onChangeIsEdit);
+    on<ChangeIsAddNew>(_onChangeIsEdit);
   }
 
-  Future<void> _onFetchTable(
-      FetchTable event, Emitter<TableState> emit) async {
+  Future<void> _onFetchTable(FetchTable event, Emitter<TableState> emit) async {
     try {
-      List<Table> tables =
-          await _tableRepository.getTableListBySection(section: event.section);
-      emit(state.copyWith(tables: tables, status: TableStatus.success, selectedForGroup: tables[0]));
+      List<Table> tables = await _tableRepository.getTableListBySection(section: event.section);
+      emit(state.copyWith(tables: tables, status: TableStatus.success, table: tables[0]));
     } catch (_) {
       emit(state.copyWith(status: TableStatus.failure));
     }

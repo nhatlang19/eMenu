@@ -27,9 +27,9 @@ class User extends Equatable {
 
    Map<String, dynamic> toJson() =>
     {
-      'cashierID': cashierID,
-      'cashierName': cashierName,
-      'cashierPwd': cashierPwd,
-      'userGroup': userGroup
+      'CashierID': cashierID,
+      'CashierName': cashierName,
+      'CashierPwd': cashierPwd,
+      'UserGroup': userGroup
     };
 }

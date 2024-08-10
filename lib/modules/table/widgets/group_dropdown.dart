@@ -29,19 +29,17 @@ class GroupDropdown extends StatelessWidget {
                         border: Border.all(color: Colors.grey),
                         borderRadius: BorderRadius.circular(5),
                       ),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       child: DropdownButtonHideUnderline(
                           child: DropdownButton<MyTable.Table>(
-                        value: state.selectedForGroup,
+                        value: state.selectedForGroup.TableNo == '' ? null : state.selectedForGroup,
                         onChanged: (MyTable.Table? newValue) {
                           context.read<TableBloc>().add(ChangeSelectGroup(group: newValue ?? state.selectedForGroup));
                         },
-                        items: state.tables
-                            .map<DropdownMenuItem<MyTable.Table>>((MyTable.Table table) {
+                        items: state.tables.map<DropdownMenuItem<MyTable.Table>>((MyTable.Table table) {
                           return DropdownMenuItem<MyTable.Table>(
                             value: table,
-                            child: Text(table.TableNo ?? 'N/A'),
+                            child: Text(table.TableNo),
                           );
                         }).toList(),
                       ))),

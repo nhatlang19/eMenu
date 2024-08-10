@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:emenu/bloc/add_to_cart_bloc/cart_bloc.dart';
 import 'package:emenu/config/themes/app_colors.dart';
 import 'package:emenu/config/themes/app_text_styles.dart';
@@ -30,7 +28,7 @@ class MenuGridRight extends StatelessWidget {
               children: [
                 IconButton(
                   iconSize: 50.0,
-                  icon: Icon(Icons.arrow_back_ios),
+                  icon: const Icon(Icons.arrow_back_ios),
                   color: Colors.white,
                   onPressed: () {
                     context.read<CartBloc>().add(ResetCart());
@@ -38,7 +36,7 @@ class MenuGridRight extends StatelessWidget {
                   },
                 ),
                 SizedBox.fromSize(
-                  size: Size(40, 40), // button width and height
+                  size: const Size(40, 40), // button width and height
                   child: ClipOval(
                     child: Material(
                       color: Colors.orange, // button color
@@ -54,7 +52,7 @@ class MenuGridRight extends StatelessWidget {
                                 color: Colors.transparent,
                                 child: Container(
                                   color: Colors.white,
-                                  padding: EdgeInsets.all(8.0),
+                                  padding: const EdgeInsets.all(8.0),
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
@@ -82,8 +80,7 @@ class MenuGridRight extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             BlocBuilder<CartBloc, CartState>(
-                              buildWhen: (previous, current) =>
-                                  previous.noPeople != current.noPeople,
+                              buildWhen: (previous, current) => previous.noPeople != current.noPeople,
                               builder: (context, state) {
                                 return Text(state.noPeople);
                               }), // text
@@ -112,7 +109,7 @@ class MenuGridRight extends StatelessWidget {
                               var total = ScreenUtil.formatPrice(state.total);
                               return Padding(
                                 padding: const EdgeInsets.only(right: 40.0),
-                                child: Text('${total} VND',
+                                child: Text('$total VND',
                                     style: const TextStyle(
                                         fontSize: 24.0,
                                         fontWeight: FontWeight.bold,
@@ -139,10 +136,10 @@ class MenuGridRight extends StatelessWidget {
                                     bottom: -10, end: -12),
                                 badgeContent: Text(
                                   '$cartItemCount',
-                                  style: TextStyle(color: Colors.white),
+                                  style: const TextStyle(color: Colors.white),
                                 ),
-                                child: const Icon(Icons.shopping_cart, color: Colors.white,size: 50.0),
                                 badgeStyle: const badges.BadgeStyle(badgeColor: Colors.red,),
+                                child: const Icon(Icons.shopping_cart, color: Colors.white,size: 50.0),
                               );
                             }),
                       ),
@@ -154,8 +151,7 @@ class MenuGridRight extends StatelessWidget {
           ),
           Flexible(
             child: BlocBuilder<CartBloc, CartState>(
-              buildWhen: (previous, current) =>
-                        previous.toogle != current.toogle,
+              buildWhen: (previous, current) => previous.toogle != current.toogle,
               builder: (context, stateCart) {
                 return Row(
                   children: [
@@ -194,8 +190,9 @@ class MenuGridRight extends StatelessWidget {
                           })),
                     ),
                     Expanded(
-                        flex: stateCart.toogle ? 1 : 0,
-                        child: stateCart.toogle? const CartView(): const SizedBox(width: 0))
+                      flex: stateCart.toogle ? 1 : 0,
+                      child: stateCart.toogle? const CartView(): const SizedBox(width: 0)
+                    )
                   ],
                 );
               },

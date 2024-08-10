@@ -8,8 +8,8 @@ import 'package:emenu/utils/screen_util.dart';
 class CartItem {
   Item item;
   int qty = 0;
-  String status = '';
-  String instruction = '';
+  String status = ' ';
+  String instruction = ' ';
   int segNo = 0;
   double total = 0;
   double taxAmt = 0;
@@ -50,19 +50,19 @@ class CartItem {
             recptDesc: '*${itemModifier.modDesc ?? ''}',
             itemType: 'M',
             unitSellPrice: itemModifier.unitPrice ?? '0',
-            comboPack: itemCombo.modClass ?? '',
+            comboPack: itemCombo.modClass ?? ' ',
             weightItem: '',
             onPromotion: '',
             promoPrice: '0',
             discountable: '',
             modifierInt: itemModifier.modCode,
-            masterCode: itemModifier.itemCode ?? '',
+            masterCode: itemModifier.itemCode ?? ' ',
             hidden: itemCombo.hidden,
             promoCode: '',
-            promoClass: '',
-            pkgPrice: '',
-            pkgQty: '',
-            pkgItems: '',
+            promoClass: '0',
+            pkgPrice: '0',
+            pkgQty: '0',
+            pkgItems: '0',
             blanket: '',
             tax: '0');
 
@@ -81,21 +81,21 @@ class CartItem {
     result += ScreenUtil.convertDoubleToInt(item.unitSellPrice) + SEPARATE; // orgPrice
     result += item.promoPrice + SEPARATE;
     result += ScreenUtil.convertDoubleToInt(total.toString()) + SEPARATE;
-    result += (item.itemType ?? '') + SEPARATE; //itemType
+    result += item.comboPack + SEPARATE; //itemType
     result += item.itemCode + SEPARATE;
-    result += (item.modifierInt ?? '') + SEPARATE;
-    result += (item.masterCode ?? '') + SEPARATE;
+    result += (item.modifierInt ?? '0') + SEPARATE;
+    result += (item.masterCode ?? ' ') + SEPARATE;
     result += item.comboPack + SEPARATE;
-    result += (item.hidden ?? '') + SEPARATE;
+    result += (item.hidden ?? ' ') + SEPARATE;
     result += instruction + SEPARATE;
     result += segNo.toString() + SEPARATE;
     result += (item.promoCode ?? '') + SEPARATE;
-    result += (item.promoClass ?? '') + SEPARATE;
-    result += (item.pkgPrice ?? '') + SEPARATE;
-    result += (item.pkgQty ?? '') + SEPARATE;
-    result += (item.pkgItems ?? '') + SEPARATE;
+    result += (item.promoClass ?? '0') + SEPARATE;
+    result += (item.pkgPrice ?? '0') + SEPARATE;
+    result += (item.pkgQty ?? '0') + SEPARATE;
+    result += (item.pkgItems ?? '0') + SEPARATE;
     result += (item.blanket ?? '') + SEPARATE;
-    result += (item.tax ?? '') + SEPARATE;
+    result += (item.tax ?? '0') + SEPARATE;
     result += ScreenUtil.convertDoubleToInt(taxAmt.toString());
     return result;
   }
