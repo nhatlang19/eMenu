@@ -26,26 +26,17 @@ class _TableViewState extends State<TableView> {
               }
             },
           ),
-          // BlocListener<TableBloc, TableState>(
-          //   listener: (context, state) {
-          //     // @TODO: not implemented yet
-          //   },
-
-          // ),
-          // BlocListener<UserBloc, UserState>(
-          //   listener: (context, state) {
-          //   },
-          // ),
         ],
         child: Column(
           children: [
             Row(
               children: [
-                Expanded(flex: 2,child: SectionFilter()),
+                const Expanded(flex: 2,child: SectionFilter()),
                 Expanded(flex: 1,
                   child: InkWell(
                     onTap: () {
-                      
+                      var sectionState = context.read<SectionBloc>().state;
+                      context.read<TableBloc>().add(FetchTable(section: sectionState.sections.first.section));
                     },
                     splashColor: Colors.blue, // splash color on tap
                     child: Container(

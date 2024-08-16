@@ -21,6 +21,7 @@ class TableBloc extends Bloc<TableEvent, TableState> {
 
   Future<void> _onFetchTable(FetchTable event, Emitter<TableState> emit) async {
     try {
+      emit(state.copyWith(status: TableStatus.initial));
       List<Table> tables = await _tableRepository.getTableListBySection(section: event.section);
       emit(state.copyWith(tables: tables, status: TableStatus.success, table: tables[0]));
     } catch (_) {

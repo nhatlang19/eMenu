@@ -44,7 +44,7 @@ class TableGrid extends StatelessWidget {
         }
       },
       child: BlocBuilder<TableBloc, TableState>(
-        // buildWhen: (previous, current) => previous.status != current.status,
+        buildWhen: (previous, current) => previous.status != current.status && current.status == TableStatus.initial,
         builder: (context, state) {
           return Expanded(
               child: Padding(
