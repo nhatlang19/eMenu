@@ -34,7 +34,7 @@ class CartItem {
   }
 
   void updateData() {
-    total = (double.parse(item.unitSellPrice) * qty) -
+    total = (double.parse(item.getOrgPrice()) * qty) -
         double.parse(item.promoPrice);
     taxAmt = (total * double.parse(item.tax ?? '0')) / 100;
   }
@@ -78,14 +78,14 @@ class CartItem {
     result += qty.toString() + SEPARATE;
     result += status + SEPARATE;
     result += item.recptDesc + SEPARATE; // itemName
-    result += ScreenUtil.convertDoubleToInt(item.unitSellPrice) + SEPARATE; // orgPrice
+    result += ScreenUtil.convertDoubleToInt(item.getOrgPrice()) + SEPARATE; // orgPrice
     result += item.promoPrice + SEPARATE;
     result += ScreenUtil.convertDoubleToInt(total.toString()) + SEPARATE;
-    result += item.comboPack + SEPARATE; //itemType
+    result += item.getComboPack() + SEPARATE; //itemType
     result += item.itemCode + SEPARATE;
     result += (item.modifierInt ?? '0') + SEPARATE;
     result += (item.masterCode ?? ' ') + SEPARATE;
-    result += item.comboPack + SEPARATE;
+    result += item.getComboPack() + SEPARATE;
     result += (item.hidden ?? ' ') + SEPARATE;
     result += instruction + SEPARATE;
     result += segNo.toString() + SEPARATE;

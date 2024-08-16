@@ -13,7 +13,6 @@ class OrderProvider extends SoapApiClient {
                               </GetOrderEditType>''';
 
     final response = await callSoapService(soapAction, soapBody);
-    print(response);
     if (response != null) {
       return parseSoapResponseToJson(response);
     }

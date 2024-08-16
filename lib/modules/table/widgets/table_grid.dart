@@ -94,9 +94,7 @@ class TableGrid extends StatelessWidget {
       case "B":
         if (table.openByIsEmpty()) {
           // @TODO: updateTableStatus (xem TableAdapter.java:101)
-          parentContext
-              .read<TableBloc>()
-              .add(const ChangeIsAddNew(isAddNew: true));
+          parentContext.read<TableBloc>().add(SelectTable(isAddNew: true, table: table));
           _showCustomDialog(parentContext, table, isAddNew: true);
         } else {
           ScaffoldMessenger.of(parentContext)
@@ -109,19 +107,19 @@ class TableGrid extends StatelessWidget {
         }
         break;
       case "O":
-        if (table.openByIsEmpty()) {
+        // if (table.openByIsEmpty()) {
           // @TODO: updateTableStatus (xem TableAdapter.java:101)
-          parentContext.read<TableBloc>().add(ChangeIsAddNew(isAddNew: false));
+          parentContext.read<TableBloc>().add(SelectTable(isAddNew: false, table: table));
           _showCustomDialog(parentContext, table, isAddNew: false);
-        } else {
-          ScaffoldMessenger.of(parentContext)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              SnackBar(
-                  content: Text(
-                      'Bàn ${table.TableNo.trim()} đang được order bởi cashier $openBy')),
-            );
-        }
+        // } else {
+        //   ScaffoldMessenger.of(parentContext)
+        //     ..hideCurrentSnackBar()
+        //     ..showSnackBar(
+        //       SnackBar(
+        //           content: Text(
+        //               'Bàn ${table.TableNo.trim()} đang được order bởi cashier $openBy')),
+        //     );
+        // }
         break;
       case "R":
       default:

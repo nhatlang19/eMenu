@@ -16,6 +16,7 @@ class TableBloc extends Bloc<TableEvent, TableState> {
     on<FetchTable>(_onFetchTable);
     on<ChangeSelectGroup>(_onChange);
     on<ChangeIsAddNew>(_onChangeIsEdit);
+    on<SelectTable>(_onSelectTable);
   }
 
   Future<void> _onFetchTable(FetchTable event, Emitter<TableState> emit) async {
@@ -33,5 +34,9 @@ class TableBloc extends Bloc<TableEvent, TableState> {
 
   void _onChangeIsEdit(ChangeIsAddNew event, Emitter<TableState> emit) {
     emit(state.copyWith(isAddNew: event.isAddNew, status: TableStatus.changed));
+  }
+
+  void _onSelectTable(SelectTable event, Emitter<TableState> emit) {
+     emit(state.copyWith(isAddNew: event.isAddNew, status: TableStatus.changed, table: event.table));
   }
 }

@@ -19,9 +19,12 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
 
    void _onOrderInitPage(OrderInitPage event, Emitter<OrderState> emit) {
     emit(state.copyWith(selectedForGroup: event.selectedForGroup
-    , isAddNew: event.isAddNew
-    , selectedTable: event.selectedTable
-    , selectedCode: event.selectedCode));
+                        , status: OrderStatus.initOrder
+                        , isAddNew: event.isAddNew
+                        , order: event.order
+                        , selectedTable: event.selectedTable
+                        , selectedCode: event.selectedCode));
+
   }
 
   void _onChangeSelectOrder(ChangeSelectOrder event, Emitter<OrderState> emit) {
@@ -34,9 +37,10 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       List<Order> orders = await _orderRepository.getOrderEditType(posBizDate: event.posBizDate, currentTable: event.currentTable);
       if (orders.isNotEmpty) {
         emit(state.copyWith(orders: orders, status: OrderStatus.success, order: orders.first));
+      } else {
+        emit(state.copyWith(orders: orders, status: OrderStatus.success));
       }
     } catch (e) {
-      print(e);
       emit(state.copyWith(status: OrderStatus.failure));
     }
   }

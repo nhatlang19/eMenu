@@ -50,10 +50,17 @@ class _CartViewState extends State<CartView> {
                           itemCount: state.cartItems.length,
                           itemBuilder: (context, index) {
                             final item = state.cartItems[index];
-                            final subTitle = item.cartItemComboList.isNotEmpty ? '${item.getTitle()} \n ${ScreenUtil.formatPrice(item.item.unitSellPrice)} VND' : '${ScreenUtil.formatPrice(item.item.unitSellPrice)} VND';
+                            String title = "";
+                            if (item.item.printStatus != '') {
+                              title += "# ";
+                            }
+
+                            title += item.item.recptDesc;
+
+                            final subTitle = item.cartItemComboList.isNotEmpty ? '${item.getTitle()} \n ${ScreenUtil.formatPrice(item.item.getOrgPrice())} VND' : '${ScreenUtil.formatPrice(item.item.getOrgPrice())} VND';
                             return ListTile(
                               isThreeLine: item.cartItemComboList.isNotEmpty,
-                              title: Text(item.item.recptDesc, style: const TextStyle(fontWeight: FontWeight.bold)),
+                              title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
                               subtitle: Text(subTitle, style: const TextStyle(fontWeight: FontWeight.w400)),
                               trailing: Row(
                                 mainAxisSize: MainAxisSize.min,

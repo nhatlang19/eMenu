@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:emenu/models/item.dart';
 import 'package:emenu/providers/cart_provider.dart';
 
 class CartRepository {
@@ -47,5 +48,17 @@ class CartRepository {
       return response + "";
     }
     return "";
+  }
+
+  Future<List<Item>> getEditOrderNumberByPOS({required String orderNo, required String posNo, required String extNo}) async {
+    final provider = CartProvider();
+
+    var json = await provider.getEditOrderNumberByPOS(orderNo, posNo, extNo);
+    final List<Item> result = [];
+    json.forEach((data) {
+      result.add(Item.fromJson(data['Table'] as Map<String, dynamic>));
+    });
+     
+    return result;
   }
 }

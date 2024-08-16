@@ -25,3 +25,10 @@ class ChangeIsAddNew extends TableEvent {
 
   const ChangeIsAddNew({required this.isAddNew});
 }
+
+class SelectTable extends TableEvent {
+  final bool isAddNew;
+  final Table table;
+
+  const SelectTable({required this.isAddNew, required this.table});
+}

@@ -46,4 +46,20 @@ class CartProvider extends SoapApiClient {
     }
     return null;
   }
+
+    Future<List<dynamic>> getEditOrderNumberByPOS(String orderNo, String posNo, String extNo) async {
+    const String soapAction = 'http://tempuri.org/GetEditOrderNumberByPOS';
+    final String soapBody = '''<GetEditOrderNumberByPOS xmlns="http://tempuri.org/">
+                                <orderNo>$orderNo</orderNo>
+                                <posNo>$posNo</posNo>
+                                <extNo>$extNo</extNo>
+                              </GetEditOrderNumberByPOS>''';
+
+    final response = await callSoapService(soapAction, soapBody);
+    print(response);
+    if (response != null) {
+      return parseSoapResponseToJson(response);
+    }
+    return [];
+  }
 }

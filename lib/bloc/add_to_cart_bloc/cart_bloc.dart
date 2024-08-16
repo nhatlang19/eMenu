@@ -10,7 +10,6 @@ import 'package:emenu/models/submenu.dart';
 import 'package:emenu/repositories/cart_repository.dart';
 import 'package:emenu/repositories/item_repository.dart';
 import 'package:emenu/utils/global.dart';
-import 'package:emenu/utils/screen_util.dart';
 import 'package:emenu/utils/settings.dart';
 import 'package:equatable/equatable.dart';
 
@@ -39,6 +38,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<ResetCart>(_onResetCart);
     on<SendOrder>(_onSendOrder);
     on<UpdateQuantityCombo>(_onUpdateQuantityCombo);
+    on<LoadItemsWhenEdit>(_onLoadItemsWhenEdit);
   }
 
   void _onResetCart(ResetCart event, Emitter<CartState> emit) {
@@ -71,8 +71,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
           qty: qty,
           priceLevel: "");
 
-      if (item.comboPack == ItemComboPack.N ||
-          item.comboPack == ItemComboPack.R) {
+      if (item.getComboPack() == ItemComboPack.N ||
+          item.getComboPack() == ItemComboPack.R) {
         var list = List<CartItem>.from(state.cartItems);
 
         final index = list.indexWhere((element) => element.item.itemCode == item.itemCode);
@@ -83,7 +83,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
               0,
               (tot, item) =>
                   tot.toDouble() +
-                  (double.parse(item.item.unitSellPrice) * item.qty -
+                  (double.parse(item.item.getOrgPrice()) * item.qty -
                       double.parse(item.item.promoPrice)));
           emit(state.copyWith(cartItems: state.cartItems, status: CartStatus.success, total: total));
         } else {
@@ -93,12 +93,12 @@ class CartBloc extends Bloc<CartEvent, CartState> {
               0,
               (tot, item) =>
                   tot.toDouble() +
-                  (double.parse(item.item.unitSellPrice) * item.qty -
+                  (double.parse(item.item.getOrgPrice()) * item.qty -
                       double.parse(item.item.promoPrice)));
 
           emit(state.copyWith(cartItems: data, status: CartStatus.success, total: total));
         }
-      } else if (item.comboPack == ItemComboPack.C) {
+      } else if (item.getComboPack() == ItemComboPack.C) {
         List<ItemCombo> itemComboList =
             await _itemRepository.getItemComboBySubMenuSelected(
                 currSubItem: event.currSubItem.defaultValue);
@@ -139,6 +139,21 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     }
   }
 
+  Future<void> _onLoadItemsWhenEdit(LoadItemsWhenEdit event, Emitter<CartState> emit) async {
+    try {
+      List<Item> items = await _cartRepository.getEditOrderNumberByPOS(orderNo: event.orderNo, posNo: event.posNo, extNo: event.extNo);
+      var list = List<CartItem>.from(state.cartItems);
+      // @TODO: need to handle for combo
+      for (var item in items) {
+        list.add(CartItem(item: item, qty: int.parse(item.qty ?? '0'), segNo: int.parse(item.seqNo ?? '0')));
+      }
+      double total = list.fold(0,(tot, item) => tot.toDouble() + (double.parse(item.item.getOrgPrice()) * item.qty - double.parse(item.item.promoPrice)));
+      emit(state.copyWith(cartItems: list, status: CartStatus.success, total: total));
+    } catch(e) {
+      emit(state.copyWith(status: CartStatus.failure, noPeople: "0", errorMessage: ''));
+    }
+  }
+
   Future<void> _onAddToCartWithCombo(
       AddToCartWithCombo event, Emitter<CartState> emit) async {
     try {
@@ -165,7 +180,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
             0,
             (tot, item) =>
                 tot.toDouble() +
-                (double.parse(item.item.unitSellPrice) * item.qty -
+                (double.parse(item.item.getOrgPrice()) * item.qty -
                     double.parse(item.item.promoPrice)));
         emit(state.copyWith(
             cartItemTmp: CartItem.empty,
@@ -201,7 +216,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         0,
         (tot, item) =>
             tot.toDouble() +
-            (double.parse(item.item.unitSellPrice) * item.qty -
+            (double.parse(item.item.getOrgPrice()) * item.qty -
                 double.parse(item.item.promoPrice)));
     emit(state.copyWith(
         cartItems: state.cartItems,
@@ -223,7 +238,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         0,
         (tot, item) =>
             tot.toDouble() +
-            (double.parse(item.item.unitSellPrice) * item.qty -
+            (double.parse(item.item.getOrgPrice()) * item.qty -
                 double.parse(item.item.promoPrice)));
     emit(state.copyWith(
         cartItems: state.cartItems,
@@ -243,7 +258,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         0,
         (tot, item) =>
             tot.toDouble() +
-            (double.parse(item.item.unitSellPrice) * item.qty -
+            (double.parse(item.item.getOrgPrice()) * item.qty -
                 double.parse(item.item.promoPrice)));
     emit(state.copyWith(
         cartItems: state.cartItems,
@@ -330,9 +345,11 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         emit(state.copyWith(status: CartStatus.sendOrderSuccess));
       } else {
         emit(state.copyWith(status: CartStatus.sendOrderFail, errorMessage: 'Bị lỗi khi gửi đơn hàng'));
+        emit(state.copyWith(status: CartStatus.sendOrderInitial, errorMessage: ''));
       }
     } catch (e) {
       emit(state.copyWith(status: CartStatus.sendOrderFail, errorMessage: e.toString()));
+      emit(state.copyWith(status: CartStatus.sendOrderInitial, errorMessage: ''));
     }
   }
 }

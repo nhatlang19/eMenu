@@ -126,3 +126,14 @@ class UpdateQuantityCombo extends CartEvent {
   @override
   List<Object> get props => [comboPosition, position, value];
 }
+
+class LoadItemsWhenEdit extends CartEvent {
+  final String orderNo;
+  final String posNo;
+  final String extNo;
+
+  const LoadItemsWhenEdit({required this.orderNo, required this.posNo, required this.extNo});
+
+  @override
+  List<Object> get props => [orderNo, posNo, extNo];
+}

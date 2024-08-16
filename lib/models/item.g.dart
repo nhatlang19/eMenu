@@ -16,10 +16,10 @@ Item _$ItemFromJson(Map<String, dynamic> json) => $checkedCreate(
           itemCode: $checkedConvert('ItemCode', (v) => v as String),
           itemType: $checkedConvert('ItemType', (v) => v as String?),
           recptDesc: $checkedConvert('RecptDesc', (v) => v as String),
-          unitSellPrice: $checkedConvert('UnitSellPrice', (v) => v as String),
-          comboPack: $checkedConvert('ComboPack', (v) => v as String),
+          unitSellPrice: $checkedConvert('UnitSellPrice', (v) => v as String?),
+          comboPack: $checkedConvert('ComboPack', (v) => v as String?),
           weightItem: $checkedConvert('WeightItem', (v) => v as String),
-          onPromotion: $checkedConvert('OnPromotion', (v) => v as String),
+          onPromotion: $checkedConvert('OnPromotion', (v) => v as String?),
           promoPrice: $checkedConvert('PromoPrice', (v) => v as String),
           discountable: $checkedConvert('Discountable', (v) => v as String),
           modifierInt: $checkedConvert('Modifier', (v) => v as String?),
@@ -32,6 +32,12 @@ Item _$ItemFromJson(Map<String, dynamic> json) => $checkedCreate(
           pkgItems: $checkedConvert('PkgItems', (v) => v as String?),
           blanket: $checkedConvert('Blanket', (v) => v as String?),
           tax: $checkedConvert('Tax', (v) => v as String?),
+          printStatus: $checkedConvert('Status', (v) => v as String? ?? ''),
+          qty: $checkedConvert('Qty', (v) => v as String? ?? '0'),
+          splited: $checkedConvert('Splited', (v) => v as String? ?? '0'),
+          seqNo: $checkedConvert('SeqNo', (v) => v as String? ?? '0'),
+          orgPrice: $checkedConvert('OrgPrice', (v) => v as String? ?? '0'),
+          comboClass: $checkedConvert('ComboClass', (v) => v as String? ?? ''),
         );
         return val;
       },
@@ -54,6 +60,12 @@ Item _$ItemFromJson(Map<String, dynamic> json) => $checkedCreate(
         'pkgQty': 'PkgQty',
         'pkgItems': 'PkgItems',
         'blanket': 'Blanket',
-        'tax': 'Tax'
+        'tax': 'Tax',
+        'printStatus': 'Status',
+        'qty': 'Qty',
+        'splited': 'Splited',
+        'seqNo': 'SeqNo',
+        'orgPrice': 'OrgPrice',
+        'comboClass': 'ComboClass'
       },
     );

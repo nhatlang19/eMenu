@@ -1,6 +1,6 @@
 part of 'order_bloc.dart';
 
-enum OrderStatus { initial, success, failure, changed }
+enum OrderStatus { initial, success, failure, changed, initOrder }
 
 final class OrderState extends Equatable {
   final List<Order> orders;
