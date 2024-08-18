@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:emenu/bloc/add_to_cart_bloc/cart_bloc.dart';
+import 'package:emenu/constants/asset_path.dart';
 import 'package:emenu/models/submenu.dart';
 import 'package:emenu/modules/order/bloc/order_bloc.dart';
 import 'package:flutter/material.dart';
@@ -38,12 +39,9 @@ class GridItem extends StatelessWidget {
                     borderRadius: const BorderRadius.all(Radius.circular(50)),
                     child: Center(
                       child: CachedNetworkImage(
-                        imageUrl:
-                            'https://images.unsplash.com/photo-1602881917760-7379db593981?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Zm9vZCUyMGJvd2x8ZW58MHx8MHx8fDA%3D',
-                        placeholder: (context, url) =>
-                            const Center(child: CircularProgressIndicator()),
-                        errorWidget: (context, url, error) =>
-                            const Center(child: Icon(Icons.error)),
+                        imageUrl: submenu.bitmap ?? AssetPath.bitmapDefault,
+                        placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+                        errorWidget: (context, url, error) => const Center(child: Icon(Icons.error)),
                         height: Platform.isAndroid ? 130 : 110,
                         width: Platform.isAndroid ? 130 : 110,
                         fit: BoxFit.fitHeight,

@@ -12,7 +12,7 @@ class ComboBottom extends StatelessWidget {
     var screenWidth = MediaQuery.of(context).size.width;
 
     return BlocBuilder<CartBloc, CartState>(
-      buildWhen: (previous, current) => current.status == CartStatus.updatedQuantityCombo
+      buildWhen: (previous, current) => previous.status != current.status && current.status == CartStatus.updatedQuantityCombo
       || current.status == CartStatus.addToCartComboFailure,
       builder: (context, state) {
         var isFail = state.status == CartStatus.addToCartComboFailure && state.errorMessage.isNotEmpty;
@@ -67,18 +67,18 @@ class ComboBottom extends StatelessWidget {
                   return Column(
                     children: [
                       Container(
-                        color: Colors.grey,
+                        color: const Color.fromARGB(255, 254, 126, 87),
                         child: ListTile(
                           // title: Text("Item $index"),
-                          title: Text(parentItem.itemCombo.itemDesc.toString()),
+                          title: Text(parentItem.itemCombo.itemDesc.toString(), style: const TextStyle(fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),),
                         ),
                       ),
                       Column(children: parentItem.cartItemModifierList.map((child) {
                         int modifierIndex = parentItem.cartItemModifierList.indexOf(child);
                         int quantity = child.quantity;
-                        if(child.hasDefaultValue) {
-                          quantity = parentItem.maxQuantity;
-                        }
+                        // if(quantity == 0 && child.hasDefaultValue) {
+                        //   quantity = parentItem.maxQuantity;
+                        // }
                         return ListTile(
                           title: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,

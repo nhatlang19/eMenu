@@ -18,6 +18,7 @@ Submenu _$SubmenuFromJson(Map<String, dynamic> json) => $checkedCreate(
           fontColor: $checkedConvert('FontColor', (v) => v as String?),
           defaultValue: $checkedConvert('DefaultValue', (v) => v as String),
           seqNum: $checkedConvert('SeqNum', (v) => v as String),
+          bitmap: $checkedConvert('Bitmap', (v) => v as String?),
         );
         return val;
       },
@@ -26,6 +27,7 @@ Submenu _$SubmenuFromJson(Map<String, dynamic> json) => $checkedCreate(
         'btnColor': 'BtnColor',
         'fontColor': 'FontColor',
         'defaultValue': 'DefaultValue',
-        'seqNum': 'SeqNum'
+        'seqNum': 'SeqNum',
+        'bitmap': 'Bitmap'
       },
     );

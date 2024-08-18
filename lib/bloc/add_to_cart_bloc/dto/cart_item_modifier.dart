@@ -5,5 +5,10 @@ class CartItemModifier {
   int quantity = 0;
   bool hasDefaultValue = false;
 
-  CartItemModifier({required this.itemModifier, this.quantity = 0, this.hasDefaultValue = false});
+  CartItemModifier({required this.itemModifier, this.hasDefaultValue = false}) {
+    quantity = 0;
+    if (hasDefaultValue) {
+      quantity = double.parse(itemModifier.quantity ?? '0').toInt();
+    }
+  }
 }

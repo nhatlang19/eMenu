@@ -23,9 +23,9 @@ class CartItemCombo {
   int getValue(CartItemModifier cartItemModifier) {
     int value = cartItemModifier.quantity;
    
-    if (cartItemModifier.hasDefaultValue) {
-        return maxQuantity;
-    }
+    // if (value == 0 && cartItemModifier.hasDefaultValue) {
+    //     return maxQuantity;
+    // }
     return value;
   }
 

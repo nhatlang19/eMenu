@@ -75,6 +75,9 @@ class CartState extends Equatable {
     List<String> lists = [];
     var seqNo = 1;
     for (CartItem cartItem in cartItems) {
+      if (cartItem.item.printStatus != '') {
+        continue;
+      }
       cartItem.segNo = seqNo++;
       lists.add(cartItem.toString());
 
@@ -86,6 +89,34 @@ class CartState extends Equatable {
     }
 
     return lists.join("\n");
+  }
+
+  String getStatus({bool isEdit = false})
+  {
+      String result = ContantOrder.Order.STATUS_DATATABLE_SEND_ALL;
+      if (cartItems.isEmpty)
+      {
+          result = ContantOrder.Order.STATUS_DATATABLE_NO_DATA;
+      }
+      else if (isEdit) {
+        bool isNew = false;
+        for (int i = cartItems.length - 1; !isNew && i >= 0; i--)
+        {
+          CartItem cartItem = cartItems[i];
+          if (!(cartItem.item.getPrintStatusStr() == Item.STATUS_CANCEL) && !(cartItem.item.getPrintStatusStr() == Item.STATUS_OLD)) {
+            isNew = true;
+          }
+        }
+
+        if (isNew) {
+            result = ContantOrder.Order.STATUS_DATATABLE_SEND_ALL;
+        }
+        else { // resend
+            result = ContantOrder.Order.STATUS_DATATABLE_RESEND;
+        }
+      }
+
+      return result;
   }
 
   @override

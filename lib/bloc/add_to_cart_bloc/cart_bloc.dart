@@ -3,6 +3,8 @@ import 'package:emenu/bloc/add_to_cart_bloc/dto/cart_item.dart';
 import 'package:emenu/bloc/add_to_cart_bloc/dto/cart_item_combo.dart';
 import 'package:emenu/bloc/add_to_cart_bloc/dto/cart_item_modifier.dart';
 import 'package:emenu/constants/item_combo_pack.dart';
+import 'package:emenu/constants/order.dart' as ContantOrder;
+import 'package:emenu/models/order.dart';
 import 'package:emenu/models/item.dart';
 import 'package:emenu/models/item_combo.dart';
 import 'package:emenu/models/item_modifier.dart';
@@ -306,9 +308,18 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       var settings = Settings();
       var setting = await settings.read();
       var cashier = await Global.getCashier();
+
       String posNo = setting.posId;
-      String orderNo = await _cartRepository.getNewOrderNumberByPOS(posNo);
-      String extNo = event.sendNewOrder == "1" ? "0" : "0";
+      String orderNo = "";
+      String extNo = "0";
+      if (event.isAddNew) {
+        orderNo = await _cartRepository.getNewOrderNumberByPOS(posNo);
+      } else {
+        posNo = event.order.getPos();
+        orderNo = event.order.getOrd();
+        extNo = event.order.getExt();
+      }
+      
       String dataTableString = state.getString();
       String splited = '0';
 

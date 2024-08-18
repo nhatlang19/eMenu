@@ -44,29 +44,31 @@ class CartItem {
     for (CartItemCombo cartItemCombo in cartItemComboList) {
       ItemCombo itemCombo = cartItemCombo.itemCombo;
       for (CartItemModifier cartItemModifier in cartItemCombo.cartItemModifierList) {
-        ItemModifier itemModifier = cartItemModifier.itemModifier;
-        Item item = Item(
-            itemCode: itemModifier.itemCode ?? '',
-            recptDesc: '*${itemModifier.modDesc ?? ''}',
-            itemType: 'M',
-            unitSellPrice: itemModifier.unitPrice ?? '0',
-            comboPack: itemCombo.modClass ?? ' ',
-            weightItem: '',
-            onPromotion: '',
-            promoPrice: '0',
-            discountable: '',
-            modifierInt: itemModifier.modCode,
-            masterCode: itemModifier.itemCode ?? ' ',
-            hidden: itemCombo.hidden,
-            promoCode: '',
-            promoClass: '0',
-            pkgPrice: '0',
-            pkgQty: '0',
-            pkgItems: '0',
-            blanket: '',
-            tax: '0');
+        if (cartItemModifier.quantity != 0) {
+          ItemModifier itemModifier = cartItemModifier.itemModifier;
+          Item item = Item(
+              itemCode: itemModifier.itemCode ?? '',
+              recptDesc: '*${itemModifier.modDesc ?? ''}',
+              itemType: 'M',
+              unitSellPrice: itemModifier.unitPrice ?? '0',
+              comboPack: itemCombo.modClass ?? ' ',
+              weightItem: '',
+              onPromotion: '',
+              promoPrice: '0',
+              discountable: '',
+              modifierInt: itemModifier.modCode,
+              masterCode: this.item.itemCode,
+              hidden: itemCombo.hidden,
+              promoCode: '',
+              promoClass: '0',
+              pkgPrice: '0',
+              pkgQty: '0',
+              pkgItems: '0',
+              blanket: '',
+              tax: this.item.tax);
 
-        cartItems.add(CartItem(item: item, qty: cartItemModifier.quantity));
+          cartItems.add(CartItem(item: item, qty: cartItemModifier.quantity));
+        }
       }
     }
 
@@ -81,7 +83,7 @@ class CartItem {
     result += ScreenUtil.convertDoubleToInt(item.getOrgPrice()) + SEPARATE; // orgPrice
     result += item.promoPrice + SEPARATE;
     result += ScreenUtil.convertDoubleToInt(total.toString()) + SEPARATE;
-    result += item.getComboPack() + SEPARATE; //itemType
+    result += (item.itemType ?? ' ') + SEPARATE; //itemType
     result += item.itemCode + SEPARATE;
     result += (item.modifierInt ?? '0') + SEPARATE;
     result += (item.masterCode ?? ' ') + SEPARATE;

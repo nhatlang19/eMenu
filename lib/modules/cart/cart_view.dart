@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:emenu/bloc/add_to_cart_bloc/cart_bloc.dart';
 import 'package:emenu/config/themes/app_colors.dart';
+import 'package:emenu/constants/order.dart';
 import 'package:emenu/modules/order/bloc/order_bloc.dart';
 import 'package:emenu/utils/screen_util.dart';
 import 'package:flutter/material.dart';
@@ -52,7 +53,7 @@ class _CartViewState extends State<CartView> {
                             final item = state.cartItems[index];
                             String title = "";
                             if (item.item.printStatus != '') {
-                              title += "# ";
+                              title += '${item.item.getPrintStatusStr()} ';
                             }
 
                             title += item.item.recptDesc;
@@ -152,17 +153,36 @@ class _CartViewState extends State<CartView> {
                                   8.0), // Optional padding around the button
                               child: OutlinedButton(
                                 onPressed: () {
+                                  String sendNewOrder = "0";
+                                  String reSendOrder = "0";
                                   var orderState = BlocProvider.of<OrderBloc>(context).state;
-                                  context.read<CartBloc>().add(SendOrder(
-                                    sendNewOrder: orderState.isAddNew ? "1" : "0",
-                                    reSendOrder: orderState.isAddNew ? "0" : "1",
-                                    typeLoad: orderState.isAddNew ? "NewOrder" : "EditOrder",
-                                    currTable: orderState.selectedTable.TableNo,
-                                    currTableGroup: orderState.selectedForGroup.TableNo,
-                                    noOfPerson: "1",
-                                    salesCode: orderState.selectedCode.code,
-                                    POSBizDate: ScreenUtil.getCurrentDate('yyyyMMdd')
-                                  ));
+                                  String status = state.getStatus(isEdit: !orderState.isAddNew);
+                                  if (status == Order.STATUS_DATATABLE_NO_DATA) {
+                                    ScaffoldMessenger.of(context)
+                                    ..hideCurrentSnackBar()
+                                    ..showSnackBar(
+                                      SnackBar(content: Text(status)),
+                                    );
+                                  } else {
+                                    if (status == Order.STATUS_DATATABLE_SEND_ALL) {
+                                      sendNewOrder = "1";
+                                    } else if (status == Order.STATUS_DATATABLE_RESEND) {
+                                      reSendOrder = "1"; 
+                                      // @TODO: need to confirm modal before resend
+                                    }
+                                    context.read<CartBloc>().add(SendOrder(
+                                      sendNewOrder: sendNewOrder,
+                                      reSendOrder: reSendOrder,
+                                      order: orderState.order,
+                                      isAddNew: orderState.isAddNew,
+                                      typeLoad: orderState.isAddNew ? "NewOrder" : "EditOrder",
+                                      currTable: orderState.selectedTable.TableNo,
+                                      currTableGroup: orderState.selectedForGroup.TableNo,
+                                      noOfPerson: "1",
+                                      salesCode: orderState.selectedCode.code,
+                                      POSBizDate: ScreenUtil.getCurrentDate('yyyyMMdd')
+                                    ));
+                                  }
                                 },
                                 style: OutlinedButton.styleFrom(
                                   side: BorderSide.none, // Remove the default border

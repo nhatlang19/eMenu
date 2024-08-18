@@ -6,6 +6,11 @@ part 'item.g.dart';
 
 @JsonSerializable()
 class Item extends Equatable {
+  // ignore: constant_identifier_names
+  static const String STATUS_OLD = "#";
+  // ignore: constant_identifier_names
+  static const String STATUS_CANCEL = "C";
+
   @JsonKey(name: 'ItemCode')
   final String itemCode;
   @JsonKey(name: 'ItemType')
@@ -167,5 +172,14 @@ class Item extends Equatable {
       return comboPack ?? '';
     }
     return '';
+  }
+
+  String getPrintStatusStr() {
+    if (printStatus!.isEmpty) {
+      return printStatus ?? '';
+    } else if (printStatus == '9') {
+      return Item.STATUS_CANCEL;
+    }
+    return Item.STATUS_OLD;
   }
 }
