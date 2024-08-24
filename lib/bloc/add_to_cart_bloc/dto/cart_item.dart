@@ -51,7 +51,7 @@ class CartItem {
               recptDesc: '*${itemModifier.modDesc ?? ''}',
               itemType: 'M',
               unitSellPrice: itemModifier.unitPrice ?? '0',
-              comboPack: itemCombo.modClass ?? ' ',
+              comboPack: itemCombo.modClass ?? '      ',
               weightItem: '',
               onPromotion: '',
               promoPrice: '0',
@@ -83,7 +83,7 @@ class CartItem {
     result += ScreenUtil.convertDoubleToInt(item.getOrgPrice()) + SEPARATE; // orgPrice
     result += item.promoPrice + SEPARATE;
     result += ScreenUtil.convertDoubleToInt(total.toString()) + SEPARATE;
-    result += (item.itemType ?? ' ') + SEPARATE; //itemType
+    result += item.getItemType() + SEPARATE; //itemType
     result += item.itemCode + SEPARATE;
     result += (item.modifierInt ?? '0') + SEPARATE;
     result += (item.masterCode ?? ' ') + SEPARATE;

@@ -182,4 +182,11 @@ class Item extends Equatable {
     }
     return Item.STATUS_OLD;
   }
+
+  String getItemType() {
+    if (itemType == null) {
+      return getComboPack();
+    }
+    return itemType ?? ' ';
+  }
 }
