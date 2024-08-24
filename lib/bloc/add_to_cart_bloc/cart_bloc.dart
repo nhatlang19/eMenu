@@ -356,8 +356,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         emit(state.copyWith(status: CartStatus.sendOrderSuccess));
       } else {
         emit(state.copyWith(status: CartStatus.sendOrderFail, errorMessage: 'Bị lỗi khi gửi đơn hàng'));
-        emit(state.copyWith(status: CartStatus.sendOrderInitial, errorMessage: ''));
       }
+      emit(state.copyWith(status: CartStatus.sendOrderInitial, errorMessage: ''));
     } catch (e) {
       emit(state.copyWith(status: CartStatus.sendOrderFail, errorMessage: e.toString()));
       emit(state.copyWith(status: CartStatus.sendOrderInitial, errorMessage: ''));

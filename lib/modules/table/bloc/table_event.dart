@@ -13,6 +13,9 @@ class FetchTable extends TableEvent {
   const FetchTable({required this.section});
 }
 
+class RefreshFetchTable extends TableEvent {
+  const RefreshFetchTable();
+}
 
 class ChangeSelectGroup extends TableEvent {
   final Table group;

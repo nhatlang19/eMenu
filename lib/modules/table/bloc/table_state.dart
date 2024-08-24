@@ -1,6 +1,6 @@
 part of 'table_bloc.dart';
 
-enum TableStatus { initial, success, failure, changed }
+enum TableStatus { initial, success, failure, changed, refresh }
 
 final class TableState extends Equatable {
   const TableState({
@@ -8,13 +8,14 @@ final class TableState extends Equatable {
     this.tables = const <Table>[],
     this.selectedForGroup = Table.empty,
     this.isAddNew = true,
-    this.table = Table.empty
+    this.table = Table.empty,
+    this.currentSection = "",
   });
 
   final TableStatus status;
   final List<Table> tables;
   final Table selectedForGroup;
-
+  final String currentSection;
   final bool isAddNew;
   final Table table;
 
@@ -24,6 +25,7 @@ final class TableState extends Equatable {
     Table? selectedForGroup,
     bool? isAddNew,
     Table? table,
+    String? currentSection,
   }) {
     return TableState(
       status: status ?? this.status,
@@ -31,8 +33,9 @@ final class TableState extends Equatable {
       selectedForGroup: selectedForGroup ?? this.selectedForGroup,
       isAddNew: isAddNew ?? this.isAddNew,
       table: table ?? this.table,
+      currentSection: currentSection ?? this.currentSection,
     );
   }
   @override
-  List<Object> get props => [status, tables, selectedForGroup, isAddNew, selectedForGroup, table];
+  List<Object> get props => [status, tables, selectedForGroup, isAddNew, selectedForGroup, table, currentSection];
 }

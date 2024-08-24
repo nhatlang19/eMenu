@@ -2,6 +2,7 @@ import 'package:emenu/config/themes/app_button_styles.dart';
 import 'package:emenu/config/themes/app_text_styles.dart';
 import 'package:emenu/modules/order/bloc/order_bloc.dart';
 import 'package:emenu/modules/table/bloc/salescode_bloc.dart';
+import 'package:emenu/modules/table/bloc/section_bloc.dart';
 import 'package:emenu/modules/table/bloc/table_bloc.dart';
 import 'package:emenu/modules/table/widgets/bill_dropdown.dart';
 import 'package:emenu/modules/table/widgets/group_dropdown.dart';
@@ -12,11 +13,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:emenu/models/table.dart' as MyTable;
 
-class TableGrid extends StatelessWidget {
+class TableGrid extends StatefulWidget {
   const TableGrid({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  State<TableGrid> createState() => _TableGridState();
+}
+
+class _TableGridState extends State<TableGrid> {
+  @override
+  Widget build(BuildContext buildContext) {
+    final tableBloc = context.read<TableBloc>();
     return BlocListener<OrderBloc, OrderState>(
       listener: (context, state) {
         if (state.status == OrderStatus.success) {
@@ -29,14 +36,7 @@ class TableGrid extends StatelessWidget {
           } else if (state.orders.length == 1) {
             var tableState = context.read<TableBloc>().state;
             var salesCodeState = context.read<SalesCodeBloc>().state;
-            Navigator.pushNamed(context, 'OrderPage',
-                arguments: <String, dynamic>{
-                  "tableGroup": tableState.selectedForGroup,
-                  "tableStatus": tableState.isAddNew,
-                  "selectedTable": tableState.table,
-                  "selectedCode": salesCodeState.selectedCode,
-                  "order": state.order
-                });
+            navigateOrder(context, tableState, salesCodeState, state, tableBloc);
           } else {
             var tableState = context.read<TableBloc>().state;
             _showSelectBillDialog(context, tableState.table);
@@ -44,7 +44,7 @@ class TableGrid extends StatelessWidget {
         }
       },
       child: BlocBuilder<TableBloc, TableState>(
-        buildWhen: (previous, current) => previous.status != current.status || current.status == TableStatus.initial,
+        buildWhen: (previous, current) => (previous.status != current.status && current.status == TableStatus.success) || current.status == TableStatus.refresh,
         builder: (context, state) {
           return Expanded(
               child: Padding(
@@ -158,14 +158,8 @@ class TableGrid extends StatelessWidget {
                           var tableState = parentContext.read<TableBloc>().state;
                           var salesCodeState = parentContext.read<SalesCodeBloc>().state;
                           var orderState = parentContext.read<OrderBloc>().state;
-                          Navigator.pushNamed(context, 'OrderPage',
-                              arguments: <String, dynamic>{
-                                "tableGroup": tableState.selectedForGroup,
-                                "tableStatus": tableState.isAddNew,
-                                "selectedTable": tableState.table,
-                                "selectedCode": salesCodeState.selectedCode,
-                                "order": orderState.order
-                              });
+                          var tableBloc = parentContext.read<TableBloc>();
+                          navigateOrder(context, tableState, salesCodeState, orderState, tableBloc);
                         },
                         child: const Text('OK'),
                       ),
@@ -247,14 +241,8 @@ class TableGrid extends StatelessWidget {
                             Navigator.of(context).pop();
                             var salesCodeState = parentContext.read<SalesCodeBloc>().state;
                             var orderState = parentContext.read<OrderBloc>().state;
-                            Navigator.pushNamed(context, 'OrderPage',
-                                arguments: <String, dynamic>{
-                                  "tableGroup": tableState.selectedForGroup,
-                                  "tableStatus": tableState.isAddNew,
-                                  "selectedTable": tableState.table,
-                                  "selectedCode": salesCodeState.selectedCode,
-                                  "order": orderState.order
-                                });
+                            var tableBloc = parentContext.read<TableBloc>();
+                            navigateOrder(context, tableState, salesCodeState, orderState, tableBloc);
                           } else {
                             var posBizDate = ScreenUtil.getCurrentDate('yyyyMMdd');
                             parentContext.read<OrderBloc>().add(FetchOrders(posBizDate: posBizDate,currentTable: tableState.table.TableNo));
@@ -272,5 +260,23 @@ class TableGrid extends StatelessWidget {
         );
       },
     );
+  }
+
+  Future<void> navigateOrder(context, tableState, salesCodeState, orderState, tableBloc) async {
+    final result = await Navigator.pushNamed(context, 'OrderPage',
+        arguments: <String, dynamic>{
+          "tableGroup": tableState.selectedForGroup,
+          "tableStatus": tableState.isAddNew,
+          "selectedTable": tableState.table,
+          "selectedCode": salesCodeState.selectedCode,
+          "tableSection": tableState.currentSection,
+          "order": orderState.order
+        });
+
+    if (result != null) {
+      if  (result == "REFRESH_TABLE") {
+        tableBloc.add(const RefreshFetchTable());
+      }
+    }
   }
 }

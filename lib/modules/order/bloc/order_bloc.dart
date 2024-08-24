@@ -21,6 +21,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     emit(state.copyWith(selectedForGroup: event.selectedForGroup
                         , status: OrderStatus.initOrder
                         , isAddNew: event.isAddNew
+                        , tableSection: event.tableSection
                         , order: event.order
                         , selectedTable: event.selectedTable
                         , selectedCode: event.selectedCode));

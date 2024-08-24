@@ -4,6 +4,8 @@ import 'package:emenu/bloc/add_to_cart_bloc/cart_bloc.dart';
 import 'package:emenu/config/themes/app_colors.dart';
 import 'package:emenu/constants/order.dart';
 import 'package:emenu/modules/order/bloc/order_bloc.dart';
+import 'package:emenu/modules/table/bloc/section_bloc.dart';
+import 'package:emenu/modules/table/bloc/table_bloc.dart';
 import 'package:emenu/utils/screen_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,6 +28,11 @@ class _CartViewState extends State<CartView> {
             ..showSnackBar(
               SnackBar(content: Text(state.errorMessage)),
             );
+        } else if (state.status == CartStatus.sendOrderSuccess) {
+          context.read<CartBloc>().add(ResetCart());
+          if (Navigator.canPop(context)) {
+            Navigator.of(context).pop("REFRESH_TABLE");
+          }
         }
       },
       child: BlocBuilder<CartBloc, CartState>(
@@ -58,83 +65,89 @@ class _CartViewState extends State<CartView> {
 
                             title += item.item.recptDesc;
 
-                            final subTitle = item.cartItemComboList.isNotEmpty ? '${item.getTitle()} \n ${ScreenUtil.formatPrice(item.item.getOrgPrice())} VND' : '${ScreenUtil.formatPrice(item.item.getOrgPrice())} VND';
-                            return ListTile(
-                              isThreeLine: item.cartItemComboList.isNotEmpty,
-                              title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-                              subtitle: Text(subTitle, style: const TextStyle(fontWeight: FontWeight.w400)),
-                              trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Container(
-                                    width: 30,
-                                    margin: const EdgeInsets.only(top: 13, bottom: 13),
-                                    decoration: const BoxDecoration(
-                                      border: Border(
-                                        left: BorderSide(color: Colors.grey, width: 1.0),
-                                        top: BorderSide(color: Colors.grey, width: 1.0),
-                                        bottom: BorderSide(color: Colors.grey, width: 1.0),
-                                      ),
-                                      borderRadius: BorderRadius.only(topLeft: Radius.circular(5), bottomLeft: Radius.circular(5)),
-                                    ),
-                                    child: IconButton(
-                                      icon: const Icon(Icons.remove, size: 15),
-                                      onPressed: () {
-                                        context.read<CartBloc>().add(Decrease(position: index));
-                                      },
+                            final subTitle = item.cartItemComboList.isNotEmpty ? item.getTitle() : '';
+                            final pricing = '${ScreenUtil.formatPrice(item.item.getOrgPrice())} VND';
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: 
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+                                        item.cartItemComboList.isNotEmpty ? Text(subTitle) : SizedBox(height: 0,),
+                                        Row(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(pricing),
+                                            Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Container(
+                                                  width: 30,
+                                                  decoration: const BoxDecoration(
+                                                    border: Border(
+                                                      left: BorderSide(color: Colors.grey, width: 1.0),
+                                                      top: BorderSide(color: Colors.grey, width: 1.0),
+                                                      bottom: BorderSide(color: Colors.grey, width: 1.0),
+                                                    ),
+                                                    borderRadius: BorderRadius.only(topLeft: Radius.circular(5), bottomLeft: Radius.circular(5)),
+                                                  ),
+                                                  child: IconButton(
+                                                    icon: const Icon(Icons.remove, size: 15),
+                                                    onPressed: () {
+                                                      context.read<CartBloc>().add(Decrease(position: index));
+                                                    },
+                                                  ),
+                                                ),
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                    border: Border.all(color: Colors.grey),
+                                                    borderRadius: BorderRadius.circular(0),
+                                                  ),
+                                                  width: 40,
+                                                  child: TextField(
+                                                    decoration: const InputDecoration(
+                                                      border: InputBorder.none, // Remove underline border
+                                                      contentPadding: EdgeInsets.symmetric(vertical: 11.0, horizontal: 0.0),
+                                                    ),
+                                                    textAlign: TextAlign.center,
+                                                    textAlignVertical:TextAlignVertical.center,
+                                                    keyboardType: TextInputType.number,
+                                                    controller: TextEditingController(text: item.qty.toString()),
+                                                    onChanged: (newValue) {
+                                                      final newQuantity =int.tryParse(newValue);
+                                                      if (newQuantity != null && newQuantity > 0) {
+                                                        context.read<CartBloc>().add(UpdateQuantity(position: index, value: newQuantity));
+                                                      }
+                                                    },
+                                                  ),
+                                                ),
+                                                Container(
+                                                  width: 30,
+                                                  decoration: const BoxDecoration(
+                                                    border: Border(
+                                                      right: BorderSide(color: Colors.grey, width: 1.0),
+                                                      top: BorderSide(color: Colors.grey, width: 1.0),
+                                                      bottom: BorderSide(color: Colors.grey, width: 1.0),
+                                                    ),
+                                                    borderRadius: BorderRadius.only(topRight: Radius.circular(5), bottomRight: Radius.circular(5)),
+                                                  ),
+                                                  child: IconButton(
+                                                    icon: const Icon(Icons.add, size: 15),
+                                                    onPressed: () {
+                                                      context.read<CartBloc>().add(Increase(position: index));
+                                                    },
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.grey),
-                                      borderRadius: BorderRadius.circular(0),
-                                    ),
-                                    width: 40,
-                                    margin:EdgeInsets.only(top: 13, bottom: 13),
-                                    child: TextField(
-                                      decoration: const InputDecoration(
-                                        border: InputBorder.none, // Remove underline border
-                                        contentPadding: EdgeInsets.symmetric(vertical: 11.0, horizontal: 0.0),
-                                      ),
-                                      textAlign: TextAlign.center,
-                                      textAlignVertical:TextAlignVertical.center,
-                                      keyboardType: TextInputType.number,
-                                      controller: TextEditingController(text: item.qty.toString()),
-                                      onChanged: (newValue) {
-                                        final newQuantity =int.tryParse(newValue);
-                                        if (newQuantity != null && newQuantity > 0) {
-                                          context.read<CartBloc>().add(UpdateQuantity(position: index, value: newQuantity));
-                                        }
-                                      },
-                                    ),
-                                  ),
-                                  Container(
-                                    width: 30,
-                                    margin: const EdgeInsets.only(top: 13, bottom: 13),
-                                    decoration: const BoxDecoration(
-                                      border: Border(
-                                        right: BorderSide(color: Colors.grey, width: 1.0),
-                                        top: BorderSide(color: Colors.grey, width: 1.0),
-                                        bottom: BorderSide(color: Colors.grey, width: 1.0),
-                                      ),
-                                      borderRadius: BorderRadius.only(topRight: Radius.circular(5), bottomRight: Radius.circular(5)),
-                                    ),
-                                    child: IconButton(
-                                      icon: const Icon(Icons.add, size: 15),
-                                      onPressed: () {
-                                        context.read<CartBloc>().add(Increase(position: index));
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              onTap: () {
-                                // Handle item tap
-                                // context.read<MenuBloc>().add(ChangeMenu(menu: menu));
-                                // context.read<SubMenuBloc>().add(FetchSubmenu(
-                                //     selectedPosMenu: menu.defaultValue,
-                                //     posGroup: state.posGroup));
-                              },
                             );
                           },
                         ),

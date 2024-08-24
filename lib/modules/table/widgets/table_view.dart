@@ -35,8 +35,7 @@ class _TableViewState extends State<TableView> {
                 Expanded(flex: 1,
                   child: InkWell(
                     onTap: () {
-                      var sectionState = context.read<SectionBloc>().state;
-                      context.read<TableBloc>().add(FetchTable(section: sectionState.sections.first.section));
+                      context.read<TableBloc>().add(RefreshFetchTable());
                     },
                     splashColor: Colors.blue, // splash color on tap
                     child: Container(

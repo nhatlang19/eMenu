@@ -10,6 +10,7 @@ final class OrderState extends Equatable {
   final Table selectedTable;
   final SalesCode selectedCode;
   final OrderStatus status;
+  final String tableSection;
 
   const OrderState({
     this.selectedForGroup = Table.empty,
@@ -19,6 +20,7 @@ final class OrderState extends Equatable {
     this.orders = const <Order>[],
     this.order = Order.empty,
     this.status = OrderStatus.initial,
+    this.tableSection = "",
   });
 
   OrderState copyWith({
@@ -28,7 +30,8 @@ final class OrderState extends Equatable {
     Table? selectedForGroup,
     bool? isAddNew,
     Table? selectedTable,
-    SalesCode? selectedCode
+    SalesCode? selectedCode,
+    String? tableSection,
   }) {
     return OrderState(
       status: status ?? this.status,
@@ -37,11 +40,12 @@ final class OrderState extends Equatable {
       selectedForGroup: selectedForGroup ?? this.selectedForGroup,
       isAddNew: isAddNew ?? this.isAddNew,
       selectedTable: selectedTable ?? this.selectedTable,
-      selectedCode: selectedCode ?? this.selectedCode
+      selectedCode: selectedCode ?? this.selectedCode,
+      tableSection: tableSection ?? this.tableSection
     );
   }
 
   @override
-  List<Object> get props => [orders, order, selectedForGroup, isAddNew, selectedTable, selectedCode, status];
+  List<Object> get props => [orders, order, selectedForGroup, isAddNew, selectedTable, selectedCode, status, tableSection];
 }
 
