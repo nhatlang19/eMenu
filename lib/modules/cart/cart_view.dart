@@ -5,8 +5,6 @@ import 'package:emenu/bloc/add_to_cart_bloc/dto/cart_item.dart';
 import 'package:emenu/config/themes/app_colors.dart';
 import 'package:emenu/constants/order.dart';
 import 'package:emenu/modules/order/bloc/order_bloc.dart';
-import 'package:emenu/modules/table/bloc/section_bloc.dart';
-import 'package:emenu/modules/table/bloc/table_bloc.dart';
 import 'package:emenu/utils/screen_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -53,8 +51,8 @@ class _CartViewState extends State<CartView> {
                         child: Table(
                           // border: TableBorder, // Adds borders to the table
                           columnWidths: {
-                            0: FlexColumnWidth(2), // Column 0 will take twice the space of column 1
-                            1: FlexColumnWidth(1), 
+                            0: FlexColumnWidth(1.5), // Column 0 will take twice the space of column 1
+                            1: FlexColumnWidth(0.5), 
                             2: FlexColumnWidth(1), 
                             3: FlexColumnWidth(1), 
                             4: FlexColumnWidth(1), 
@@ -72,14 +70,18 @@ class _CartViewState extends State<CartView> {
                               child: Table(
                                 // border: TableBorder, // Adds borders to the table
                                 columnWidths: {
-                                  0: FlexColumnWidth(2), // Column 0 will take twice the space of column 1
-                                  1: FlexColumnWidth(1), 
+                                  0: FlexColumnWidth(1.5), // Column 0 will take twice the space of column 1
+                                  1: FlexColumnWidth(0.5), 
                                   2: FlexColumnWidth(1), 
                                   3: FlexColumnWidth(1), 
                                   4: FlexColumnWidth(1), 
                                 },
                                 children: [
-                                  ...state.cartItems.map((data) => _buildDataRow(data)).toList(),
+                                  ...state.cartItems.asMap().entries.map((entry) {
+                                    int index = entry.key;
+                                    CartItem data = entry.value;
+                                    return _buildDataRow(index, data);
+                                  }),
                                 ]
                               ),
                             ),
@@ -159,7 +161,7 @@ class _CartViewState extends State<CartView> {
     return TableCell(
       child: Padding(
               padding: padding,
-              child: Text(text, style: TextStyle(fontWeight: FontWeight.bold)),
+              child: Text(text, style: const TextStyle(fontWeight: FontWeight.bold)),
             ),
     );
   }
@@ -179,15 +181,71 @@ class _CartViewState extends State<CartView> {
         _buildTableCellText('S/L'),
         _buildTableCellText('Đơn giá'),
         _buildTableCellText('Trạng thái'),
+        _buildTableCellText(''),
       ],
     );
   }
 
-  TableRow _buildDataRow(CartItem item) {
+  _buildControl(int index, {hideIncrease = false}) {
+    BorderRadius border = BorderRadius.only(topLeft: Radius.circular(5), bottomLeft: Radius.circular(5));
+    if (hideIncrease) {
+      border = BorderRadius.all(Radius.circular(5));
+    }
+    return TableCell(
+      child: Expanded(
+        child: Padding(
+                padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 50,
+                      decoration: BoxDecoration(
+                        border: const Border(
+                          left: BorderSide(color: Colors.grey, width: 1.0),
+                          top: BorderSide(color: Colors.grey, width: 1.0),
+                          bottom: BorderSide(color: Colors.grey, width: 1.0),
+                          right: BorderSide(color: Colors.grey, width: 1.0),
+                        ),
+                        borderRadius: border,
+                      ),
+                      child: IconButton(
+                        icon: Icon(!hideIncrease ? Icons.remove : Icons.close, size: 15),
+                        onPressed: () {
+                          context.read<CartBloc>().add(Decrease(position: index));
+                        },
+                      ),
+                    ),
+                    !hideIncrease ? Container(
+                      width: 50,
+                      decoration: const BoxDecoration(
+                        border: Border(
+                          top: BorderSide(color: Colors.grey, width: 1.0),
+                          bottom: BorderSide(color: Colors.grey, width: 1.0),
+                          right: BorderSide(color: Colors.grey, width: 1.0),
+                        ),
+                        borderRadius: BorderRadius.only(topRight: Radius.circular(5), bottomRight: Radius.circular(5)),
+                      ),
+                      child: IconButton(
+                        icon: const Icon(Icons.add, size: 15),
+                        onPressed: () {
+                          context.read<CartBloc>().add(Increase(position: index));
+                        },
+                      ),
+                    ) : SizedBox(),
+                  ],
+                ),
+              ),
+      ),
+    );
+  }
+
+  TableRow _buildDataRow(int index, CartItem item) {
     String title = item.item.recptDesc;
     String qty = item.qty.toString();
     String pricing = '${ScreenUtil.formatPrice(item.item.getOrgPrice())} đ';
     String status = item.item.getPrintStatusStr();
+    final hideIncrease = item.item.comboPack == "C";
     return TableRow(
       decoration: const BoxDecoration(
         border: Border(
@@ -201,7 +259,8 @@ class _CartViewState extends State<CartView> {
         _buildTableCellText(title),
         _buildTableCellText(qty),
         _buildTableCellText(pricing),
-        _buildTableCellText(status),
+        _buildTableCellText(status, ),
+        item.item.getItemType() != "M" ? _buildControl(index, hideIncrease: hideIncrease) : const TableCell(child: SizedBox()),
       ],
     );
   }

@@ -16,10 +16,12 @@ class Setting {
   final String type;
   @JsonKey(name: 'vat')
   final String vat;
+  @JsonKey(name: 'isCashier')
+  final String isCashier;
 
   @override
   List<Object> get props =>
-      [serverIP, posGroup, posId, type, storeNo, vat];
+      [serverIP, posGroup, posId, type, storeNo, vat, isCashier];
 
   const Setting(
       {required this.serverIP,
@@ -27,13 +29,15 @@ class Setting {
       required this.posId,
       required this.type,
       required this.storeNo,
-      required this.vat});
+      required this.vat,
+      required this.isCashier
+  });
 
   static const empty = Setting(serverIP: '',
       posGroup: '',
       posId: '',
       type: '',
-      storeNo: '', vat: '');
+      storeNo: '', vat: '', isCashier: '0');
 
   factory Setting.fromJson(Map<String, dynamic> json) =>
       _$SettingFromJson(json);
@@ -44,6 +48,7 @@ class Setting {
         'posId': posId,
         'type': type,
         'storeNo': storeNo,
-        'vat': vat
+        'vat': vat,
+        'isCashier': isCashier
       };
 }

@@ -17,6 +17,7 @@ class _SettingPageState extends State<SettingPage> {
   final _posGroupController = TextEditingController();
   final _posIdController = TextEditingController();
   final _vatController = TextEditingController();
+  final _isCashierController = TextEditingController();
   final _typeController = TextEditingController();
   final _sectionController = TextEditingController();
 
@@ -31,6 +32,7 @@ class _SettingPageState extends State<SettingPage> {
     _sectionController.dispose();
     _storeNoController.dispose();
     _vatController.dispose();
+    _isCashierController.dispose();
     super.dispose();
   }
 
@@ -51,6 +53,7 @@ class _SettingPageState extends State<SettingPage> {
     _typeController.text = setting.type;
     _storeNoController.text = setting.storeNo;
     _vatController.text = setting.vat;
+    _isCashierController.text = setting.isCashier;
   }
 
   void _save() async {
@@ -63,7 +66,8 @@ class _SettingPageState extends State<SettingPage> {
           posId: _posIdController.text,
           type: _typeController.text,
           storeNo: _storeNoController.text,
-          vat: _vatController.text);
+          vat: _vatController.text,
+          isCashier: _isCashierController.text);
       var settings = Settings();
       await settings.write(setting);
 
@@ -125,6 +129,13 @@ class _SettingPageState extends State<SettingPage> {
               TextFormField(
                 controller: _vatController,
                 decoration: InputDecoration(labelText: 'VAT'),
+                validator: (value) {
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: _isCashierController,
+                decoration: InputDecoration(labelText: 'Cashier'),
                 validator: (value) {
                   return null;
                 },

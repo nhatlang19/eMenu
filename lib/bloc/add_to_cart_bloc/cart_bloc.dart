@@ -176,9 +176,16 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       } else {
         CartItem cartItemTmp = state.cartItemTmp;
         cartItemTmp.segNo = state.cartItems.length + 1;
+        var childCartItems = cartItemTmp.convertChildToCartItems();
+        cartItemTmp.cartItemComboList = [];
 
-        final data = List<CartItem>.from(state.cartItems)..add(cartItemTmp);
-        double total = data.fold(
+        final lists = List<CartItem>.from(state.cartItems);
+        lists.add(cartItemTmp);
+        for (CartItem child in childCartItems) {
+          lists.add(child);
+        }
+        // final data = List<CartItem>.from(state.cartItems)..add(cartItemTmp);
+        double total = lists.fold(
             0,
             (tot, item) =>
                 tot.toDouble() +
@@ -186,7 +193,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
                     double.parse(item.item.promoPrice)));
         emit(state.copyWith(
             cartItemTmp: CartItem.empty,
-            cartItems: data,
+            cartItems: lists,
             errorMessage: '',
             status: CartStatus.success,
             total: total,
@@ -229,12 +236,24 @@ class CartBloc extends Bloc<CartEvent, CartState> {
 
   void _onDecrease(Decrease event, Emitter<CartState> emit) {
     emit(state.copyWith(status: CartStatus.initial));
-    var item = state.cartItems[event.position];
+    final lists = state.cartItems;
+    var item = lists[event.position];
     if (item.qty > 1) {
-      state.cartItems[event.position].qty -= 1;
-      state.cartItems[event.position].updateData();
+      lists[event.position].qty -= 1;
+      lists[event.position].updateData();
     } else {
-      state.cartItems.removeAt(event.position);
+      final isCombo = lists[event.position].item.comboPack == "C";
+      lists.removeAt(event.position);
+      if (isCombo) {
+        var position = event.position;
+        do {
+          if (position < lists.length && lists[position].item.getItemType() == "M") {
+            lists.removeAt(position);
+          } else {
+            break;
+          }
+        } while (true);
+      }
     }
     double total = state.cartItems.fold(
         0,
@@ -243,7 +262,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
             (double.parse(item.item.getOrgPrice()) * item.qty -
                 double.parse(item.item.promoPrice)));
     emit(state.copyWith(
-        cartItems: state.cartItems,
+        cartItems: lists,
         status: CartStatus.updatedQuantity,
         total: total));
     emit(state.copyWith(status: CartStatus.initial));
