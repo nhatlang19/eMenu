@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:emenu/bloc/add_to_cart_bloc/cart_bloc.dart';
+import 'package:emenu/bloc/add_to_cart_bloc/dto/cart_item.dart';
 import 'package:emenu/config/themes/app_colors.dart';
 import 'package:emenu/constants/order.dart';
 import 'package:emenu/modules/order/bloc/order_bloc.dart';
@@ -47,163 +48,101 @@ class _CartViewState extends State<CartView> {
                 color: Colors.white70,
                 child: Column(
                   children: [
-                    Expanded(
-                      flex: 1,
-                      child: Expanded(
-                          child: MediaQuery.removePadding(
-                        context: context,
-                        removeTop: true,
-                        removeBottom: true,
-                        child: ListView.builder(
-                          itemCount: state.cartItems.length,
-                          itemBuilder: (context, index) {
-                            final item = state.cartItems[index];
-                            String title = "";
-                            if (item.item.printStatus != '') {
-                              title += '${item.item.getPrintStatusStr()} ';
-                            }
-
-                            title += item.item.recptDesc;
-
-                            final subTitle = item.cartItemComboList.isNotEmpty ? item.getTitle() : '';
-                            final pricing = '${ScreenUtil.formatPrice(item.item.getOrgPrice())} VND';
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: 
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-                                        item.cartItemComboList.isNotEmpty ? Text(subTitle) : SizedBox(height: 0,),
-                                        Row(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(pricing),
-                                            Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Container(
-                                                  width: 30,
-                                                  decoration: const BoxDecoration(
-                                                    border: Border(
-                                                      left: BorderSide(color: Colors.grey, width: 1.0),
-                                                      top: BorderSide(color: Colors.grey, width: 1.0),
-                                                      bottom: BorderSide(color: Colors.grey, width: 1.0),
-                                                    ),
-                                                    borderRadius: BorderRadius.only(topLeft: Radius.circular(5), bottomLeft: Radius.circular(5)),
-                                                  ),
-                                                  child: IconButton(
-                                                    icon: const Icon(Icons.remove, size: 15),
-                                                    onPressed: () {
-                                                      context.read<CartBloc>().add(Decrease(position: index));
-                                                    },
-                                                  ),
-                                                ),
-                                                Container(
-                                                  decoration: BoxDecoration(
-                                                    border: Border.all(color: Colors.grey),
-                                                    borderRadius: BorderRadius.circular(0),
-                                                  ),
-                                                  width: 40,
-                                                  child: TextField(
-                                                    decoration: const InputDecoration(
-                                                      border: InputBorder.none, // Remove underline border
-                                                      contentPadding: EdgeInsets.symmetric(vertical: 11.0, horizontal: 0.0),
-                                                    ),
-                                                    textAlign: TextAlign.center,
-                                                    textAlignVertical:TextAlignVertical.center,
-                                                    keyboardType: TextInputType.number,
-                                                    controller: TextEditingController(text: item.qty.toString()),
-                                                    onChanged: (newValue) {
-                                                      final newQuantity =int.tryParse(newValue);
-                                                      if (newQuantity != null && newQuantity > 0) {
-                                                        context.read<CartBloc>().add(UpdateQuantity(position: index, value: newQuantity));
-                                                      }
-                                                    },
-                                                  ),
-                                                ),
-                                                Container(
-                                                  width: 30,
-                                                  decoration: const BoxDecoration(
-                                                    border: Border(
-                                                      right: BorderSide(color: Colors.grey, width: 1.0),
-                                                      top: BorderSide(color: Colors.grey, width: 1.0),
-                                                      bottom: BorderSide(color: Colors.grey, width: 1.0),
-                                                    ),
-                                                    borderRadius: BorderRadius.only(topRight: Radius.circular(5), bottomRight: Radius.circular(5)),
-                                                  ),
-                                                  child: IconButton(
-                                                    icon: const Icon(Icons.add, size: 15),
-                                                    onPressed: () {
-                                                      context.read<CartBloc>().add(Increase(position: index));
-                                                    },
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                            );
+                      Padding(
+                        padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 8.0),
+                        child: Table(
+                          // border: TableBorder, // Adds borders to the table
+                          columnWidths: {
+                            0: FlexColumnWidth(2), // Column 0 will take twice the space of column 1
+                            1: FlexColumnWidth(1), 
+                            2: FlexColumnWidth(1), 
+                            3: FlexColumnWidth(1), 
+                            4: FlexColumnWidth(1), 
                           },
+                          children: [
+                            _buildHeaderTable(),
+                          ]
                         ),
-                      )),
-                    ),
+                      ),
+                      Expanded(
+                        child: SingleChildScrollView(
+                            scrollDirection: Axis.vertical,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+                              child: Table(
+                                // border: TableBorder, // Adds borders to the table
+                                columnWidths: {
+                                  0: FlexColumnWidth(2), // Column 0 will take twice the space of column 1
+                                  1: FlexColumnWidth(1), 
+                                  2: FlexColumnWidth(1), 
+                                  3: FlexColumnWidth(1), 
+                                  4: FlexColumnWidth(1), 
+                                },
+                                children: [
+                                  ...state.cartItems.map((data) => _buildDataRow(data)).toList(),
+                                ]
+                              ),
+                            ),
+                          ),
+                      ),
                     Container(
-                      color: AppColors.lightBlue,
+                      color: AppColors.mainBlack,
                       child: Padding(
-                        padding: EdgeInsets.all(Platform.isAndroid ? 1.0 : 0.0),
+                        padding: const EdgeInsets.all(8.0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const SizedBox(),
-                            Container(
-                              padding: const EdgeInsets.all(
-                                  8.0), // Optional padding around the button
-                              child: OutlinedButton(
-                                onPressed: () {
-                                  String sendNewOrder = "0";
-                                  String reSendOrder = "0";
-                                  var orderState = BlocProvider.of<OrderBloc>(context).state;
-                                  String status = state.getStatus(isEdit: !orderState.isAddNew);
-                                  if (status == Order.STATUS_DATATABLE_NO_DATA) {
-                                    ScaffoldMessenger.of(context)
-                                    ..hideCurrentSnackBar()
-                                    ..showSnackBar(
-                                      SnackBar(content: Text(status)),
-                                    );
-                                  } else {
-                                    if (status == Order.STATUS_DATATABLE_SEND_ALL) {
-                                      sendNewOrder = "1";
-                                    } else if (status == Order.STATUS_DATATABLE_RESEND) {
-                                      reSendOrder = "1"; 
-                                      // @TODO: need to confirm modal before resend
-                                    }
-                                    context.read<CartBloc>().add(SendOrder(
-                                      sendNewOrder: sendNewOrder,
-                                      reSendOrder: reSendOrder,
-                                      order: orderState.order,
-                                      isAddNew: orderState.isAddNew,
-                                      typeLoad: orderState.isAddNew ? "NewOrder" : "EditOrder",
-                                      currTable: orderState.selectedTable.TableNo,
-                                      currTableGroup: orderState.selectedForGroup.TableNo,
-                                      noOfPerson: "1",
-                                      salesCode: orderState.selectedCode.code,
-                                      POSBizDate: ScreenUtil.getCurrentDate('yyyyMMdd')
-                                    ));
-                                  }
-                                },
-                                style: OutlinedButton.styleFrom(
-                                  side: BorderSide.none, // Remove the default border
-                                  padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0), // Button padding
-                                ),
-                                child: const Text('SEND ORDER', style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold, color: Colors.white)),
+                            Expanded(
+                              child: Text('Tạm tính: $total đ',
+                                    style: const TextStyle(
+                                        fontSize: 24.0,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white)),
+                            ),
+                            Expanded(
+                              child: Container(
+                                color: AppColors.mainRed,
+                                child: OutlinedButton(
+                                    onPressed: () {
+                                      String sendNewOrder = "0";
+                                      String reSendOrder = "0";
+                                      var orderState = BlocProvider.of<OrderBloc>(context).state;
+                                      String status = state.getStatus(isEdit: !orderState.isAddNew);
+                                      if (status == Order.STATUS_DATATABLE_NO_DATA) {
+                                        ScaffoldMessenger.of(context)
+                                        ..hideCurrentSnackBar()
+                                        ..showSnackBar(
+                                          SnackBar(content: Text(status)),
+                                        );
+                                      } else {
+                                        if (status == Order.STATUS_DATATABLE_SEND_ALL) {
+                                          sendNewOrder = "1";
+                                        } else if (status == Order.STATUS_DATATABLE_RESEND) {
+                                          reSendOrder = "1"; 
+                                          // @TODO: need to confirm modal before resend
+                                        }
+                                        context.read<CartBloc>().add(SendOrder(
+                                          sendNewOrder: sendNewOrder,
+                                          reSendOrder: reSendOrder,
+                                          order: orderState.order,
+                                          isAddNew: orderState.isAddNew,
+                                          typeLoad: orderState.isAddNew ? "NewOrder" : "EditOrder",
+                                          currTable: orderState.selectedTable.TableNo,
+                                          currTableGroup: orderState.selectedForGroup.TableNo,
+                                          noOfPerson: "1",
+                                          salesCode: orderState.selectedCode.code,
+                                          POSBizDate: ScreenUtil.getCurrentDate('yyyyMMdd')
+                                        ));
+                                      }
+                                    },
+                                    style: OutlinedButton.styleFrom(
+                                      side: BorderSide.none, // Remove the default border
+                                      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 10.0), // Button padding
+                                    ),
+                                    child: const Text('Xác nhận', style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold, color: Colors.white)),
+                                  ),
                               ),
-                            )
+                            ),
                           ],
                         ),
                       ),
@@ -213,6 +152,57 @@ class _CartViewState extends State<CartView> {
               ),
             );
           }),
+    );
+  }
+  
+  _buildTableCellText(String text, [EdgeInsetsGeometry padding = const EdgeInsets.only(top: 15.0, bottom: 15.0)]) {
+    return TableCell(
+      child: Padding(
+              padding: padding,
+              child: Text(text, style: TextStyle(fontWeight: FontWeight.bold)),
+            ),
+    );
+  }
+
+  _buildHeaderTable() {
+    return TableRow(
+      decoration: const BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: Colors.grey, // Right border color
+            width: 1.0, // Border width
+          ),
+        ),
+      ),
+      children: [
+        _buildTableCellText('Tên món'),
+        _buildTableCellText('S/L'),
+        _buildTableCellText('Đơn giá'),
+        _buildTableCellText('Trạng thái'),
+      ],
+    );
+  }
+
+  TableRow _buildDataRow(CartItem item) {
+    String title = item.item.recptDesc;
+    String qty = item.qty.toString();
+    String pricing = '${ScreenUtil.formatPrice(item.item.getOrgPrice())} đ';
+    String status = item.item.getPrintStatusStr();
+    return TableRow(
+      decoration: const BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: Colors.grey, // Right border color
+            width: 1.0, // Border width
+          ),
+        ),
+      ),
+      children: [
+        _buildTableCellText(title),
+        _buildTableCellText(qty),
+        _buildTableCellText(pricing),
+        _buildTableCellText(status),
+      ],
     );
   }
 }

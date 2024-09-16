@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:emenu/bloc/add_to_cart_bloc/cart_bloc.dart';
+import 'package:emenu/config/themes/app_colors.dart';
 import 'package:emenu/constants/asset_path.dart';
 import 'package:emenu/models/submenu.dart';
 import 'package:emenu/modules/order/bloc/order_bloc.dart';
@@ -23,52 +24,53 @@ class GridItem extends StatelessWidget {
                 currSubItem: submenu, qty: 1, priceLevel: state.selectedCode.priceLevel));
           },
           child: Card(
-            color: Colors.white,
-            elevation: 1,
+            color: AppColors.cardOrder,
+            elevation: 4,
             margin: const EdgeInsets.all(2),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(0),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                const SizedBox(height: 5),
-                Stack(children: [
-                  ClipRRect(
-                    borderRadius: const BorderRadius.all(Radius.circular(50)),
-                    child: Center(
-                      child: CachedNetworkImage(
+            child: Stack(
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                     CachedNetworkImage(
                         imageUrl: submenu.bitmap ?? AssetPath.bitmapDefault,
                         placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
                         errorWidget: (context, url, error) => const Center(child: Icon(Icons.error)),
-                        height: Platform.isAndroid ? 130 : 110,
-                        width: Platform.isAndroid ? 130 : 110,
                         fit: BoxFit.fitHeight,
                       ),
+                    Flexible(
+                      flex: 1,
+                      child: 
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                submenu.description,
+                                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20),
+                              ),
+                              Text(
+                                '123.000 đ',
+                                style: TextStyle(color: Colors.white, fontSize: 20),
+                              ),
+                            ],
+                          ),
+                        ),
                     ),
-                  ),
-                  Positioned(
-                    top: 1,
-                    left: 5,
-                    child: Icon(
-                      Icons.add_circle_outline,
-                      color: Colors.grey[400],
-                      size: 30,
-                    ),
-                  ),
-                ]),
-                Padding(
-                  padding: const EdgeInsets.only(top: 8, bottom: 0),
-                  child: Center(
-                    child: Text(
-                      submenu.description,
-                      textAlign: TextAlign.center,
-                    ),
+                  ],
+                ),
+                Positioned(
+                  bottom: 5,
+                  right: 5,
+                  child: Icon(
+                    Icons.add_circle_outline,
+                    color: Colors.grey[400],
+                    size: 45,
                   ),
                 ),
               ],
-            ),
+            )
           ),
         );
       },

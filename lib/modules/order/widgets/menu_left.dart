@@ -21,7 +21,7 @@ class MenuLeft extends StatelessWidget {
         child: Column(
           children: [
             Container(
-              color: AppColors.mainBLue,
+              // color: AppColors.mainBLue,
               child: Padding(
                 padding: EdgeInsets.all(Platform.isAndroid ? 1.0 : 0.0),
                 child: Row(
@@ -61,14 +61,18 @@ class MenuLeft extends StatelessWidget {
                   final selectedIndex = state.menus.indexOf(state.menu);
                   return ListTile(
                     selected: selectedIndex == index,
-                    tileColor: ColorUtil.parseColor(menu.btnColor),
-                    selectedTileColor: ColorUtil.parseColor(menu.btnColor,
-                        alpha: 0.5), // Background color for non-selected state
+                    // tileColor: ColorUtil.parseColor(menu.btnColor),
+                    textColor: Colors.white,
+                    tileColor: AppColors.mainBLue,
+                    // selectedTileColor: ColorUtil.parseColor(menu.btnColor,
+                    //     alpha: 0.5), // Background color for non-selected state
+                    selectedColor: Colors.white,
+                    selectedTileColor: AppColors.mainRed,
                     title: Text(
                       menu.description,
                       style: TextStyle(
-                        color:
-                            ColorUtil.parseColor(menu.fontColor), // Text color
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold
                       ),
                     ),
                     onTap: () {
