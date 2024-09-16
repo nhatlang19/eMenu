@@ -1,4 +1,5 @@
 import 'package:emenu/bloc/add_to_cart_bloc/cart_bloc.dart';
+import 'package:emenu/config/themes/app_colors.dart';
 import 'package:emenu/modules/order/bloc/menu_bloc.dart';
 import 'package:emenu/modules/order/bloc/order_bloc.dart';
 import 'package:emenu/modules/order/bloc/submenu_bloc.dart';
@@ -53,7 +54,7 @@ class _OrderPageState extends State<OrderPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.grey[200],
+        backgroundColor: AppColors.mainBLue,
         // appBar: AppBar(
         //   title: const Text('Order'),
         // ),
@@ -90,6 +91,8 @@ class _OrderPageState extends State<OrderPage> {
                 ], child: const OrderView());
               }
               return const CircularProgressIndicator();
-            }));
+            }
+      )
+    );
   }
 }
