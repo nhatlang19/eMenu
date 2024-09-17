@@ -9,6 +9,7 @@ import 'package:emenu/models/item.dart';
 import 'package:emenu/models/item_combo.dart';
 import 'package:emenu/models/item_modifier.dart';
 import 'package:emenu/models/submenu.dart';
+import 'package:emenu/models/table.dart';
 import 'package:emenu/repositories/cart_repository.dart';
 import 'package:emenu/repositories/item_repository.dart';
 import 'package:emenu/utils/global.dart';
@@ -41,6 +42,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<SendOrder>(_onSendOrder);
     on<UpdateQuantityCombo>(_onUpdateQuantityCombo);
     on<LoadItemsWhenEdit>(_onLoadItemsWhenEdit);
+    on<SetTable>(_onSetTable);
   }
 
   void _onResetCart(ResetCart event, Emitter<CartState> emit) {
@@ -298,6 +300,10 @@ class CartBloc extends Bloc<CartEvent, CartState> {
 
   void _onToogle(Toogle event, Emitter<CartState> emit) {
     emit(state.copyWith(toogle: !state.toogle));
+  }
+
+  void _onSetTable(SetTable event, Emitter<CartState> emit) {
+    emit(state.copyWith(selectedTable: event.table));
   }
 
   void _onUpdateNoPeople(UpdateNoPeople event, Emitter<CartState> emit) {

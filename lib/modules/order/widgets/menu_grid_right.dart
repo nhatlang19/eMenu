@@ -40,33 +40,37 @@ class MenuGridRight extends StatelessWidget {
                             onTapDown: (details) {
                               OverlayState overlayState = Overlay.of(context);
                                overlayEntry = OverlayEntry(builder: (context) {
-                                return Positioned(
-                                  top: details.globalPosition.dy + 10,
-                                  left: details.globalPosition.dx + 10,
-                                  child: Material(
-                                    color: Colors.transparent,
-                                    child: Container(
-                                      color: Colors.white,
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          NumberKeyboards(
-                                            onKeyPressed: (value) {
-                                              context.read<CartBloc>().add(UpdateNoPeople(value: value));
-                                            },
-                                            onClose: () {
-                                              try {
-                                                overlayEntry?.remove();
-                                              } catch(_) {
-          
-                                              }
-                                            },
+                                return Stack(
+                                  children: [
+                                    Positioned(
+                                      top: details.globalPosition.dy + 10,
+                                      left: details.globalPosition.dx + 10,
+                                      child: Material(
+                                        color: Colors.transparent,
+                                        child: Container(
+                                          color: Colors.white,
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              NumberKeyboards(
+                                                onKeyPressed: (value) {
+                                                  context.read<CartBloc>().add(UpdateNoPeople(value: value));
+                                                },
+                                                onClose: () {
+                                                  try {
+                                                    overlayEntry?.remove();
+                                                  } catch(_) {
+                                              
+                                                  }
+                                                },
+                                              ),
+                                            ],
                                           ),
-                                        ],
+                                        ),
                                       ),
                                     ),
-                                  ),
+                                  ],
                                 );
                               });
                               overlayState.insert(overlayEntry);

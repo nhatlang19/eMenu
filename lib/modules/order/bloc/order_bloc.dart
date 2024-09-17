@@ -17,7 +17,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     on<FetchOrders>(_onFetchOrders);
   }
 
-   void _onOrderInitPage(OrderInitPage event, Emitter<OrderState> emit) {
+  void _onOrderInitPage(OrderInitPage event, Emitter<OrderState> emit) {
     emit(state.copyWith(selectedForGroup: event.selectedForGroup
                         , status: OrderStatus.initOrder
                         , isAddNew: event.isAddNew
@@ -25,7 +25,6 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
                         , order: event.order
                         , selectedTable: event.selectedTable
                         , selectedCode: event.selectedCode));
-
   }
 
   void _onChangeSelectOrder(ChangeSelectOrder event, Emitter<OrderState> emit) {

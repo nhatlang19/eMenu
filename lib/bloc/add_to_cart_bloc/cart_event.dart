@@ -141,3 +141,12 @@ class LoadItemsWhenEdit extends CartEvent {
   @override
   List<Object> get props => [orderNo, posNo, extNo];
 }
+
+class SetTable extends CartEvent {
+  final Table table;
+
+  const SetTable({required this.table});
+
+  @override
+  List<Object> get props => [table];
+}

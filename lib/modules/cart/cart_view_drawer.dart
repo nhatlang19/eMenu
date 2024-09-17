@@ -42,13 +42,13 @@ class CartViewDrawer extends StatelessWidget {
                           );
                         }
                         ), // t
-                        Text("Danh sách món đã gọi", style: TextStyle(fontSize: 20),),
+                        const Text("Danh sách món đã gọi", style: TextStyle(fontSize: 20),),
                         const SizedBox(width: 1)
                       ],
                     ),
                   ),
                 ),
-                CartView()
+                const CartView()
               ],
             )
         ),

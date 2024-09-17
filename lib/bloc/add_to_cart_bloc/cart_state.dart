@@ -30,11 +30,13 @@ class CartState extends Equatable {
   final ShowCombo showCombo;
   late CartItem cartItemTmp;
   final String errorMessage;
+  final Table selectedTable;
 
   CartState(
       {
       this.cartItems = const <CartItem>[],
       this.status = CartStatus.initial,
+      this.selectedTable = Table.empty,
       this.total = 0,
       this.toogle = false,
       this.showCombo = ShowCombo.hide,
@@ -52,6 +54,7 @@ class CartState extends Equatable {
     String? noPeople,
     CartItem? cartItemTmp,
     String? errorMessage,
+    Table? selectedTable,
   }) {
     var state = CartState(
         status: status ?? this.status,
@@ -59,6 +62,7 @@ class CartState extends Equatable {
         total: total ?? this.total,
         toogle: toogle ?? this.toogle,
         showCombo: showCombo ?? this.showCombo,
+        selectedTable: selectedTable ?? this.selectedTable,
         errorMessage: errorMessage ?? this.errorMessage,
         noPeople: noPeople ?? this.noPeople);
 
@@ -128,6 +132,7 @@ class CartState extends Equatable {
         noPeople,
         showCombo,
         cartItemTmp,
-        errorMessage
+        errorMessage,
+        selectedTable
       ];
 }

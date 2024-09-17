@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:emenu/bloc/add_to_cart_bloc/cart_bloc.dart';
 import 'package:emenu/bloc/add_to_cart_bloc/dto/cart_item.dart';
+import 'package:emenu/config/routes/routes.dart';
 import 'package:emenu/config/themes/app_colors.dart';
 import 'package:emenu/constants/order.dart';
+import 'package:emenu/modules/confirm/confirm_page.dart';
 import 'package:emenu/modules/order/bloc/order_bloc.dart';
 import 'package:emenu/utils/screen_util.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +30,7 @@ class _CartViewState extends State<CartView> {
               SnackBar(content: Text(state.errorMessage)),
             );
         } else if (state.status == CartStatus.sendOrderSuccess) {
-          context.read<CartBloc>().add(ResetCart());
+          //context.read<CartBloc>().add(ResetCart());
           if (Navigator.canPop(context)) {
             Navigator.of(context).pop("REFRESH_TABLE");
           }
@@ -106,36 +108,49 @@ class _CartViewState extends State<CartView> {
                                 color: AppColors.mainRed,
                                 child: OutlinedButton(
                                     onPressed: () {
-                                      String sendNewOrder = "0";
-                                      String reSendOrder = "0";
-                                      var orderState = BlocProvider.of<OrderBloc>(context).state;
-                                      String status = state.getStatus(isEdit: !orderState.isAddNew);
-                                      if (status == Order.STATUS_DATATABLE_NO_DATA) {
-                                        ScaffoldMessenger.of(context)
-                                        ..hideCurrentSnackBar()
-                                        ..showSnackBar(
-                                          SnackBar(content: Text(status)),
-                                        );
-                                      } else {
-                                        if (status == Order.STATUS_DATATABLE_SEND_ALL) {
-                                          sendNewOrder = "1";
-                                        } else if (status == Order.STATUS_DATATABLE_RESEND) {
-                                          reSendOrder = "1"; 
-                                          // @TODO: need to confirm modal before resend
-                                        }
-                                        context.read<CartBloc>().add(SendOrder(
-                                          sendNewOrder: sendNewOrder,
-                                          reSendOrder: reSendOrder,
-                                          order: orderState.order,
-                                          isAddNew: orderState.isAddNew,
-                                          typeLoad: orderState.isAddNew ? "NewOrder" : "EditOrder",
-                                          currTable: orderState.selectedTable.TableNo,
-                                          currTableGroup: orderState.selectedForGroup.TableNo,
-                                          noOfPerson: "1",
-                                          salesCode: orderState.selectedCode.code,
-                                          POSBizDate: ScreenUtil.getCurrentDate('yyyyMMdd')
-                                        ));
-                                      }
+                                      // var orderState = BlocProvider.of<OrderBloc>(context).state;
+                                      // context.read<CartBloc>().add(SetTable(table: orderState.selectedTable));
+                                      // Navigator.pushNamed(context, 'ConfirmPage');
+
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute<ConfirmPage>(
+                                          builder: (_) => BlocProvider.value(
+                                            value: BlocProvider.of<OrderBloc>(context),
+                                            child: const ConfirmPage(),
+                                          ),
+                                        ),
+                                      );
+
+                                      // String sendNewOrder = "0";
+                                      // String reSendOrder = "0";
+                                      // var orderState = BlocProvider.of<OrderBloc>(context).state;
+                                      // String status = state.getStatus(isEdit: !orderState.isAddNew);
+                                      // if (status == Order.STATUS_DATATABLE_NO_DATA) {
+                                      //   ScaffoldMessenger.of(context)
+                                      //   ..hideCurrentSnackBar()
+                                      //   ..showSnackBar(
+                                      //     SnackBar(content: Text(status)),
+                                      //   );
+                                      // } else {
+                                      //   if (status == Order.STATUS_DATATABLE_SEND_ALL) {
+                                      //     sendNewOrder = "1";
+                                      //   } else if (status == Order.STATUS_DATATABLE_RESEND) {
+                                      //     reSendOrder = "1"; 
+                                      //     // @TODO: need to confirm modal before resend
+                                      //   }
+                                      //   context.read<CartBloc>().add(SendOrder(
+                                      //     sendNewOrder: sendNewOrder,
+                                      //     reSendOrder: reSendOrder,
+                                      //     order: orderState.order,
+                                      //     isAddNew: orderState.isAddNew,
+                                      //     typeLoad: orderState.isAddNew ? "NewOrder" : "EditOrder",
+                                      //     currTable: orderState.selectedTable.TableNo,
+                                      //     currTableGroup: orderState.selectedForGroup.TableNo,
+                                      //     noOfPerson: "1",
+                                      //     salesCode: orderState.selectedCode.code,
+                                      //     POSBizDate: ScreenUtil.getCurrentDate('yyyyMMdd')
+                                      //   ));
+                                      // }
                                     },
                                     style: OutlinedButton.styleFrom(
                                       side: BorderSide.none, // Remove the default border
