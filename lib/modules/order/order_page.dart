@@ -55,9 +55,6 @@ class _OrderPageState extends State<OrderPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: AppColors.mainBLue,
-        // appBar: AppBar(
-        //   title: const Text('Order'),
-        // ),
         body: FutureBuilder<String>(
             future: _getSettings(),
             builder: (BuildContext context, AsyncSnapshot<String> snapshot) {

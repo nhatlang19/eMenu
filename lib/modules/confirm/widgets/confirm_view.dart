@@ -12,17 +12,39 @@ class ConfirmView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        _buildBack(context),
-        _buildTitle(context),
-        _buildTableHeader(context),
-        _buildTableRow(context),
-        _buildConfirmButton(context),
-        const SizedBox(
-          height: 100,
-        )
-      ],
+    return BlocListener<CartBloc, CartState>(
+      listener: (context, state) {
+        if (state.status == CartStatus.sendOrderFail) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              SnackBar(content: Text(state.errorMessage)),
+            );
+        } else if (state.status == CartStatus.sendOrderSuccess) {
+          context.read<CartBloc>().add(ResetCart());
+          var state = context.read<OrderBloc>().state;
+          context.read<CartBloc>().add(LoadItemsWhenEdit(
+                            orderNo: state.order.getOrd(),
+                            extNo: state.order.getExt(),
+                            posNo: state.order.getPos()));
+
+          if (Navigator.canPop(context)) {
+            Navigator.of(context).pop();
+          }
+        }
+      },
+      child: Column(
+        children: [
+          _buildBack(context),
+          _buildTitle(context),
+          _buildTableHeader(context),
+          _buildTableRow(context),
+          _buildConfirmButton(context),
+          const SizedBox(
+            height: 100,
+          )
+        ],
+      ),
     );
   }
 
@@ -57,10 +79,6 @@ class ConfirmView extends StatelessWidget {
 
   _buildTitle(BuildContext context) {
     return BlocBuilder<OrderBloc, OrderState>(
-      // buildWhen: (previous, current) =>
-      //     previous.cartItems.length != current.cartItems.length ||
-      //     current.status == CartStatus.updatedQuantity ||
-      //     current.status == CartStatus.success,
       builder: (context, state) {
         return Center(
           child: Text(
@@ -162,8 +180,7 @@ class ConfirmView extends StatelessWidget {
       child: TableCell(
         child: Padding(
           padding: padding,
-          child:
-              Text(text, style: const TextStyle(fontSize: 20)),
+          child: Text(text, style: const TextStyle(fontSize: 20)),
         ),
       ),
     );

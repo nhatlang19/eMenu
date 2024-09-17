@@ -2,9 +2,8 @@ import 'dart:io';
 
 import 'package:emenu/bloc/add_to_cart_bloc/cart_bloc.dart';
 import 'package:emenu/bloc/add_to_cart_bloc/dto/cart_item.dart';
-import 'package:emenu/config/routes/routes.dart';
 import 'package:emenu/config/themes/app_colors.dart';
-import 'package:emenu/constants/order.dart';
+import 'package:emenu/models/item.dart';
 import 'package:emenu/modules/confirm/confirm_page.dart';
 import 'package:emenu/modules/order/bloc/order_bloc.dart';
 import 'package:emenu/utils/screen_util.dart';
@@ -24,16 +23,16 @@ class _CartViewState extends State<CartView> {
     return BlocListener<CartBloc, CartState>(
       listener: (context, state) {
         if (state.status == CartStatus.sendOrderFail) {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              SnackBar(content: Text(state.errorMessage)),
-            );
+          // ScaffoldMessenger.of(context)
+          //   ..hideCurrentSnackBar()
+          //   ..showSnackBar(
+          //     SnackBar(content: Text(state.errorMessage)),
+          //   );
         } else if (state.status == CartStatus.sendOrderSuccess) {
           //context.read<CartBloc>().add(ResetCart());
-          if (Navigator.canPop(context)) {
-            Navigator.of(context).pop("REFRESH_TABLE");
-          }
+          // if (Navigator.canPop(context)) {
+          //   Navigator.of(context).pop("REFRESH_TABLE");
+          // }
         }
       },
       child: BlocBuilder<CartBloc, CartState>(
@@ -172,12 +171,21 @@ class _CartViewState extends State<CartView> {
     );
   }
   
-  _buildTableCellText(String text, [EdgeInsetsGeometry padding = const EdgeInsets.only(top: 15.0, bottom: 15.0)]) {
+  _buildTableCellText(String text, {EdgeInsetsGeometry padding = const EdgeInsets.only(top: 15.0, bottom: 15.0)}) {
     return TableCell(
       child: Padding(
               padding: padding,
               child: Text(text, style: const TextStyle(fontWeight: FontWeight.bold)),
             ),
+    );
+  }
+
+  _buildTableCellIcon(String text, {
+    EdgeInsetsGeometry padding = const EdgeInsets.only(right: 30, top: 15.0, bottom: 15.0),
+    Widget widget = const Icon(Icons.local_fire_department, size: 25, color: Colors.red,)
+  }) {
+    return TableCell(
+      child: Padding(padding: padding, child: widget),
     );
   }
 
@@ -274,8 +282,10 @@ class _CartViewState extends State<CartView> {
         _buildTableCellText(title),
         _buildTableCellText(qty),
         _buildTableCellText(pricing),
-        _buildTableCellText(status, ),
-        item.item.getItemType() != "M" ? _buildControl(index, hideIncrease: hideIncrease) : const TableCell(child: SizedBox()),
+        status != Item.STATUS_OLD && status != Item.STATUS_CANCEL ? _buildTableCellIcon(status, widget: SizedBox()) : _buildTableCellIcon(status),
+        item.item.getItemType() != "M" 
+        && status != Item.STATUS_CANCEL
+        && status != Item.STATUS_OLD ? _buildControl(index, hideIncrease: hideIncrease) : const TableCell(child: SizedBox()),
       ],
     );
   }
