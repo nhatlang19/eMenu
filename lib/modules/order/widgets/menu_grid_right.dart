@@ -1,9 +1,9 @@
 import 'package:emenu/bloc/add_to_cart_bloc/cart_bloc.dart';
 import 'package:emenu/config/themes/app_colors.dart';
 import 'package:emenu/config/themes/app_text_styles.dart';
-import 'package:emenu/modules/cart/cart_view.dart';
 import 'package:emenu/modules/cart/cart_view_drawer.dart';
 import 'package:emenu/modules/order/bloc/menu_bloc.dart';
+import 'package:emenu/modules/order/bloc/order_bloc.dart';
 import 'package:emenu/modules/order/bloc/submenu_bloc.dart';
 import 'package:emenu/modules/order/widgets/grid_item.dart';
 import 'package:emenu/utils/screen_util.dart';
@@ -100,14 +100,29 @@ class MenuGridRight extends StatelessWidget {
                             style: AppTextStyles.tableTitleWhite,
                           )));
                         }),
-                    IconButton(
-                      iconSize: 50.0,
-                      icon: const Icon(Icons.exit_to_app),
-                      color: Colors.white,
-                      onPressed: () {
-                        context.read<CartBloc>().add(ResetCart());
-                        Navigator.pop(context);
-                      },
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        BlocBuilder<OrderBloc, OrderState>(
+                          builder: (context, state) {
+                            return Text("Bàn ${state.selectedTable.TableNo.trim()}", 
+                              style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold));
+                          },
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.only(left: 15, right: 5),
+                          child: Text('|', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                        ),
+                        IconButton(
+                          iconSize: 50.0,
+                          icon: const Icon(Icons.exit_to_app),
+                          color: Colors.white,
+                          onPressed: () {
+                            context.read<CartBloc>().add(const ResetCart());
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -185,8 +200,7 @@ class MenuGridRight extends StatelessWidget {
                             children: [
                               InkWell(
                                 onTap: () {
-                                  // Navigator.pushNamed(context, 'CartPage');
-                                  context.read<CartBloc>().add(Toogle());
+                                  context.read<CartBloc>().add(const Toogle());
                                 },
                                 child: BlocBuilder<CartBloc, CartState>(
                                     buildWhen: (previous, current) =>
