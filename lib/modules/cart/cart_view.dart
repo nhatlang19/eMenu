@@ -282,10 +282,9 @@ class _CartViewState extends State<CartView> {
         _buildTableCellText(title),
         _buildTableCellText(qty),
         _buildTableCellText(pricing),
-        status != Item.STATUS_OLD && status != Item.STATUS_CANCEL ? _buildTableCellIcon(status, widget: SizedBox()) : _buildTableCellIcon(status),
+        status == '' ? _buildTableCellIcon(status, widget: SizedBox()) : _buildTableCellIcon(status),
         item.item.getItemType() != "M" 
-        && status != Item.STATUS_CANCEL
-        && status != Item.STATUS_OLD ? _buildControl(index, hideIncrease: hideIncrease) : const TableCell(child: SizedBox()),
+        && status == "" ? _buildControl(index, hideIncrease: hideIncrease) : const TableCell(child: SizedBox()),
       ],
     );
   }

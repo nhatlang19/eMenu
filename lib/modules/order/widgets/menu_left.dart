@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:emenu/config/themes/app_colors.dart';
+import 'package:emenu/constants/asset_path.dart';
 import 'package:emenu/modules/order/bloc/menu_bloc.dart';
 import 'package:emenu/modules/order/bloc/submenu_bloc.dart';
 import 'package:emenu/utils/color_util.dart';
@@ -20,34 +21,14 @@ class MenuLeft extends StatelessWidget {
         flex: 1,
         child: Column(
           children: [
-            Container(
-              // color: AppColors.mainBLue,
-              child: Padding(
-                padding: EdgeInsets.all(Platform.isAndroid ? 1.0 : 0.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const SizedBox(),
-                    const Center(
-                        child: Text(
-                      "MENU",
-                      style: TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white),
-                      textAlign: TextAlign.center,
-                    )),
-                    IconButton(
-                      iconSize: 50.0,
-                      icon: Icon(Icons.menu),
-                      color: Colors.white,
-                      onPressed: () {
-                        // Navigator.pop(context);
-                      },
-                    ),
-                  ],
-                ),
-              ),
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Center(
+                        child: Image.asset(
+                          AssetPath.loginLogo,
+                          width: 200,
+                        ),
+                      ),
             ),
             Expanded(
                 child: MediaQuery.removePadding(

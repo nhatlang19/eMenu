@@ -79,7 +79,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
           item.getComboPack() == ItemComboPack.R) {
         var list = List<CartItem>.from(state.cartItems);
 
-        final index = list.indexWhere((element) => element.item.itemCode == item.itemCode);
+        final index = list.indexWhere((element) => element.item.itemCode == item.itemCode 
+                                                && element.item.getPrintStatusStr() == '');
         if (index >= 0) {
           state.cartItems[index].qty += 1;
           state.cartItems[index].updateData();
