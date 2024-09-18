@@ -147,7 +147,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   Future<void> _onLoadItemsWhenEdit(LoadItemsWhenEdit event, Emitter<CartState> emit) async {
     try {
       List<Item> items = await _cartRepository.getEditOrderNumberByPOS(orderNo: event.orderNo, posNo: event.posNo, extNo: event.extNo);
-      var list = List<CartItem>.from(state.cartItems);
+      var list = List<CartItem>.from([]);
       // @TODO: need to handle for combo
       for (var item in items) {
         list.add(CartItem(item: item, qty: int.parse(item.qty ?? '0'), segNo: int.parse(item.seqNo ?? '0')));

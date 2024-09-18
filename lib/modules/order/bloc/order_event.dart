@@ -42,3 +42,13 @@ class FetchOrders extends OrderEvent {
   @override
   List<Object> get props => [posBizDate, currentTable];
 }
+
+class FetchOrdersAfterSend extends OrderEvent {
+  final String posBizDate;
+  final String currentTable;
+
+  const FetchOrdersAfterSend({required this.posBizDate, required this.currentTable});
+
+  @override
+  List<Object> get props => [posBizDate, currentTable];
+}

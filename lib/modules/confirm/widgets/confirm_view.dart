@@ -13,7 +13,7 @@ class ConfirmView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<CartBloc, CartState>(
-      listener: (context, state) {
+      listener: (context, state) async {
         if (state.status == CartStatus.sendOrderFail) {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
@@ -21,12 +21,25 @@ class ConfirmView extends StatelessWidget {
               SnackBar(content: Text(state.errorMessage)),
             );
         } else if (state.status == CartStatus.sendOrderSuccess) {
-          context.read<CartBloc>().add(ResetCart());
-          var state = context.read<OrderBloc>().state;
-          context.read<CartBloc>().add(LoadItemsWhenEdit(
-                            orderNo: state.order.getOrd(),
-                            extNo: state.order.getExt(),
-                            posNo: state.order.getPos()));
+          // context.read<CartBloc>().add(ResetCart());
+          // var state = context.read<OrderBloc>().state;
+          // context.read<CartBloc>().add(LoadItemsWhenEdit(
+          //                   orderNo: state.order.getOrd(),
+          //                   extNo: state.order.getExt(),
+          //                   posNo: state.order.getPos()));
+
+           // context.read<CartBloc>().add(const MoveToOld());
+          // var state = context.read<OrderBloc>().state;
+          
+          var orderState = context.read<OrderBloc>().state;                
+
+          // context.read<CartBloc>().add(LoadItemsWhenEdit(
+          //                   orderNo: state.order.getOrd(),
+          //                   extNo: state.order.getExt(),
+          //                   posNo: state.order.getPos()));
+          await fetchOrders(context, orderState.selectedTable.TableNo);
+          await Future.delayed(const Duration(milliseconds: 500));
+          await loadItems(context);
 
           if (Navigator.canPop(context)) {
             Navigator.of(context).pop();
@@ -46,6 +59,19 @@ class ConfirmView extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<void> fetchOrders(BuildContext context, String tableNo) async {
+    var posBizDate = ScreenUtil.getCurrentDate('yyyyMMdd');
+    context.read<OrderBloc>().add(FetchOrdersAfterSend(posBizDate: posBizDate, currentTable: tableNo));
+  }
+
+  Future<void> loadItems(BuildContext context) async {
+    var orderState = context.read<OrderBloc>().state;
+    context.read<CartBloc>().add(LoadItemsWhenEdit(
+                      orderNo: orderState.order.getOrd(),
+                      extNo: orderState.order.getExt(),
+                      posNo: orderState.order.getPos()));
   }
 
   _buildBack(BuildContext context) {

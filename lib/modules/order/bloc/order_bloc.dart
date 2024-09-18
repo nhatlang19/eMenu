@@ -15,6 +15,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     on<OrderInitPage>(_onOrderInitPage);
     on<ChangeSelectOrder>(_onChangeSelectOrder);
     on<FetchOrders>(_onFetchOrders);
+    on<FetchOrdersAfterSend>(_onFetchOrdersAfterSend);
   }
 
   void _onOrderInitPage(OrderInitPage event, Emitter<OrderState> emit) {
@@ -39,6 +40,20 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
         emit(state.copyWith(orders: orders, status: OrderStatus.success, order: orders.first));
       } else {
         emit(state.copyWith(orders: orders, status: OrderStatus.success));
+      }
+    } catch (e) {
+      emit(state.copyWith(status: OrderStatus.failure));
+    }
+  }
+
+  Future<void> _onFetchOrdersAfterSend(FetchOrdersAfterSend event, Emitter<OrderState> emit) async {
+    try {
+      emit(state.copyWith(status: OrderStatus.initial));
+      List<Order> orders = await _orderRepository.getOrderEditType(posBizDate: event.posBizDate, currentTable: event.currentTable);
+      if (orders.isNotEmpty) {
+        emit(state.copyWith(orders: orders, status: OrderStatus.success, order: orders.first, isAddNew: false));
+      } else {
+        emit(state.copyWith(orders: orders, status: OrderStatus.success, isAddNew: false));
       }
     } catch (e) {
       emit(state.copyWith(status: OrderStatus.failure));
