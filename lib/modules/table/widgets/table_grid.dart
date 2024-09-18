@@ -107,19 +107,19 @@ class _TableGridState extends State<TableGrid> {
         }
         break;
       case "O":
-        // if (table.openByIsEmpty()) {
+        if (table.openByIsEmpty()) {
           // @TODO: updateTableStatus (xem TableAdapter.java:101)
           parentContext.read<TableBloc>().add(SelectTable(isAddNew: false, table: table));
           _showCustomDialog(parentContext, table, isAddNew: false);
-        // } else {
-        //   ScaffoldMessenger.of(parentContext)
-        //     ..hideCurrentSnackBar()
-        //     ..showSnackBar(
-        //       SnackBar(
-        //           content: Text(
-        //               'Bàn ${table.TableNo.trim()} đang được order bởi cashier $openBy')),
-        //     );
-        // }
+        } else {
+          ScaffoldMessenger.of(parentContext)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              SnackBar(
+                  content: Text(
+                      'Bàn ${table.TableNo.trim()} đang được order bởi cashier $openBy')),
+            );
+        }
         break;
       case "R":
       default:
