@@ -1,10 +1,7 @@
-import 'package:emenu/bloc/add_to_cart_bloc/cart_bloc.dart';
 import 'package:emenu/config/themes/app_colors.dart';
 import 'package:emenu/modules/order/bloc/menu_bloc.dart';
 import 'package:emenu/modules/order/bloc/order_bloc.dart';
 import 'package:emenu/modules/order/bloc/submenu_bloc.dart';
-import 'package:emenu/modules/order/widgets/menu_grid_right.dart';
-import 'package:emenu/modules/order/widgets/menu_left.dart';
 import 'package:emenu/modules/order/widgets/order_view.dart';
 import 'package:emenu/modules/table/bloc/section_bloc.dart';
 import 'package:emenu/modules/table/bloc/table_bloc.dart';
@@ -80,7 +77,7 @@ class _OrderPageState extends State<OrderPage> {
                         SubMenuBloc(menuRepository: menuRepository),
                   ),
                   BlocProvider<SectionBloc>(
-                        create: (BuildContext context) => SectionBloc(sectionRepository: sectionRepository)..add(FetchSection()),
+                        create: (BuildContext context) => SectionBloc(sectionRepository: sectionRepository)..add(const FetchSection()),
                   ),
                   BlocProvider<TableBloc>(
                     create: (BuildContext context) => TableBloc(tableRepository: tableRepository),

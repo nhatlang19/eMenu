@@ -17,6 +17,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     on<LoginUsernameChanged>(_onUsernameChanged);
     on<LoginPasswordChanged>(_onPasswordChanged);
     on<LoginSubmitted>(_onSubmitted);
+    on<LoginConfirmed>(_onLoginConfirmed);
     on<LogoutSubmitted>(_onLogout);
   }
 
@@ -68,6 +69,28 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       }
     }
   }
+
+  Future<void> _onLoginConfirmed(
+    LoginConfirmed event,
+    Emitter<LoginState> emit,
+  ) async {
+    if (state.isValid) {
+      emit(state.copyWith(confirmStatus: ConfirmStatus.initial));
+      try {
+        User user = await _authenticationRepository.logIn(
+          username: state.username.value,
+          password: state.password.value,
+        );
+        // User user = User.empty;
+        emit(state.copyWith(confirmStatus: ConfirmStatus.success));
+      } catch (_) {
+        emit(state.copyWith(confirmStatus: ConfirmStatus.failure));
+        emit(state.copyWith(confirmStatus: ConfirmStatus.initial));
+      }
+    }
+  }
+
+  
 
   void _onLogout(LogoutSubmitted event, Emitter<LoginState> emit) {
     _authenticationRepository.logOut();
