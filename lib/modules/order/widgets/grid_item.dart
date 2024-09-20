@@ -6,6 +6,7 @@ import 'package:emenu/config/themes/app_colors.dart';
 import 'package:emenu/constants/asset_path.dart';
 import 'package:emenu/models/submenu.dart';
 import 'package:emenu/modules/order/bloc/order_bloc.dart';
+import 'package:emenu/utils/screen_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -18,6 +19,7 @@ class GridItem extends StatelessWidget {
   Widget build(BuildContext buildContext) {
     return BlocBuilder<OrderBloc, OrderState>(
       builder: (context, state) {
+        var price = ScreenUtil.formatPrice(submenu.price);        
         return InkWell(
           onTap: () {
             context.read<CartBloc>().add(AddToCart(
@@ -51,7 +53,7 @@ class GridItem extends StatelessWidget {
                                 style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20),
                               ),
                               Text(
-                                '123.000 đ',
+                                '$price đ',
                                 style: TextStyle(color: Colors.white, fontSize: 20),
                               ),
                             ],

@@ -19,12 +19,14 @@ class Submenu extends Equatable {
   final String seqNum;
   @JsonKey(name: 'Bitmap')
   final String? bitmap;
+  @JsonKey(name: 'UnitSellPrice')
+  final String? price;
 
   @override
-  List<Object> get props => [description, btnColor ?? '', fontColor ?? '', defaultValue, seqNum, bitmap ?? AssetPath.bitmapDefault];
+  List<Object> get props => [description, btnColor ?? '', fontColor ?? '', defaultValue, seqNum, bitmap ?? AssetPath.bitmapDefault, price ?? "0"];
 
   static const empty =
-      Submenu(description: '', btnColor: '', fontColor: '', defaultValue: '', seqNum: '', bitmap: AssetPath.bitmapDefault);
+      Submenu(description: '', btnColor: '', fontColor: '', defaultValue: '', seqNum: '', bitmap: AssetPath.bitmapDefault, price: '0');
 
   const Submenu({
     required this.description,
@@ -32,7 +34,8 @@ class Submenu extends Equatable {
     required this.fontColor,
     required this.defaultValue,
     required this.seqNum,
-    required this.bitmap
+    required this.bitmap,
+    required this.price,
   });
 
   factory Submenu.fromJson(Map<String, dynamic> json) => _$SubmenuFromJson(json);
