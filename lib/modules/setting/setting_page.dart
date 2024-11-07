@@ -87,7 +87,7 @@ class _SettingPageState extends State<SettingPage> {
     var serverIp = _serverIpController.text;
     bool isConnected = await _connectionRepository.checkConnection(Global.serviceUrl(serverIp));
 
-    String message = isConnected ? 'Connection Successful' : 'Connection unsuccessful';
+    String message = isConnected ? 'Connection OK' : 'Connection FAILED';
     ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
