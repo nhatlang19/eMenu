@@ -46,16 +46,11 @@ class _LoginFormState extends State<LoginForm> {
   }
 
   Row _buildVersion() {
-    return Row(
+    return const Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        TextButton(
-          onPressed: () {
-            Navigator.pushNamed(context, 'SettingPage');
-          },
-          child: const Text('Settings'),
-        ),
-        const Text('Version: 0.1.0'),
+        SizedBox(),
+        Text('Version: 0.1.0'),
       ],
     );
   }
@@ -86,6 +81,24 @@ class _LoginFormState extends State<LoginForm> {
                 ),
               ),
               const SizedBox(height: 20),
+              BlocBuilder<LoginBloc, LoginState>(
+                buildWhen: (previous, current) => previous.username != current.username || previous.password != current.password,
+                builder: (context, state) {
+                  if (state.username.displayError != null) {
+                    return const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text("Invalid username", style: TextStyle(color: Colors.red, fontSize: 20)),
+                    );
+                  } else if(state.password.displayError != null) {
+                    return const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text("Invalid password", style: TextStyle(color: Colors.red, fontSize: 20)),
+                    );
+                  } else {
+                    return const SizedBox();
+                  }
+                },
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

@@ -1,4 +1,6 @@
 import 'package:emenu/models/setting.dart';
+import 'package:emenu/repositories/connection_repository.dart';
+import 'package:emenu/utils/global.dart';
 import 'package:emenu/utils/settings.dart';
 import 'package:flutter/material.dart';
 
@@ -20,6 +22,8 @@ class _SettingPageState extends State<SettingPage> {
   final _isCashierController = TextEditingController();
   final _typeController = TextEditingController();
   final _sectionController = TextEditingController();
+
+  final _connectionRepository = ConnectionRepository();
 
   late final Setting setting;
 
@@ -79,11 +83,23 @@ class _SettingPageState extends State<SettingPage> {
     }
   }
 
+  void _testConnection() async {
+    var serverIp = _serverIpController.text;
+    bool isConnected = await _connectionRepository.checkConnection(Global.serviceUrl(serverIp));
+
+    String message = isConnected ? 'Connection Successful' : 'Connection unsuccessful';
+    ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(content: Text(message)),
+        );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Settings'),
+        title: const Text('Settings'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -93,57 +109,71 @@ class _SettingPageState extends State<SettingPage> {
             children: <Widget>[
               TextFormField(
                 controller: _serverIpController,
-                decoration: InputDecoration(labelText: 'Server IP'),
+                decoration: const InputDecoration(labelText: 'Server IP'),
                 validator: (value) {
                   return null;
                 },
               ),
                TextFormField(
                 controller: _storeNoController,
-                decoration: InputDecoration(labelText: 'StoreNo'),
+                decoration: const InputDecoration(labelText: 'StoreNo'),
                 validator: (value) {
                   return null;
                 },
               ),
               TextFormField(
                 controller: _posGroupController,
-                decoration: InputDecoration(labelText: 'POS Group'),
+                decoration: const InputDecoration(labelText: 'POS Group'),
                 validator: (value) {
                   return null;
                 },
               ),
               TextFormField(
                 controller: _posIdController,
-                decoration: InputDecoration(labelText: 'POS ID'),
+                decoration: const InputDecoration(labelText: 'POS ID'),
                 validator: (value) {
                   return null;
                 },
               ),
               TextFormField(
                 controller: _typeController,
-                decoration: InputDecoration(labelText: 'Type'),
+                decoration: const InputDecoration(labelText: 'Type'),
                 validator: (value) {
                   return null;
                 },
               ),
               TextFormField(
                 controller: _vatController,
-                decoration: InputDecoration(labelText: 'VAT'),
+                decoration: const InputDecoration(labelText: 'VAT'),
                 validator: (value) {
                   return null;
                 },
               ),
               TextFormField(
                 controller: _isCashierController,
-                decoration: InputDecoration(labelText: 'Cashier'),
+                decoration: const InputDecoration(labelText: 'Cashier'),
                 validator: (value) {
                   return null;
                 },
               ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _save,
-                child: Text('Save'),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: _testConnection,
+                      child: const Text('Test Connection'),
+                    ),
+                  ),
+                  const SizedBox(width: 10,),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: _save,
+                      child: const Text('Save'),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

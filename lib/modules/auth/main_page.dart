@@ -30,6 +30,17 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+       appBar: AppBar(
+        backgroundColor: Colors.grey[200],
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings, size: 50, color: Colors.black,),
+            onPressed: () {
+              Navigator.pushNamed(context, 'SettingPage');
+            },
+          ),
+        ],
+      ),
       backgroundColor: Colors.grey[200],
       body: Center(
         child: SingleChildScrollView(

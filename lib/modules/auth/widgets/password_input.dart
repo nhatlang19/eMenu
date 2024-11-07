@@ -6,7 +6,7 @@ class PasswordInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<LoginBloc, LoginState>(
-      buildWhen: (previous, current) => previous.password != current.password,
+      buildWhen: (previous, current) => previous.username != current.username || previous.password != current.password,
       builder: (context, state) {
         return TextFormField(
           key: const Key('lib/modules/auth/widgets/Password_input.dart'),
@@ -18,8 +18,8 @@ class PasswordInput extends StatelessWidget {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(0),
             ),
-            errorText:
-                state.password.displayError != null ? 'invalid password' : null,
+            // errorText:
+            //     state.password.displayError != null ? 'invalid password' : null,
           ),
         );
       },
