@@ -15,7 +15,7 @@ class CartItem {
   double taxAmt = 0;
   late List<CartItemCombo> cartItemComboList;
 
-  static const String SEPARATE = "|";
+  static const String SEPARATE = "_|_";
 
   static CartItem empty = CartItem(item: Item.empty, qty: 0, segNo: 0);
 

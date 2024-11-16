@@ -1,6 +1,8 @@
+import 'package:emenu/config/themes/app_text_styles.dart';
 import 'package:emenu/models/setting.dart';
 import 'package:emenu/repositories/connection_repository.dart';
 import 'package:emenu/utils/global.dart';
+import 'package:emenu/utils/screen_util.dart';
 import 'package:emenu/utils/settings.dart';
 import 'package:flutter/material.dart';
 
@@ -22,6 +24,7 @@ class _SettingPageState extends State<SettingPage> {
   final _isCashierController = TextEditingController();
   final _typeController = TextEditingController();
   final _sectionController = TextEditingController();
+  final _passwordController = TextEditingController();
 
   final _connectionRepository = ConnectionRepository();
 
@@ -37,6 +40,7 @@ class _SettingPageState extends State<SettingPage> {
     _storeNoController.dispose();
     _vatController.dispose();
     _isCashierController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
@@ -75,6 +79,10 @@ class _SettingPageState extends State<SettingPage> {
       var settings = Settings();
       await settings.write(setting);
 
+      _passwordController.text = "";
+
+      Navigator.of(context).pop();
+
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
@@ -97,61 +105,89 @@ class _SettingPageState extends State<SettingPage> {
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width / 4;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Settings'),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.only(left: width, right: width, top: 20),
         child: Form(
           key: _formKey,
           child: ListView(
             children: <Widget>[
               TextFormField(
                 controller: _serverIpController,
-                decoration: const InputDecoration(labelText: 'Server IP'),
+                decoration: const InputDecoration(
+                  labelText: 'Server IP',
+                  border: OutlineInputBorder(),
+                ),
                 validator: (value) {
                   return null;
                 },
               ),
-               TextFormField(
+              const SizedBox(height: 16),
+              TextFormField(
                 controller: _storeNoController,
-                decoration: const InputDecoration(labelText: 'StoreNo'),
+                decoration: const InputDecoration(
+                  labelText: 'StoreNo',
+                  border: OutlineInputBorder(),
+                ),
                 validator: (value) {
                   return null;
                 },
               ),
+              const SizedBox(height: 16),
               TextFormField(
                 controller: _posGroupController,
-                decoration: const InputDecoration(labelText: 'POS Group'),
+                decoration: const InputDecoration(
+                  labelText: 'POS Group',
+                  border: OutlineInputBorder(),
+                ),
                 validator: (value) {
                   return null;
                 },
               ),
+              const SizedBox(height: 16),
               TextFormField(
                 controller: _posIdController,
-                decoration: const InputDecoration(labelText: 'POS ID'),
+                decoration: const InputDecoration(
+                  labelText: 'POS ID',
+                  border: OutlineInputBorder(),
+                ),
                 validator: (value) {
                   return null;
                 },
               ),
+              const SizedBox(height: 16),
               TextFormField(
                 controller: _typeController,
-                decoration: const InputDecoration(labelText: 'Type'),
+                decoration: const InputDecoration(
+                  labelText: 'Type',
+                  border: OutlineInputBorder(),
+                ),
                 validator: (value) {
                   return null;
                 },
               ),
+              const SizedBox(height: 16),
               TextFormField(
                 controller: _vatController,
-                decoration: const InputDecoration(labelText: 'VAT'),
+                decoration: const InputDecoration(
+                  labelText: 'VAT',
+                  border: OutlineInputBorder(),
+                ),
                 validator: (value) {
                   return null;
                 },
               ),
+              const SizedBox(height: 16),
               TextFormField(
                 controller: _isCashierController,
-                decoration: const InputDecoration(labelText: 'Cashier'),
+                decoration: const InputDecoration(
+                  labelText: 'Cashier',
+                  border: OutlineInputBorder(),
+                ),
                 validator: (value) {
                   return null;
                 },
@@ -169,7 +205,9 @@ class _SettingPageState extends State<SettingPage> {
                   const SizedBox(width: 10,),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: _save,
+                      onPressed: () async {
+                        _showCustomDialog(context);
+                      },
                       child: const Text('Save'),
                     ),
                   ),
@@ -179,6 +217,74 @@ class _SettingPageState extends State<SettingPage> {
           ),
         ),
       ),
+    );
+  }
+
+  void _showCustomDialog(BuildContext parentContext) {
+    showDialog(
+      context: parentContext,
+      useRootNavigator: false,
+      builder: (BuildContext context) {
+        return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.5, // Custom width
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      'Password',
+                      style: AppTextStyles.dialogTitle,
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _passwordController,
+                      decoration: const InputDecoration(labelText: 'Password'),
+                      validator: (value) {
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('Close'),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              if (_passwordController.text == ScreenUtil.getCurrentDate('ddMMyy')) {
+                                _save();
+                              } else {
+                                ScaffoldMessenger.of(context)
+                                ..hideCurrentSnackBar()
+                                ..showSnackBar(
+                                  const SnackBar(content: Text('Invalid password')),
+                                );
+                              }
+                            },
+                            child: const Text('OK'),
+                          )
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+        );
+      },
     );
   }
 }

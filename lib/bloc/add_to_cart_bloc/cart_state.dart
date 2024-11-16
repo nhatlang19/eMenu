@@ -92,7 +92,7 @@ class CartState extends Equatable {
       // }
     }
 
-    return lists.join("\n");
+    return lists.join("*V#A*");
   }
 
   String getStatus({bool isEdit = false})

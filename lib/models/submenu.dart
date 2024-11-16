@@ -7,6 +7,7 @@ part 'submenu.g.dart';
 
 @JsonSerializable()
 class Submenu extends Equatable {
+
   @JsonKey(name: 'BtnColor')
   final String? btnColor;
   @JsonKey(name: 'Description')
@@ -21,12 +22,14 @@ class Submenu extends Equatable {
   final String? bitmap;
   @JsonKey(name: 'UnitSellPrice')
   final String? price;
+  @JsonKey(name: 'RunOut')
+  final String? runOut;
 
   @override
-  List<Object> get props => [description, btnColor ?? '', fontColor ?? '', defaultValue, seqNum, bitmap ?? AssetPath.bitmapDefault, price ?? "0"];
+  List<Object> get props => [description, btnColor ?? '', fontColor ?? '', defaultValue, seqNum, bitmap ?? AssetPath.bitmapDefault, price ?? "0", runOut ?? "0"];
 
   static const empty =
-      Submenu(description: '', btnColor: '', fontColor: '', defaultValue: '', seqNum: '', bitmap: AssetPath.bitmapDefault, price: '0');
+      Submenu(description: '', btnColor: '', fontColor: '', defaultValue: '', seqNum: '', bitmap: AssetPath.bitmapDefault, price: '0', runOut: '0');
 
   const Submenu({
     required this.description,
@@ -36,7 +39,12 @@ class Submenu extends Equatable {
     required this.seqNum,
     required this.bitmap,
     required this.price,
+    required this.runOut,
   });
 
   factory Submenu.fromJson(Map<String, dynamic> json) => _$SubmenuFromJson(json);
+
+  isRunOut() {
+    return this.runOut == "1";
+  }
 }

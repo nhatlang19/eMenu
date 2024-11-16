@@ -67,10 +67,10 @@ class ComboBottom extends StatelessWidget {
                   return Column(
                     children: [
                       Container(
-                        color: const Color.fromARGB(255, 254, 126, 87),
+                        color: const Color(0xFF4682B4),
                         child: ListTile(
-                          // title: Text("Item $index"),
-                          title: Text(parentItem.itemCombo.itemDesc.toString(), style: const TextStyle(fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),),
+                          title: Text("Món tự chọn ${comboIndex + 1}", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),),
+                          // title: Text(parentItem.itemCombo.itemDesc.toString(), style: const TextStyle(fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),),
                         ),
                       ),
                       Column(children: parentItem.cartItemModifierList.map((child) {
@@ -94,6 +94,7 @@ class ComboBottom extends StatelessWidget {
                               Expanded(
                                 flex: 1,
                                 child: TextField(
+                                  keyboardType: TextInputType.number,
                                   controller: TextEditingController(text: quantity.toString()),
                                   inputFormatters: [
                                     LengthLimitingTextInputFormatter(2), // Limit to 1 characters

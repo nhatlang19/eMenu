@@ -8,6 +8,7 @@ import 'package:emenu/repositories/cart_repository.dart';
 import 'package:emenu/repositories/item_repository.dart';
 import 'package:emenu/repositories/user_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
@@ -16,6 +17,10 @@ void main() async {
   await dotenv.load(fileName: ".env");
 
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+   SystemChrome.setPreferredOrientations([
+    DeviceOrientation.landscapeLeft,
+    DeviceOrientation.landscapeRight,
+  ]);
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   runApp(const MainApp());
