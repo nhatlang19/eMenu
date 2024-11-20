@@ -15,9 +15,9 @@ class TableRepository {
     var json = await provider.getTableListBySection(section);
 
     final List<Table> result = [];
-    json.forEach((data) {
+    for (var data in json) {
       result.add(Table.fromJson(data['Table'] as Map<String, dynamic>));
-    });
+    }
      
     return result;
   }

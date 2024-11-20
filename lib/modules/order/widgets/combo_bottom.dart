@@ -16,11 +16,11 @@ class ComboBottom extends StatelessWidget {
       || current.status == CartStatus.addToCartComboFailure,
       builder: (context, state) {
         var isFail = state.status == CartStatus.addToCartComboFailure && state.errorMessage.isNotEmpty;
-        Widget errorText = isFail ? Center(child: Text(state.errorMessage, style: const TextStyle(fontSize: 20.0, color: Colors.red))) : SizedBox(height: 0,);
+        Widget errorText = isFail ? Center(child: Text(state.errorMessage, style: const TextStyle(fontSize: 20.0, color: Colors.red))) : const SizedBox(height: 0,);
         return Container(
           height: screenHeight * 0.9,
           width: screenWidth * 0.9,
-          padding: EdgeInsets.all(0.0),
+          padding: const EdgeInsets.all(0.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[

@@ -51,12 +51,12 @@ class _CartViewState extends State<CartView> {
                         padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 8.0),
                         child: Table(
                           // border: TableBorder, // Adds borders to the table
-                          columnWidths: {
-                            0: FlexColumnWidth(1.5), // Column 0 will take twice the space of column 1
-                            1: FlexColumnWidth(0.5), 
-                            2: FlexColumnWidth(1), 
-                            3: FlexColumnWidth(1), 
-                            4: FlexColumnWidth(1), 
+                          columnWidths: const {
+                            0: const FlexColumnWidth(1.5), // Column 0 will take twice the space of column 1
+                            1: const FlexColumnWidth(0.5), 
+                            2: const FlexColumnWidth(1), 
+                            3: const FlexColumnWidth(1), 
+                            4: const FlexColumnWidth(1), 
                           },
                           children: [
                             _buildHeaderTable(),
@@ -70,12 +70,12 @@ class _CartViewState extends State<CartView> {
                               padding: const EdgeInsets.only(left: 15.0, right: 15.0),
                               child: Table(
                                 // border: TableBorder, // Adds borders to the table
-                                columnWidths: {
-                                  0: FlexColumnWidth(1.5), // Column 0 will take twice the space of column 1
-                                  1: FlexColumnWidth(0.5), 
-                                  2: FlexColumnWidth(1), 
-                                  3: FlexColumnWidth(1), 
-                                  4: FlexColumnWidth(1), 
+                                columnWidths: const {
+                                  0: const FlexColumnWidth(1.5), // Column 0 will take twice the space of column 1
+                                  1: const FlexColumnWidth(0.5), 
+                                  2: const FlexColumnWidth(1), 
+                                  3: const FlexColumnWidth(1), 
+                                  4: const FlexColumnWidth(1), 
                                 },
                                 children: [
                                   ...state.cartItems.asMap().entries.map((entry) {
@@ -210,9 +210,9 @@ class _CartViewState extends State<CartView> {
   }
 
   _buildControl(int index, {hideIncrease = false}) {
-    BorderRadius border = BorderRadius.only(topLeft: Radius.circular(5), bottomLeft: Radius.circular(5));
+    BorderRadius border = const BorderRadius.only(topLeft: Radius.circular(5), bottomLeft: Radius.circular(5));
     if (hideIncrease) {
-      border = BorderRadius.all(Radius.circular(5));
+      border = const BorderRadius.all(Radius.circular(5));
     }
     return TableCell(
       child: Expanded(
@@ -255,7 +255,7 @@ class _CartViewState extends State<CartView> {
                           context.read<CartBloc>().add(Increase(position: index));
                         },
                       ),
-                    ) : SizedBox(),
+                    ) : const SizedBox(),
                   ],
                 ),
               ),
@@ -282,7 +282,7 @@ class _CartViewState extends State<CartView> {
         _buildTableCellText(title),
         _buildTableCellText(qty),
         _buildTableCellText(pricing),
-        status == '' ? _buildTableCellIcon(status, widget: SizedBox()) : _buildTableCellIcon(status),
+        status == '' ? _buildTableCellIcon(status, widget: const SizedBox()) : _buildTableCellIcon(status),
         item.item.getItemType() != "M" 
         && status == "" ? _buildControl(index, hideIncrease: hideIncrease) : const TableCell(child: SizedBox()),
       ],

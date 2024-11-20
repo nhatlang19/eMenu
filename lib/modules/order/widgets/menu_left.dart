@@ -1,10 +1,9 @@
-import 'dart:io';
 
+import 'package:emenu/bloc/add_to_cart_bloc/cart_bloc.dart';
 import 'package:emenu/config/themes/app_colors.dart';
 import 'package:emenu/constants/asset_path.dart';
 import 'package:emenu/modules/order/bloc/menu_bloc.dart';
 import 'package:emenu/modules/order/bloc/submenu_bloc.dart';
-import 'package:emenu/utils/color_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -51,13 +50,14 @@ class MenuLeft extends StatelessWidget {
                     selectedTileColor: AppColors.mainRed,
                     title: Text(
                       menu.description,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold
                       ),
                     ),
                     onTap: () {
                       // Handle item tap
+                      context.read<CartBloc>().add(const Close());
                       context.read<MenuBloc>().add(ChangeMenu(menu: menu));
                       context.read<SubMenuBloc>().add(FetchSubmenu(
                           selectedPosMenu: menu.defaultValue,

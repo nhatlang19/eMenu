@@ -47,7 +47,7 @@ class _TablePageState extends State<TablePage> {
           body: MultiBlocProvider(
                     providers: [
                       BlocProvider<SectionBloc>(
-                        create: (BuildContext context) => SectionBloc(sectionRepository: sectionRepository)..add(FetchSection()),
+                        create: (BuildContext context) => SectionBloc(sectionRepository: sectionRepository)..add(const FetchSection()),
                       ),
                       BlocProvider<TableBloc>(
                         create: (BuildContext context) => TableBloc(tableRepository: tableRepository),

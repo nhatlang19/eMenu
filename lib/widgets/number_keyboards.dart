@@ -17,7 +17,7 @@ class NumberKeyboards extends StatelessWidget {
           Expanded(
             child: GridView.builder(
               itemCount: 12,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3,
               ),
               itemBuilder: (context, index) {
@@ -34,7 +34,7 @@ class NumberKeyboards extends StatelessWidget {
                 return GestureDetector(
                   onTap: () => onKeyPressed(keyLabel),
                   child: Container(
-                    margin: EdgeInsets.all(5.0),
+                    margin: const EdgeInsets.all(5.0),
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.grey),
                       borderRadius: BorderRadius.circular(8.0),
@@ -43,7 +43,7 @@ class NumberKeyboards extends StatelessWidget {
                     child: Center(
                       child: Text(
                         keyLabel,
-                        style: TextStyle(fontSize: 24, color: Colors.white),
+                        style: const TextStyle(fontSize: 24, color: Colors.white),
                       ),
                     ),
                   ),
@@ -53,7 +53,7 @@ class NumberKeyboards extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: onClose,
-            child: Text('Close'),
+            child: const Text('Close'),
           ),
         ],
       ),

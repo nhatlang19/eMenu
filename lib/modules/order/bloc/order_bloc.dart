@@ -11,7 +11,7 @@ part 'order_state.dart';
 class OrderBloc extends Bloc<OrderEvent, OrderState> {
   final OrderRepository _orderRepository;
 
-  OrderBloc({required OrderRepository orderRepository}) : _orderRepository = orderRepository, super(OrderState()) {
+  OrderBloc({required OrderRepository orderRepository}) : _orderRepository = orderRepository, super(const OrderState()) {
     on<OrderInitPage>(_onOrderInitPage);
     on<ChangeSelectOrder>(_onChangeSelectOrder);
     on<FetchOrders>(_onFetchOrders);

@@ -45,6 +45,6 @@ class Submenu extends Equatable {
   factory Submenu.fromJson(Map<String, dynamic> json) => _$SubmenuFromJson(json);
 
   isRunOut() {
-    return this.runOut == "1";
+    return runOut == "1";
   }
 }

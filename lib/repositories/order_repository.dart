@@ -12,9 +12,9 @@ class OrderRepository {
 
     var json = await provider.getOrderEditType(posBizDate, currentTable);
     final List<Order> result = [];
-    json.forEach((data) {
+    for (var data in json) {
       result.add(Order.fromJson(data['Table'] as Map<String, dynamic>));
-    });
+    }
      
     return result;
   }

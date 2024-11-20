@@ -32,7 +32,7 @@ class SalesCodeDropdown extends StatelessWidget {
                         borderRadius: BorderRadius.circular(5),
                       ),
                       padding:
-                          EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                          const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       child: DropdownButtonHideUnderline(
                           child: DropdownButton<SalesCode>(
                         value: state.selectedCode,

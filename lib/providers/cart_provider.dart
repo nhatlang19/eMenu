@@ -42,7 +42,7 @@ class CartProvider extends SoapApiClient {
     return false;
   }
 
-  Future<dynamic?> getNewOrderNumberByPOS(String posNo) async {
+  Future<dynamic> getNewOrderNumberByPOS(String posNo) async {
     const String soapAction = 'http://tempuri.org/GetNewOrderNumberByPOS';
     final String soapBody =
         '''<GetNewOrderNumberByPOS xmlns="http://tempuri.org/">

@@ -56,7 +56,7 @@ class OrderView extends StatelessWidget {
                           useSafeArea: true,
                           builder: (context) {
                             context.read<CartBloc>().add(const SkipShowCombo());
-                            return ComboBottom();
+                            return const ComboBottom();
                           },
                         );
                       }

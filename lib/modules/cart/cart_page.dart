@@ -161,7 +161,7 @@ class _CartPageState extends State<CartPage> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(20.0),
-                              child: Text('Tổng tiền: ${total} VND',
+                              child: Text('Tổng tiền: $total VND',
                                   style: const TextStyle(
                                       fontSize: 24.0,
                                       fontWeight: FontWeight.bold,
@@ -183,11 +183,6 @@ class _CartPageState extends State<CartPage> {
                                 onPressed: () {
                                   // Your onPressed logic here
                                 },
-                                child: const Text('SEND ORDER >>> ',
-                                    style: TextStyle(
-                                        fontSize: 24.0,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white)),
                                 style: OutlinedButton.styleFrom(
                                   side: BorderSide
                                       .none, // Remove the default border
@@ -195,6 +190,11 @@ class _CartPageState extends State<CartPage> {
                                       horizontal: 24.0,
                                       vertical: 12.0), // Button padding
                                 ),
+                                child: const Text('SEND ORDER >>> ',
+                                    style: TextStyle(
+                                        fontSize: 24.0,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white)),
                               ),
                             )
                           ],

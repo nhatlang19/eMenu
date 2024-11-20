@@ -37,6 +37,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<Decrease>(_onDecrease);
     on<UpdateQuantity>(_onUpdateQuantity);
     on<Toogle>(_onToogle);
+    on<Close>(_onClose);
     on<UpdateNoPeople>(_onUpdateNoPeople);
     on<ResetCart>(_onResetCart);
     on<SendOrder>(_onSendOrder);
@@ -301,6 +302,10 @@ class CartBloc extends Bloc<CartEvent, CartState> {
 
   void _onToogle(Toogle event, Emitter<CartState> emit) {
     emit(state.copyWith(toogle: !state.toogle));
+  }
+
+   void _onClose(Close event, Emitter<CartState> emit) {
+    emit(state.copyWith(toogle: false));
   }
 
   void _onSetTable(SetTable event, Emitter<CartState> emit) {

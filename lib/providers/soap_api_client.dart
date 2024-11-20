@@ -105,10 +105,10 @@ abstract class SoapApiClient {
     final List<dynamic>  jsonResult = [];
     final myTransformer = Xml2Json();
 
-    elements.forEach((elm) {
+    for (var elm in elements) {
       myTransformer.parse(elm.toXmlString());
       jsonResult.add(jsonDecode(myTransformer.toParker()));
-    });
+    }
     return jsonResult;
   }
 

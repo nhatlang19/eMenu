@@ -12,3 +12,7 @@ A new Flutter project.
 
 - dart run build_runner build
 - REFS: https://bloclibrary.dev/tutorials/flutter-weather/#setup-1
+
+# Build apk
+
+- flutter build apk --release

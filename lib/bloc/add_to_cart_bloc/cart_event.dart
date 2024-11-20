@@ -34,6 +34,13 @@ class AddToCartWithCombo extends CartEvent {
   List<Object> get props => [callback];
 }
 
+class Close extends CartEvent {
+  const Close();
+
+  @override
+  List<Object> get props => [];
+}
+
 class Toogle extends CartEvent {
   const Toogle();
 

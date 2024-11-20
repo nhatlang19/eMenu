@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:emenu/models/item.dart';
 import 'package:emenu/providers/connection_provider.dart';
 
 class ConnectionRepository {

@@ -37,7 +37,7 @@ class CartViewDrawer extends StatelessWidget {
                             iconSize: 40.0,
                             icon: const Icon(Icons.close),
                             onPressed: () {
-                              context.read<CartBloc>().add(Toogle());
+                              context.read<CartBloc>().add(const Toogle());
                             },
                           );
                         }

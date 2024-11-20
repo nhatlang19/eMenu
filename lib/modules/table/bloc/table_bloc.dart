@@ -1,6 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:emenu/models/sales_code.dart';
-import 'package:emenu/models/section.dart';
 import 'package:emenu/models/table.dart';
 import 'package:emenu/repositories/table_repository.dart';
 import 'package:equatable/equatable.dart';

@@ -75,6 +75,7 @@ class CartItem {
     return cartItems;
   }
 
+  @override
   String toString() {
     String result = "";
     result += qty.toString() + SEPARATE;

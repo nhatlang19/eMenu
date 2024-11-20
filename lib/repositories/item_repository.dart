@@ -17,9 +17,9 @@ class ItemRepository {
     var json = await provider.getItemBySubMenuSelected(currSubItem, priceLevel, qty);
 
     final List<Item> result = [];
-    json.forEach((data) {
+    for (var data in json) {
       result.add(Item.fromJson(data['Table1'] as Map<String, dynamic>));
-    });
+    }
      
     return result[0];
   }
@@ -30,9 +30,9 @@ class ItemRepository {
     var json = await provider.getItemComboBySubMenuSelected(currSubItem);
 
     final List<ItemCombo> result = [];
-    json.forEach((data) {
+    for (var data in json) {
       result.add(ItemCombo.fromJson(data['Table'] as Map<String, dynamic>));
-    });
+    }
      
     return result;
   }
@@ -43,9 +43,9 @@ class ItemRepository {
     var json = await provider.getModifierByModifierItem(modifierItem);
 
     final List<ItemModifier> result = [];
-    json.forEach((data) {
+    for (var data in json) {
       result.add(ItemModifier.fromJson(data['Table'] as Map<String, dynamic>));
-    });
+    }
      
     return result;
   }

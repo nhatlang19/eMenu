@@ -66,7 +66,7 @@ class MenuGridRight extends StatelessWidget {
                                                 },
                                                 onClose: () {
                                                   try {
-                                                    overlayEntry?.remove();
+                                                    overlayEntry.remove();
                                                   } catch (_) {}
                                                 },
                                               ),
@@ -177,13 +177,12 @@ class MenuGridRight extends StatelessWidget {
                                     children: [
                                       Expanded(
                                         child: GridView.builder(
-                                          padding: const EdgeInsets.all(5),
                                           gridDelegate:
                                               SliverGridDelegateWithFixedCrossAxisCount(
                                                   crossAxisCount:
                                                       crossAxisCount, // Number of columns in the grid
                                                   crossAxisSpacing: 10,
-                                                  mainAxisSpacing: 1,
+                                                  mainAxisSpacing: 0,
                                                   childAspectRatio: 22 / 9),
                                           itemCount: state.submenus
                                               .length, // Number of items in the grid
@@ -238,7 +237,9 @@ class MenuGridRight extends StatelessWidget {
                               child: BlocBuilder<CartBloc, CartState>(
                                   buildWhen: (previous, current) =>
                                       previous.cartItems.length !=
-                                      current.cartItems.length,
+                                      current.cartItems.length||
+                                      current.status == CartStatus.updatedQuantity ||
+                                      current.status == CartStatus.success,
                                   builder: (context, state) {
                                     final cartItemCount =
                                         state.cartItems.length;
