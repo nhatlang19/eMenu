@@ -77,12 +77,13 @@ class CartState extends Equatable {
 
   String getString() {
     List<String> lists = [];
-    var seqNo = 1;
+    var seqNo = 0;
     for (CartItem cartItem in cartItems) {
+      seqNo++;
       if (cartItem.item.printStatus != '') {
         continue;
       }
-      cartItem.segNo = seqNo++;
+      cartItem.segNo = seqNo;
       lists.add(cartItem.toString());
 
       // var childCartItems = cartItem.convertChildToCartItems();

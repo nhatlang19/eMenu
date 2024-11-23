@@ -7,6 +7,7 @@ import 'package:emenu/modules/auth/widgets/username_input.dart';
 import 'package:emenu/utils/global.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:formz/formz.dart';
 
 class LoginForm extends StatefulWidget {
@@ -46,11 +47,12 @@ class _LoginFormState extends State<LoginForm> {
   }
 
   Row _buildVersion() {
-    return const Row(
+    var version = dotenv.env['VERSION'];
+    return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        SizedBox(),
-        Text('Version: 0.1.0'),
+        const SizedBox(),
+        Text('Version: $version'),
       ],
     );
   }

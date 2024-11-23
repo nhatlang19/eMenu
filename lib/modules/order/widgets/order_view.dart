@@ -49,14 +49,14 @@ class OrderView extends StatelessWidget {
                     listener: (context, state) {
                       if (state.showCombo == ShowCombo.show && state.errorMessage.isEmpty) {
                         showModalBottomSheet(
-                          isDismissible: false,
-                          enableDrag: false,
+                          // isDismissible: false,
+                          // enableDrag: false,
                           context: context,
                           isScrollControlled: true,
-                          useSafeArea: true,
+                          // useSafeArea: true,
                           builder: (context) {
                             context.read<CartBloc>().add(const SkipShowCombo());
-                            return const ComboBottom();
+                            return  ComboBottom();
                           },
                         );
                       }
