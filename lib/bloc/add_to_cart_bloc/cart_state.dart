@@ -8,6 +8,7 @@ enum CartStatus {
   addToCartComboFailure,
   updatedQuantity,
   updatedQuantityCombo,
+  updatedNoGuest,
   sendOrderInitial,
   sendOrderDuplicate,
   sendOrderSuccess,
@@ -26,11 +27,12 @@ class CartState extends Equatable {
   final CartStatus status;
   final dynamic total;
   final bool toogle;
-  final String noPeople;
+  final String customQuantity;
   final ShowCombo showCombo;
   late CartItem cartItemTmp;
   final String errorMessage;
   final Table selectedTable;
+  final int noGuest;
 
   CartState(
       {
@@ -41,7 +43,9 @@ class CartState extends Equatable {
       this.toogle = false,
       this.showCombo = ShowCombo.hide,
       this.errorMessage = '',
-      this.noPeople = "0",}) {
+      this.customQuantity = "0",
+      this.noGuest = 2,
+      }) {
         this.cartItemTmp = CartItem.empty;
       }
 
@@ -51,10 +55,11 @@ class CartState extends Equatable {
     dynamic? total,
     bool? toogle,
     ShowCombo? showCombo,
-    String? noPeople,
+    String? customQuantity,
     CartItem? cartItemTmp,
     String? errorMessage,
     Table? selectedTable,
+    int? noGuest,
   }) {
     var state = CartState(
         status: status ?? this.status,
@@ -64,7 +69,8 @@ class CartState extends Equatable {
         showCombo: showCombo ?? this.showCombo,
         selectedTable: selectedTable ?? this.selectedTable,
         errorMessage: errorMessage ?? this.errorMessage,
-        noPeople: noPeople ?? this.noPeople);
+        customQuantity: customQuantity ?? this.customQuantity,
+        noGuest: noGuest ?? this.noGuest);
 
     state.cartItemTmp = cartItemTmp ?? this.cartItemTmp;
     return state;
@@ -85,12 +91,6 @@ class CartState extends Equatable {
       }
       cartItem.segNo = seqNo;
       lists.add(cartItem.toString());
-
-      // var childCartItems = cartItem.convertChildToCartItems();
-      // for (CartItem child in childCartItems) {
-      //   child.segNo = seqNo++;
-      //   lists.add(child.toString());
-      // }
     }
 
     return lists.join("*V#A*");
@@ -130,10 +130,11 @@ class CartState extends Equatable {
         status,
         total,
         toogle,
-        noPeople,
+        customQuantity,
         showCombo,
         cartItemTmp,
         errorMessage,
-        selectedTable
+        selectedTable,
+        noGuest,
       ];
 }

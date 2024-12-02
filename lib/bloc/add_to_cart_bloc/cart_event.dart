@@ -76,10 +76,19 @@ class UpdateQuantity extends CartEvent {
   List<Object> get props => [position];
 }
 
-class UpdateNoPeople extends CartEvent {
+class UpdateNoGuest extends CartEvent {
+  final int noGuest;
+
+  const UpdateNoGuest({required this.noGuest});
+
+  @override
+  List<Object> get props => [noGuest];
+}
+
+class UpdateCustomQuantity extends CartEvent {
   final String value;
 
-  const UpdateNoPeople({required this.value});
+  const UpdateCustomQuantity({required this.value});
 
   @override
   List<Object> get props => [value];

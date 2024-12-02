@@ -21,4 +21,14 @@ class TableRepository {
      
     return result;
   }
+
+  Future<bool> updateTableStatus({required String status
+  , required String cashierId
+  , required String currentTable}) async {
+    final provider = TableProvider();
+
+    var res = await provider.updateTableStatus(status, cashierId, currentTable);
+
+    return res;
+  }
 }

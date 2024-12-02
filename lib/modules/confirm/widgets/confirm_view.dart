@@ -245,7 +245,7 @@ class ConfirmView extends StatelessWidget {
                       typeLoad: orderState.isAddNew ? "NewOrder" : "EditOrder",
                       currTable: orderState.selectedTable.TableNo,
                       currTableGroup: orderState.selectedForGroup.TableNo,
-                      noOfPerson: "1",
+                      noOfPerson: state.noGuest.toString(),
                       salesCode: orderState.selectedCode.code,
                       POSBizDate: ScreenUtil.getCurrentDate('yyyyMMdd')));
                 }

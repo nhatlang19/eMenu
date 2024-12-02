@@ -17,10 +17,11 @@ void main() async {
   await dotenv.load(fileName: ".env");
 
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-   SystemChrome.setPreferredOrientations([
+  SystemChrome.setPreferredOrientations([
     DeviceOrientation.landscapeLeft,
     DeviceOrientation.landscapeRight,
   ]);
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky); // Hide both the status bar and navigation bar.
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   runApp(const MainApp());

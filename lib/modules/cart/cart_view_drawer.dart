@@ -31,7 +31,7 @@ class CartViewDrawer extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         BlocBuilder<CartBloc, CartState>(
-                        buildWhen: (previous, current) => previous.noPeople != current.noPeople,
+                        buildWhen: (previous, current) => previous.customQuantity != current.customQuantity,
                         builder: (context, state) {
                           return IconButton(
                             iconSize: 40.0,

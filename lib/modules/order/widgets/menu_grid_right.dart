@@ -1,3 +1,4 @@
+import 'package:awesome_number_picker/awesome_number_picker.dart';
 import 'package:emenu/bloc/add_to_cart_bloc/cart_bloc.dart';
 import 'package:emenu/config/themes/app_colors.dart';
 import 'package:emenu/config/themes/app_text_styles.dart';
@@ -14,9 +15,23 @@ import 'package:emenu/widgets/number_keyboards.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:badges/badges.dart' as badges;
+import 'package:numberpicker/numberpicker.dart';
 
-class MenuGridRight extends StatelessWidget {
+class MenuGridRight extends StatefulWidget {
   const MenuGridRight({super.key});
+
+  @override
+  State<MenuGridRight> createState() => _MenuGridRightState();
+}
+
+class _MenuGridRightState extends State<MenuGridRight> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showSetPeopleV2(context);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +76,7 @@ class MenuGridRight extends StatelessWidget {
                                               NumberKeyboards(
                                                 onKeyPressed: (value) {
                                                   context.read<CartBloc>().add(
-                                                      UpdateNoPeople(
+                                                      UpdateCustomQuantity(
                                                           value: value));
                                                 },
                                                 onClose: () {
@@ -85,9 +100,10 @@ class MenuGridRight extends StatelessWidget {
                               children: <Widget>[
                                 BlocBuilder<CartBloc, CartState>(
                                     buildWhen: (previous, current) =>
-                                        previous.noPeople != current.noPeople,
+                                        previous.customQuantity !=
+                                        current.customQuantity,
                                     builder: (context, state) {
-                                      return Text(state.noPeople);
+                                      return Text(state.customQuantity);
                                     }), // text
                               ],
                             ),
@@ -135,14 +151,15 @@ class MenuGridRight extends StatelessWidget {
                           onPressed: () async {
                             var settings = Settings();
                             var setting = await settings.read();
-                            if (setting.isCashier == "1") {
+                            if (setting.exitMode == "0") {
                               // ignore: use_build_context_synchronously
                               _showCustomDialog(context);
                             } else {
                               // ignore: use_build_context_synchronously
                               context.read<CartBloc>().add(const ResetCart());
-                              // ignore: use_build_context_synchronously
-                              Navigator.pop(context);
+                              if (Navigator.canPop(context)) {
+                                Navigator.of(context).pop("REFRESH_TABLE");
+                              }
                             }
                           },
                         ),
@@ -207,61 +224,89 @@ class MenuGridRight extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       BlocBuilder<CartBloc, CartState>(
                           buildWhen: (previous, current) =>
-                              previous.cartItems.length !=
-                                  current.cartItems.length ||
-                              current.status == CartStatus.updatedQuantity ||
-                              current.status == CartStatus.success,
+                              previous.noGuest != current.noGuest ||
+                              current.status == CartStatus.updatedNoGuest,
                           builder: (context, state) {
-                            var total = ScreenUtil.formatPrice(state.total);
-                            return Padding(
-                              padding: const EdgeInsets.only(right: 40.0),
-                              child: Text('Tạm tính: $total đ',
-                                  style: const TextStyle(
-                                      fontSize: 24.0,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white)),
+                            var noGuest = state.noGuest;
+                            return InkWell(
+                              onTap: () => displaySetPeople(context),
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 40.0),
+                                child: Text('Số khách: $noGuest',
+                                    style: const TextStyle(
+                                        fontSize: 24.0,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white)),
+                              ),
                             );
                           }),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 20),
-                        child: Row(
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                context.read<CartBloc>().add(const Toogle());
-                              },
-                              child: BlocBuilder<CartBloc, CartState>(
-                                  buildWhen: (previous, current) =>
-                                      previous.cartItems.length !=
-                                      current.cartItems.length||
-                                      current.status == CartStatus.updatedQuantity ||
-                                      current.status == CartStatus.success,
-                                  builder: (context, state) {
-                                    final cartItemCount =
-                                        state.cartItems.length;
-                                    return badges.Badge(
-                                      position: badges.BadgePosition.bottomEnd(
-                                          bottom: -10, end: -12),
-                                      badgeContent: Text(
-                                        '$cartItemCount',
-                                        style: const TextStyle(
-                                            color: Colors.white),
-                                      ),
-                                      badgeStyle: const badges.BadgeStyle(
-                                        badgeColor: Colors.red,
-                                      ),
-                                      child: const Icon(Icons.shopping_cart,
-                                          color: Colors.white, size: 50.0),
-                                    );
-                                  }),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          BlocBuilder<CartBloc, CartState>(
+                              buildWhen: (previous, current) =>
+                                  previous.cartItems.length !=
+                                      current.cartItems.length ||
+                                  current.status ==
+                                      CartStatus.updatedQuantity ||
+                                  current.status == CartStatus.success,
+                              builder: (context, state) {
+                                var total = ScreenUtil.formatPrice(state.total);
+                                return Padding(
+                                  padding: const EdgeInsets.only(right: 40.0),
+                                  child: Text('Tạm tính: $total đ',
+                                      style: const TextStyle(
+                                          fontSize: 24.0,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white)),
+                                );
+                              }),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 20),
+                            child: Row(
+                              children: [
+                                InkWell(
+                                  onTap: () {
+                                    context
+                                        .read<CartBloc>()
+                                        .add(const Toogle());
+                                  },
+                                  child: BlocBuilder<CartBloc, CartState>(
+                                      buildWhen: (previous, current) =>
+                                          previous.cartItems.length !=
+                                              current.cartItems.length ||
+                                          current.status ==
+                                              CartStatus.updatedQuantity ||
+                                          current.status == CartStatus.success,
+                                      builder: (context, state) {
+                                        final cartItemCount =
+                                            state.cartItems.length;
+                                        return badges.Badge(
+                                          position:
+                                              badges.BadgePosition.bottomEnd(
+                                                  bottom: -10, end: -12),
+                                          badgeContent: Text(
+                                            '$cartItemCount',
+                                            style: const TextStyle(
+                                                color: Colors.white),
+                                          ),
+                                          badgeStyle: const badges.BadgeStyle(
+                                            badgeColor: Colors.red,
+                                          ),
+                                          child: const Icon(Icons.shopping_cart,
+                                              color: Colors.white, size: 50.0),
+                                        );
+                                      }),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      )
+                          )
+                        ],
+                      ),
                     ],
                   ),
                 ),
@@ -302,11 +347,12 @@ class MenuGridRight extends StatelessWidget {
                   Navigator.of(context).pop("REFRESH_TABLE");
                 }
               } else if (state.confirmStatus == ConfirmStatus.failure) {
-                  ScaffoldMessenger.of(context)
-                    ..hideCurrentSnackBar()
-                    ..showSnackBar(
-                      const SnackBar(content: Text("Invalid username or password")),
-                    );
+                ScaffoldMessenger.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(
+                    const SnackBar(
+                        content: Text("Invalid username or password")),
+                  );
               }
             },
             child: Dialog(
@@ -386,7 +432,9 @@ class MenuGridRight extends StatelessWidget {
                               return ElevatedButton(
                                 onPressed: () {
                                   if (state.isValid) {
-                                    context.read<LoginBloc>().add(const LoginConfirmed());
+                                    context
+                                        .read<LoginBloc>()
+                                        .add(const LoginConfirmed());
                                   }
                                 },
                                 child: const Text('OK'),
@@ -402,6 +450,122 @@ class MenuGridRight extends StatelessWidget {
             ),
           ),
         );
+      },
+    );
+  }
+
+  Future<void> displaySetPeople(BuildContext parentContext) async {
+    var settings = Settings();
+    var setting = await settings.read();
+    if (setting.exitMode == "1") {
+      showSetPeopleV2(parentContext);
+    }
+  }
+
+  void showSetPeople(BuildContext parentContext, {int noGuestDefault = 2}) {
+    int currentValue = 2;
+    showDialog(
+      context: parentContext,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Set people'),
+          content: SizedBox(
+            height: 300,
+            child: BlocBuilder<CartBloc, CartState>(
+              builder: (context, state) {
+                currentValue = state.noGuest;
+                return IntegerNumberPicker(
+                  initialValue: currentValue,
+                  minValue: 1,
+                  maxValue: 30,
+                  onChanged: (i) => setState(() {
+                    currentValue = i;
+                  }),
+                );
+              },
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            TextButton(
+              child: const Text('Set'),
+              onPressed: () {
+                context
+                    .read<CartBloc>()
+                    .add(UpdateNoGuest(noGuest: currentValue));
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void showSetPeopleV2(BuildContext parentContext, {int noGuestDefault = 2}) {
+    int currentValue = 2;
+    showModalBottomSheet(
+      context: parentContext,
+      builder: (BuildContext context) {
+        return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width / 2,
+              child: BlocBuilder<CartBloc, CartState>(
+                builder: (context, state) {
+                  currentValue = state.noGuest;
+                  return StatefulBuilder(
+                    builder: (BuildContext context, StateSetter setState) {
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              TextButton(
+                                onPressed: () {
+                                  context
+                                      .read<CartBloc>()
+                                      .add(UpdateNoGuest(noGuest: currentValue));
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('Chọn'),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
+                          NumberPicker(
+                              minValue: 1,
+                              maxValue: 30,
+                              value: currentValue,
+                              onChanged: (int newValue) {
+                                setState(() {
+                                  currentValue = newValue;
+                                });
+                              },
+                              itemWidth: MediaQuery.of(context).size.width / 2,
+                              itemCount: 5,
+                              textStyle: const TextStyle(color: Colors.black),
+                              selectedTextStyle: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color.fromARGB(100, 146, 146, 146), // Custom background color
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                        ],
+                      );
+                      },
+                    );
+                }),
+            )
+          );
       },
     );
   }

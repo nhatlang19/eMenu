@@ -18,4 +18,20 @@ class TableProvider extends SoapApiClient {
     }
     return [];
   }
+
+  Future<bool> updateTableStatus(String status, String cashierId, String currentTable) async {
+    const String soapAction = 'http://tempuri.org/UpdateTableStatus';
+    final String soapBody =
+        '''<UpdateTableStatus xmlns="http://tempuri.org/">
+            <tableStatus>$status</tableStatus>
+            <cashierID>$cashierId</cashierID>
+            <currentTable>$currentTable</currentTable>
+          </UpdateTableStatus>''';
+
+    final response = await callSoapService(soapAction, soapBody);
+    if (response != null) {
+      return parseSoapResponseToOneValue(response, element: "UpdateTableStatusResult") == 'true';
+    }
+    return false;
+  }
 }

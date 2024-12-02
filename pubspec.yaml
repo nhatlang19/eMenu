@@ -29,6 +29,8 @@ dependencies:
   dio: ^5.7.0
   auto_size_text: ^3.0.0
   flutter_keyboard_visibility: ^6.0.0
+  numberpicker: ^2.1.2
+  awesome_number_picker: ^0.0.4
 
 dev_dependencies:
   flutter_test:

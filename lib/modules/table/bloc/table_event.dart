@@ -13,6 +13,11 @@ class FetchTable extends TableEvent {
   const FetchTable({required this.section});
 }
 
+class FetchTableRepeat extends TableEvent {
+  final int selectedTableIndex;
+  const FetchTableRepeat({required this.selectedTableIndex});
+}
+
 class RefreshFetchTable extends TableEvent {
   const RefreshFetchTable();
 }
@@ -34,4 +39,16 @@ class SelectTable extends TableEvent {
   final Table table;
 
   const SelectTable({required this.isAddNew, required this.table});
+}
+
+class UpdateTableStatus extends TableEvent {
+  final String status;
+  final String cashierId;
+  final String tableNo;
+
+  const UpdateTableStatus({required this.status, required this.cashierId, required this.tableNo});
+}
+
+class RestoreStatus extends TableEvent {
+  const RestoreStatus();
 }

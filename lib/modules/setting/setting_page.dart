@@ -21,7 +21,7 @@ class _SettingPageState extends State<SettingPage> {
   final _posGroupController = TextEditingController();
   final _posIdController = TextEditingController();
   final _vatController = TextEditingController();
-  final _isCashierController = TextEditingController();
+  final _exitModeController = TextEditingController();
   final _typeController = TextEditingController();
   final _sectionController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -39,7 +39,7 @@ class _SettingPageState extends State<SettingPage> {
     _sectionController.dispose();
     _storeNoController.dispose();
     _vatController.dispose();
-    _isCashierController.dispose();
+    _exitModeController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
@@ -61,7 +61,7 @@ class _SettingPageState extends State<SettingPage> {
     _typeController.text = setting.type;
     _storeNoController.text = setting.storeNo;
     _vatController.text = setting.vat;
-    _isCashierController.text = setting.isCashier;
+    _exitModeController.text = setting.exitMode;
   }
 
   void _save() async {
@@ -75,7 +75,7 @@ class _SettingPageState extends State<SettingPage> {
           type: _typeController.text,
           storeNo: _storeNoController.text,
           vat: _vatController.text,
-          isCashier: _isCashierController.text);
+          exitMode: _exitModeController.text);
       var settings = Settings();
       await settings.write(setting);
 
@@ -183,9 +183,9 @@ class _SettingPageState extends State<SettingPage> {
               ),
               const SizedBox(height: 16),
               TextFormField(
-                controller: _isCashierController,
+                controller: _exitModeController,
                 decoration: const InputDecoration(
-                  labelText: 'Cashier',
+                  labelText: 'Exit Mode',
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) {

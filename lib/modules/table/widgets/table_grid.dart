@@ -1,16 +1,19 @@
 import 'package:emenu/config/themes/app_button_styles.dart';
 import 'package:emenu/config/themes/app_text_styles.dart';
+import 'package:emenu/constants/table.dart';
 import 'package:emenu/modules/order/bloc/order_bloc.dart';
 import 'package:emenu/modules/table/bloc/salescode_bloc.dart';
 import 'package:emenu/modules/table/bloc/table_bloc.dart';
 import 'package:emenu/modules/table/widgets/bill_dropdown.dart';
 import 'package:emenu/modules/table/widgets/group_dropdown.dart';
 import 'package:emenu/modules/table/widgets/sales_code_dropdown.dart';
+import 'package:emenu/utils/global.dart';
 import 'package:emenu/utils/screen_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:emenu/models/table.dart' as MyTable;
+import 'package:numberpicker/numberpicker.dart';
 
 class TableGrid extends StatefulWidget {
   const TableGrid({super.key});
@@ -23,27 +26,58 @@ class _TableGridState extends State<TableGrid> {
   @override
   Widget build(BuildContext buildContext) {
     final tableBloc = context.read<TableBloc>();
-    return BlocListener<OrderBloc, OrderState>(
-      listener: (context, state) {
-        if (state.status == OrderStatus.success) {
-          if (state.orders.isEmpty) {
-            ScaffoldMessenger.of(context)
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<OrderBloc, OrderState>(
+          listener: (context, state) {
+            if (state.status == OrderStatus.success) {
+              if (state.orders.isEmpty) {
+                ScaffoldMessenger.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(
+                    const SnackBar(
+                        content: Text(
+                            'Error BizDate >> Không thể load lại order. Vui lòng kiểm tra kết ngày.')),
+                  );
+              } else if (state.orders.length == 1) {
+                var tableState = context.read<TableBloc>().state;
+                var salesCodeState = context.read<SalesCodeBloc>().state;
+                navigateOrder(
+                    context, tableState, salesCodeState, state, tableBloc);
+              } else {
+                var tableState = context.read<TableBloc>().state;
+                _showSelectBillDialog(context, tableState.table);
+              }
+            }
+          },
+        ),
+        BlocListener<TableBloc, TableState>(
+          listener: (context, state) {
+            if (state.status == TableStatus.repeat) {
+              MyTable.Table table = state.tables.elementAt(state.selectedTableIndex);
+              doShowDialog(context, table);
+            } else if (state.status == TableStatus.updateStatusSuccess) {
+              MyTable.Table table = state.tables.elementAt(state.selectedTableIndex);
+              var isAddNew = (table.Status == "A" || table.Status == "B");
+              context
+                .read<TableBloc>()
+                .add(SelectTable(isAddNew: isAddNew, table: table));
+              _showCustomDialog(context, table, isAddNew: isAddNew);
+            } else if (state.status == TableStatus.updateStatusFailed) {
+              ScaffoldMessenger.of(context)
               ..hideCurrentSnackBar()
               ..showSnackBar(
-                const SnackBar(content: Text('Error BizDate >> Không thể load lại order. Vui lòng kiểm tra kết ngày.')),
+                const SnackBar(content: Text('Không thể cập nhật trạng thái bàn')),
               );
-          } else if (state.orders.length == 1) {
-            var tableState = context.read<TableBloc>().state;
-            var salesCodeState = context.read<SalesCodeBloc>().state;
-            navigateOrder(context, tableState, salesCodeState, state, tableBloc);
-          } else {
-            var tableState = context.read<TableBloc>().state;
-            _showSelectBillDialog(context, tableState.table);
-          }
-        }
-      },
+            }
+          },
+        ),
+      ],
       child: BlocBuilder<TableBloc, TableState>(
-        buildWhen: (previous, current) => (previous.status != current.status && current.status == TableStatus.success) || current.status == TableStatus.refresh,
+        buildWhen: (previous, current) =>
+            (previous.status != current.status &&
+                current.status == TableStatus.success) ||
+            current.status == TableStatus.refresh,
         builder: (context, state) {
           return Expanded(
               child: Padding(
@@ -61,7 +95,7 @@ class _TableGridState extends State<TableGrid> {
                       var table = state.tables[index];
                       return InkWell(
                           onTap: () {
-                            doShowDialog(context, table);
+                            context.read<TableBloc>().add(FetchTableRepeat(selectedTableIndex: index));
                           },
                           child: Card(
                             shape: const RoundedRectangleBorder(
@@ -86,15 +120,17 @@ class _TableGridState extends State<TableGrid> {
     );
   }
 
-  void doShowDialog(BuildContext parentContext, MyTable.Table table) {
+  void doShowDialog(BuildContext parentContext, MyTable.Table table) async {
+    var cashier = await Global.getCashier();
     var openBy = table.OpenBy.toString();
     switch (table.Status) {
       case "A":
       case "B":
         if (table.openByIsEmpty()) {
-          // @TODO: updateTableStatus (xem TableAdapter.java:101)
-          parentContext.read<TableBloc>().add(SelectTable(isAddNew: true, table: table));
-          _showCustomDialog(parentContext, table, isAddNew: true);
+          parentContext.read<TableBloc>().add(UpdateTableStatus(
+            status: TableConstant.STATUS_OPEN
+            , cashierId: cashier.cashierID ?? ''
+            , tableNo: table.TableNo));
         } else {
           ScaffoldMessenger.of(parentContext)
             ..hideCurrentSnackBar()
@@ -107,9 +143,10 @@ class _TableGridState extends State<TableGrid> {
         break;
       case "O":
         if (table.openByIsEmpty()) {
-          // @TODO: updateTableStatus (xem TableAdapter.java:101)
-          parentContext.read<TableBloc>().add(SelectTable(isAddNew: false, table: table));
-          _showCustomDialog(parentContext, table, isAddNew: false);
+           parentContext.read<TableBloc>().add(UpdateTableStatus(
+            status: TableConstant.STATUS_OPEN
+            , cashierId: cashier.cashierID ?? ''
+            , tableNo: table.TableNo));
         } else {
           ScaffoldMessenger.of(parentContext)
             ..hideCurrentSnackBar()
@@ -154,11 +191,15 @@ class _TableGridState extends State<TableGrid> {
                       child: ElevatedButton(
                         onPressed: () {
                           Navigator.of(context).pop();
-                          var tableState = parentContext.read<TableBloc>().state;
-                          var salesCodeState = parentContext.read<SalesCodeBloc>().state;
-                          var orderState = parentContext.read<OrderBloc>().state;
+                          var tableState =
+                              parentContext.read<TableBloc>().state;
+                          var salesCodeState =
+                              parentContext.read<SalesCodeBloc>().state;
+                          var orderState =
+                              parentContext.read<OrderBloc>().state;
                           var tableBloc = parentContext.read<TableBloc>();
-                          navigateOrder(context, tableState, salesCodeState, orderState, tableBloc);
+                          navigateOrder(context, tableState, salesCodeState,
+                              orderState, tableBloc);
                         },
                         child: const Text('OK'),
                       ),
@@ -222,8 +263,15 @@ class _TableGridState extends State<TableGrid> {
                     ),
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
+                        onPressed: () async {
+                          var cashier = await Global.getCashier();
+                          var tableState =
+                              parentContext.read<TableBloc>().state;
+                          parentContext.read<TableBloc>().add(UpdateTableStatus(
+                              status: TableConstant.STATUS_CLOSE
+                              , cashierId: cashier.cashierID ?? ''
+                              , tableNo: tableState.table.TableNo));
+                          Navigator.of(parentContext).pop();
                         },
                         child: const Text('Close'),
                       ),
@@ -233,19 +281,26 @@ class _TableGridState extends State<TableGrid> {
                     ),
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
                           var tableState =
                               parentContext.read<TableBloc>().state;
                           if (isAddNew) {
-                            Navigator.of(context).pop();
-                            var salesCodeState = parentContext.read<SalesCodeBloc>().state;
-                            var orderState = parentContext.read<OrderBloc>().state;
+                            Navigator.pop(context);
+                            var salesCodeState =
+                                parentContext.read<SalesCodeBloc>().state;
+                            var orderState =
+                                parentContext.read<OrderBloc>().state;
                             var tableBloc = parentContext.read<TableBloc>();
-                            navigateOrder(context, tableState, salesCodeState, orderState, tableBloc);
+                            navigateOrder(parentContext, tableState, salesCodeState,
+                                orderState, tableBloc);
                           } else {
-                            var posBizDate = ScreenUtil.getCurrentDate('yyyyMMdd');
-                            parentContext.read<OrderBloc>().add(FetchOrders(posBizDate: posBizDate,currentTable: tableState.table.TableNo));
-                            Navigator.of(context).pop();
+                            var posBizDate =
+                                ScreenUtil.getCurrentDate('yyyyMMdd');
+                            parentContext.read<TableBloc>().add(const RestoreStatus());
+                            parentContext.read<OrderBloc>().add(FetchOrders(
+                                posBizDate: posBizDate,
+                                currentTable: tableState.table.TableNo));
+                            Navigator.of(parentContext).pop();
                           }
                         },
                         child: const Text('OK'),
@@ -261,7 +316,8 @@ class _TableGridState extends State<TableGrid> {
     );
   }
 
-  Future<void> navigateOrder(context, tableState, salesCodeState, orderState, tableBloc) async {
+  Future<void> navigateOrder(
+      context, tableState, salesCodeState, orderState, tableBloc) async {
     final result = await Navigator.pushNamed(context, 'OrderPage',
         arguments: <String, dynamic>{
           "tableGroup": tableState.selectedForGroup,
@@ -273,7 +329,12 @@ class _TableGridState extends State<TableGrid> {
         });
 
     if (result != null) {
-      if  (result == "REFRESH_TABLE") {
+      if (result == "REFRESH_TABLE") {
+        var cashier = await Global.getCashier();
+        tableBloc.add(UpdateTableStatus(
+            status: TableConstant.STATUS_CLOSE
+            , cashierId: cashier.cashierID ?? ''
+            , tableNo: tableState.table.TableNo));
         tableBloc.add(const RefreshFetchTable());
       }
     }

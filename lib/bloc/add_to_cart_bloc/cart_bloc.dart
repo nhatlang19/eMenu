@@ -38,12 +38,13 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<UpdateQuantity>(_onUpdateQuantity);
     on<Toogle>(_onToogle);
     on<Close>(_onClose);
-    on<UpdateNoPeople>(_onUpdateNoPeople);
+    on<UpdateCustomQuantity>(_onUpdateCustomQuantity);
     on<ResetCart>(_onResetCart);
     on<SendOrder>(_onSendOrder);
     on<UpdateQuantityCombo>(_onUpdateQuantityCombo);
     on<LoadItemsWhenEdit>(_onLoadItemsWhenEdit);
     on<SetTable>(_onSetTable);
+    on<UpdateNoGuest>(_onUpdateNoGuest);
   }
 
   void _onResetCart(ResetCart event, Emitter<CartState> emit) {
@@ -52,7 +53,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         cartItems: [],
         total: 0,
         toogle: false,
-        noPeople: "1"));
+        customQuantity: "1"));
   }
 
   Future<void> _onAddToCart(AddToCart event, Emitter<CartState> emit) async {
@@ -65,10 +66,10 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         qty = 1;
       }
 
-      if (state.noPeople == '0') {
+      if (state.customQuantity == '0') {
         qty = 1;
       } else {
-        qty = int.parse(state.noPeople);
+        qty = int.parse(state.customQuantity);
       }
 
       Item item = await _itemRepository.getItemBySubMenuSelected(
@@ -139,9 +140,9 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         }
         emit(state.copyWith(showCombo: ShowCombo.show));
       }
-      emit(state.copyWith(noPeople: "0", errorMessage: ''));
+      emit(state.copyWith(customQuantity: "0", errorMessage: ''));
     } catch (_) {
-      emit(state.copyWith(status: CartStatus.failure, noPeople: "0", errorMessage: ''));
+      emit(state.copyWith(status: CartStatus.failure, customQuantity: "0", errorMessage: ''));
     }
   }
 
@@ -156,7 +157,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       double total = list.fold(0,(tot, item) => tot.toDouble() + (double.parse(item.item.getOrgPrice()) * item.qty - double.parse(item.item.promoPrice)));
       emit(state.copyWith(cartItems: list, status: CartStatus.success, total: total));
     } catch(e) {
-      emit(state.copyWith(status: CartStatus.failure, noPeople: "0", errorMessage: ''));
+      emit(state.copyWith(status: CartStatus.failure, customQuantity: "0", errorMessage: ''));
     }
   }
 
@@ -201,14 +202,14 @@ class CartBloc extends Bloc<CartEvent, CartState> {
             errorMessage: '',
             status: CartStatus.success,
             total: total,
-            noPeople: "0",
+            customQuantity: "0",
             showCombo: ShowCombo.hide));
 
         event.callback();
       }
     } catch (_) {
       emit(state.copyWith(
-          status: CartStatus.failure, noPeople: "0", showCombo: ShowCombo.hide, errorMessage: ''));
+          status: CartStatus.failure, customQuantity: "0", showCombo: ShowCombo.hide, errorMessage: ''));
       event.callback();
     }
   }
@@ -300,6 +301,10 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     emit(state.copyWith(cartItemTmp: state.cartItemTmp, status: CartStatus.updatedQuantityCombo));
   }
 
+  void _onUpdateNoGuest(UpdateNoGuest event, Emitter<CartState> emit) {
+    emit(state.copyWith(noGuest: event.noGuest, status: CartStatus.updatedNoGuest));
+  }
+
   void _onToogle(Toogle event, Emitter<CartState> emit) {
     emit(state.copyWith(toogle: !state.toogle));
   }
@@ -312,23 +317,23 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     emit(state.copyWith(selectedTable: event.table));
   }
 
-  void _onUpdateNoPeople(UpdateNoPeople event, Emitter<CartState> emit) {
+  void _onUpdateCustomQuantity(UpdateCustomQuantity event, Emitter<CartState> emit) {
     if (event.value == 'C') {
-      emit(state.copyWith(noPeople: "1"));
+      emit(state.copyWith(customQuantity: "1"));
     } else if (event.value == '←') {
-      if (state.noPeople.length == 1) {
-        emit(state.copyWith(noPeople: "0"));
+      if (state.customQuantity.length == 1) {
+        emit(state.copyWith(customQuantity: "0"));
       } else {
         emit(state.copyWith(
-            noPeople: state.noPeople.substring(0, state.noPeople.length - 1)));
+            customQuantity: state.customQuantity.substring(0, state.customQuantity.length - 1)));
       }
     } else {
-      if (state.noPeople == '0') {
-        emit(state.copyWith(noPeople: event.value));
+      if (state.customQuantity == '0') {
+        emit(state.copyWith(customQuantity: event.value));
       } else {
-        var newValue = state.noPeople + event.value;
+        var newValue = state.customQuantity + event.value;
         if (newValue.isNotEmpty && newValue.length <= 2) {
-          emit(state.copyWith(noPeople: newValue));
+          emit(state.copyWith(customQuantity: newValue));
         }
       }
     }
