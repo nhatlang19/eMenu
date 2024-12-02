@@ -2,6 +2,7 @@ import 'package:awesome_number_picker/awesome_number_picker.dart';
 import 'package:emenu/bloc/add_to_cart_bloc/cart_bloc.dart';
 import 'package:emenu/config/themes/app_colors.dart';
 import 'package:emenu/config/themes/app_text_styles.dart';
+import 'package:emenu/constants/order.dart';
 import 'package:emenu/modules/auth/bloc/login_bloc.dart';
 import 'package:emenu/modules/cart/cart_view_drawer.dart';
 import 'package:emenu/modules/order/bloc/menu_bloc.dart';
@@ -26,306 +27,311 @@ class MenuGridRight extends StatefulWidget {
 
 class _MenuGridRightState extends State<MenuGridRight> {
   @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      showSetPeopleV2(context);
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     late OverlayEntry overlayEntry;
-    return Expanded(
-      flex: 4,
-      child: Stack(
-        children: [
-          Column(
-            children: [
-              Container(
-                color: AppColors.mainRed,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    SizedBox.fromSize(
-                      size: const Size(40, 40), // button width and height
-                      child: ClipOval(
-                        child: Material(
-                          color: Colors.orange, // button color
-                          child: GestureDetector(
-                            // splashColor: Colors.green, // splash color
-                            onTapDown: (details) {
-                              OverlayState overlayState = Overlay.of(context);
-                              overlayEntry = OverlayEntry(builder: (context) {
-                                return Stack(
-                                  children: [
-                                    Positioned(
-                                      top: details.globalPosition.dy + 10,
-                                      left: details.globalPosition.dx + 10,
-                                      child: Material(
-                                        color: Colors.transparent,
-                                        child: Container(
-                                          color: Colors.white,
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              NumberKeyboards(
-                                                onKeyPressed: (value) {
-                                                  context.read<CartBloc>().add(
-                                                      UpdateCustomQuantity(
-                                                          value: value));
-                                                },
-                                                onClose: () {
-                                                  try {
-                                                    overlayEntry.remove();
-                                                  } catch (_) {}
-                                                },
-                                              ),
-                                            ],
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<OrderBloc, OrderState>(
+          listener: (context, state) {
+            if (state.status == OrderStatus.initOrder && state.isAddNew) {
+               WidgetsBinding.instance.addPostFrameCallback((_) {
+                showSetPeopleV2(context);
+              });
+            }
+          },
+        ),
+      ],
+      child: Expanded(
+        flex: 4,
+        child: Stack(
+          children: [
+            Column(
+              children: [
+                Container(
+                  color: AppColors.mainRed,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      SizedBox.fromSize(
+                        size: const Size(40, 40), // button width and height
+                        child: ClipOval(
+                          child: Material(
+                            color: Colors.orange, // button color
+                            child: GestureDetector(
+                              // splashColor: Colors.green, // splash color
+                              onTapDown: (details) {
+                                OverlayState overlayState = Overlay.of(context);
+                                overlayEntry = OverlayEntry(builder: (context) {
+                                  return Stack(
+                                    children: [
+                                      Positioned(
+                                        top: details.globalPosition.dy + 10,
+                                        left: details.globalPosition.dx + 10,
+                                        child: Material(
+                                          color: Colors.transparent,
+                                          child: Container(
+                                            color: Colors.white,
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                NumberKeyboards(
+                                                  onKeyPressed: (value) {
+                                                    context.read<CartBloc>().add(
+                                                        UpdateCustomQuantity(
+                                                            value: value));
+                                                  },
+                                                  onClose: () {
+                                                    try {
+                                                      overlayEntry.remove();
+                                                    } catch (_) {}
+                                                  },
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                );
-                              });
-                              overlayState.insert(overlayEntry);
-                            }, // button pressed
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                BlocBuilder<CartBloc, CartState>(
-                                    buildWhen: (previous, current) =>
-                                        previous.customQuantity !=
-                                        current.customQuantity,
-                                    builder: (context, state) {
-                                      return Text(state.customQuantity);
-                                    }), // text
-                              ],
+                                    ],
+                                  );
+                                });
+                                overlayState.insert(overlayEntry);
+                              }, // button pressed
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  BlocBuilder<CartBloc, CartState>(
+                                      buildWhen: (previous, current) =>
+                                          previous.customQuantity !=
+                                          current.customQuantity,
+                                      builder: (context, state) {
+                                        return Text(state.customQuantity);
+                                      }), // text
+                                ],
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    BlocBuilder<MenuBloc, MenuState>(
-                        buildWhen: (previous, current) =>
-                            previous.menu.defaultValue !=
-                            current.menu.defaultValue,
-                        builder: (context, state) {
-                          return Expanded(
-                              child: Center(
-                                  child: Text(
-                            state.menu.description,
-                            style: AppTextStyles.tableTitleWhite,
-                          )));
-                        }),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        BlocBuilder<OrderBloc, OrderState>(
-                          builder: (context, state) {
-                            return Text(
-                                "Bàn ${state.selectedTable.TableNo.trim()}",
-                                style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold));
-                          },
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.only(left: 15, right: 5),
-                          child: Text('|',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold)),
-                        ),
-                        IconButton(
-                          iconSize: 50.0,
-                          icon: const Icon(Icons.exit_to_app),
-                          color: Colors.white,
-                          onPressed: () async {
-                            var settings = Settings();
-                            var setting = await settings.read();
-                            if (setting.exitMode == "0") {
-                              // ignore: use_build_context_synchronously
-                              _showCustomDialog(context);
-                            } else {
-                              // ignore: use_build_context_synchronously
-                              context.read<CartBloc>().add(const ResetCart());
-                              if (Navigator.canPop(context)) {
-                                Navigator.of(context).pop("REFRESH_TABLE");
-                              }
-                            }
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              Flexible(
-                child: BlocBuilder<CartBloc, CartState>(
-                  buildWhen: (previous, current) =>
-                      previous.toogle != current.toogle,
-                  builder: (context, stateCart) {
-                    return Row(
-                      children: [
-                        Expanded(
-                          flex: 2,
-                          child: Padding(
-                              padding: const EdgeInsets.all(2.0),
-                              child: BlocBuilder<SubMenuBloc, SubmenuState>(
-                                  // buildWhen: (previous, current) =>
-                                  //     previous.menu.defaultValue != current.menu.defaultValue,
-                                  builder: (context, state) {
-                                var crossAxisCount =
-                                    ScreenUtil.isPortrait(context)
-                                        ? 3
-                                        : (stateCart.toogle ? 3 : 5);
-                                crossAxisCount = 2;
-                                return MediaQuery.removePadding(
-                                  context: context,
-                                  child: Column(
-                                    children: [
-                                      Expanded(
-                                        child: GridView.builder(
-                                          gridDelegate:
-                                              SliverGridDelegateWithFixedCrossAxisCount(
-                                                  crossAxisCount:
-                                                      crossAxisCount, // Number of columns in the grid
-                                                  crossAxisSpacing: 10,
-                                                  mainAxisSpacing: 0,
-                                                  childAspectRatio: 22 / 9),
-                                          itemCount: state.submenus
-                                              .length, // Number of items in the grid
-                                          itemBuilder: (context, index) {
-                                            return GridItem(
-                                                index, state.submenus[index]);
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              })),
-                        ),
-                      ],
-                    );
-                  },
-                ),
-              ),
-              Container(
-                color: AppColors.mainRed,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      BlocBuilder<CartBloc, CartState>(
+                      BlocBuilder<MenuBloc, MenuState>(
                           buildWhen: (previous, current) =>
-                              previous.noGuest != current.noGuest ||
-                              current.status == CartStatus.updatedNoGuest,
+                              previous.menu.defaultValue !=
+                              current.menu.defaultValue,
                           builder: (context, state) {
-                            var noGuest = state.noGuest;
-                            return InkWell(
-                              onTap: () => displaySetPeople(context),
-                              child: Padding(
-                                padding: const EdgeInsets.only(right: 40.0),
-                                child: Text('Số khách: $noGuest',
-                                    style: const TextStyle(
-                                        fontSize: 24.0,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white)),
-                              ),
-                            );
+                            return Expanded(
+                                child: Center(
+                                    child: Text(
+                              state.menu.description,
+                              style: AppTextStyles.tableTitleWhite,
+                            )));
                           }),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          BlocBuilder<CartBloc, CartState>(
-                              buildWhen: (previous, current) =>
-                                  previous.cartItems.length !=
-                                      current.cartItems.length ||
-                                  current.status ==
-                                      CartStatus.updatedQuantity ||
-                                  current.status == CartStatus.success,
-                              builder: (context, state) {
-                                var total = ScreenUtil.formatPrice(state.total);
-                                return Padding(
-                                  padding: const EdgeInsets.only(right: 40.0),
-                                  child: Text('Tạm tính: $total đ',
-                                      style: const TextStyle(
-                                          fontSize: 24.0,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white)),
-                                );
-                              }),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 20),
-                            child: Row(
-                              children: [
-                                InkWell(
-                                  onTap: () {
-                                    context
-                                        .read<CartBloc>()
-                                        .add(const Toogle());
-                                  },
-                                  child: BlocBuilder<CartBloc, CartState>(
-                                      buildWhen: (previous, current) =>
-                                          previous.cartItems.length !=
-                                              current.cartItems.length ||
-                                          current.status ==
-                                              CartStatus.updatedQuantity ||
-                                          current.status == CartStatus.success,
-                                      builder: (context, state) {
-                                        final cartItemCount =
-                                            state.cartItems.length;
-                                        return badges.Badge(
-                                          position:
-                                              badges.BadgePosition.bottomEnd(
-                                                  bottom: -10, end: -12),
-                                          badgeContent: Text(
-                                            '$cartItemCount',
-                                            style: const TextStyle(
-                                                color: Colors.white),
-                                          ),
-                                          badgeStyle: const badges.BadgeStyle(
-                                            badgeColor: Colors.red,
-                                          ),
-                                          child: const Icon(Icons.shopping_cart,
-                                              color: Colors.white, size: 50.0),
-                                        );
-                                      }),
-                                ),
-                              ],
-                            ),
-                          )
+                          BlocBuilder<OrderBloc, OrderState>(
+                            builder: (context, state) {
+                              return Text(
+                                  "Bàn ${state.selectedTable.TableNo.trim()}",
+                                  style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold));
+                            },
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.only(left: 15, right: 5),
+                            child: Text('|',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold)),
+                          ),
+                          IconButton(
+                            iconSize: 50.0,
+                            icon: const Icon(Icons.exit_to_app),
+                            color: Colors.white,
+                            onPressed: () async {
+                              var settings = Settings();
+                              var setting = await settings.read();
+                              if (setting.exitMode == "1") {
+                                // ignore: use_build_context_synchronously
+                                _showCustomDialog(context);
+                              } else {
+                                // ignore: use_build_context_synchronously
+                                context.read<CartBloc>().add(const ResetCart());
+                                if (Navigator.canPop(context)) {
+                                  Navigator.of(context).pop("REFRESH_TABLE");
+                                }
+                              }
+                            },
+                          ),
                         ],
                       ),
                     ],
                   ),
                 ),
-              ),
-            ],
-          ),
-          BlocBuilder<CartBloc, CartState>(
-              buildWhen: (previous, current) =>
-                  previous.toogle != current.toogle,
-              builder: (context, stateCart) {
-                return Positioned(
-                  top: 0,
-                  right: 0,
-                  child: stateCart.toogle
-                      ? const CartViewDrawer()
-                      : const SizedBox(width: 0),
-                );
-              })
-        ],
+                Flexible(
+                  child: BlocBuilder<CartBloc, CartState>(
+                    buildWhen: (previous, current) =>
+                        previous.toogle != current.toogle,
+                    builder: (context, stateCart) {
+                      return Row(
+                        children: [
+                          Expanded(
+                            flex: 2,
+                            child: Padding(
+                                padding: const EdgeInsets.all(2.0),
+                                child: BlocBuilder<SubMenuBloc, SubmenuState>(
+                                    // buildWhen: (previous, current) =>
+                                    //     previous.menu.defaultValue != current.menu.defaultValue,
+                                    builder: (context, state) {
+                                  var crossAxisCount =
+                                      ScreenUtil.isPortrait(context)
+                                          ? 3
+                                          : (stateCart.toogle ? 3 : 5);
+                                  crossAxisCount = 2;
+                                  return MediaQuery.removePadding(
+                                    context: context,
+                                    child: Column(
+                                      children: [
+                                        Expanded(
+                                          child: GridView.builder(
+                                            gridDelegate:
+                                                SliverGridDelegateWithFixedCrossAxisCount(
+                                                    crossAxisCount:
+                                                        crossAxisCount, // Number of columns in the grid
+                                                    crossAxisSpacing: 10,
+                                                    mainAxisSpacing: 0,
+                                                    childAspectRatio: 22 / 9),
+                                            itemCount: state.submenus
+                                                .length, // Number of items in the grid
+                                            itemBuilder: (context, index) {
+                                              return GridItem(
+                                                  index, state.submenus[index]);
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                })),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+                Container(
+                  color: AppColors.mainRed,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        BlocBuilder<CartBloc, CartState>(
+                            buildWhen: (previous, current) =>
+                                previous.noGuest != current.noGuest ||
+                                current.status == CartStatus.updatedNoGuest,
+                            builder: (context, state) {
+                              var noGuest = state.noGuest;
+                              return InkWell(
+                                onTap: () => displaySetPeople(context),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 40.0),
+                                  child: Text('Số khách: $noGuest',
+                                      style: const TextStyle(
+                                          fontSize: 24.0,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white)),
+                                ),
+                              );
+                            }),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            BlocBuilder<CartBloc, CartState>(
+                                buildWhen: (previous, current) =>
+                                    previous.cartItems.length !=
+                                        current.cartItems.length ||
+                                    current.status ==
+                                        CartStatus.updatedQuantity ||
+                                    current.status == CartStatus.success,
+                                builder: (context, state) {
+                                  var total = ScreenUtil.formatPrice(state.total);
+                                  return Padding(
+                                    padding: const EdgeInsets.only(right: 40.0),
+                                    child: Text('Tạm tính: $total đ',
+                                        style: const TextStyle(
+                                            fontSize: 24.0,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white)),
+                                  );
+                                }),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 20),
+                              child: Row(
+                                children: [
+                                  InkWell(
+                                    onTap: () {
+                                      context
+                                          .read<CartBloc>()
+                                          .add(const Toogle());
+                                    },
+                                    child: BlocBuilder<CartBloc, CartState>(
+                                        buildWhen: (previous, current) =>
+                                            previous.cartItems.length !=
+                                                current.cartItems.length ||
+                                            current.status ==
+                                                CartStatus.updatedQuantity ||
+                                            current.status == CartStatus.success,
+                                        builder: (context, state) {
+                                          final cartItemCount =
+                                              state.cartItems.length;
+                                          return badges.Badge(
+                                            position:
+                                                badges.BadgePosition.bottomEnd(
+                                                    bottom: -10, end: -12),
+                                            badgeContent: Text(
+                                              '$cartItemCount',
+                                              style: const TextStyle(
+                                                  color: Colors.white),
+                                            ),
+                                            badgeStyle: const badges.BadgeStyle(
+                                              badgeColor: Colors.red,
+                                            ),
+                                            child: const Icon(Icons.shopping_cart,
+                                                color: Colors.white, size: 50.0),
+                                          );
+                                        }),
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            BlocBuilder<CartBloc, CartState>(
+                buildWhen: (previous, current) =>
+                    previous.toogle != current.toogle,
+                builder: (context, stateCart) {
+                  return Positioned(
+                    top: 0,
+                    right: 0,
+                    child: stateCart.toogle
+                        ? const CartViewDrawer()
+                        : const SizedBox(width: 0),
+                  );
+                })
+          ],
+        ),
       ),
     );
   }
@@ -457,7 +463,7 @@ class _MenuGridRightState extends State<MenuGridRight> {
   Future<void> displaySetPeople(BuildContext parentContext) async {
     var settings = Settings();
     var setting = await settings.read();
-    if (setting.exitMode == "1") {
+    if (setting.exitMode == "0") {
       showSetPeopleV2(parentContext);
     }
   }
@@ -513,7 +519,7 @@ class _MenuGridRightState extends State<MenuGridRight> {
         return Padding(
             padding: const EdgeInsets.all(16.0),
             child: SizedBox(
-              width: MediaQuery.of(context).size.width / 2,
+              width: MediaQuery.of(context).size.width / 4,
               child: BlocBuilder<CartBloc, CartState>(
                 builder: (context, state) {
                   currentValue = state.noGuest;
