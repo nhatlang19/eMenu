@@ -42,22 +42,15 @@ class _MainPageState extends State<MainPage> {
         ],
       ),
       backgroundColor: Colors.grey[200],
-      body: Center(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: BlocProvider(
-              create: (context) {
-                return LoginBloc(
-                  authenticationRepository: 
-                      RepositoryProvider.of<AuthRepository>(context),
-                );
-              },
-              child: const LoginForm(),
-            ),
+      body: BlocProvider(
+            create: (context) {
+              return LoginBloc(
+                authenticationRepository: 
+                    RepositoryProvider.of<AuthRepository>(context),
+              );
+            },
+            child: const LoginForm(),
           ),
-        ),
-      ),
     );
   }
 }

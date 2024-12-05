@@ -8,9 +8,7 @@ class CartViewDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      flex: 1,
-      child: Container(
+    return Container(
             width: MediaQuery.of(context).size.width / 2,
             height: MediaQuery.of(context).size.height,
             color: Colors.white,
@@ -51,7 +49,6 @@ class CartViewDrawer extends StatelessWidget {
                 const CartView()
               ],
             )
-        ),
     );
   }
 }

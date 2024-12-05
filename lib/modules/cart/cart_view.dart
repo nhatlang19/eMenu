@@ -215,7 +215,7 @@ class _CartViewState extends State<CartView> {
       border = const BorderRadius.all(Radius.circular(5));
     }
     return TableCell(
-      child: Expanded(
+      child: IntrinsicWidth(
         child: Padding(
                 padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
                 child: Row(

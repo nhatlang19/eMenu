@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:emenu/bloc/add_to_cart_bloc/cart_bloc.dart';
 import 'package:emenu/config/routes/router.dart' as router;
 import 'package:emenu/config/routes/routes.dart';
@@ -7,6 +9,7 @@ import 'package:emenu/repositories/auth_repository.dart';
 import 'package:emenu/repositories/cart_repository.dart';
 import 'package:emenu/repositories/item_repository.dart';
 import 'package:emenu/repositories/user_repository.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,6 +18,12 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
+  FlutterError.onError = (details) {
+    FlutterError.presentError(details);
+    if (kReleaseMode) {
+      print(details);
+    };
+  };
 
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([

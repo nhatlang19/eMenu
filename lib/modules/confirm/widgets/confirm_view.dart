@@ -124,8 +124,7 @@ class ConfirmView extends StatelessWidget {
           current.status == CartStatus.updatedQuantity ||
           current.status == CartStatus.success,
       builder: (context, state) {
-        return Expanded(
-          child: SingleChildScrollView(
+        return SingleChildScrollView(
             scrollDirection: Axis.vertical,
             child: Padding(
               padding: EdgeInsets.only(left: width, right: width, top: 0.0),
@@ -140,7 +139,6 @@ class ConfirmView extends StatelessWidget {
                 }),
               ]),
             ),
-          ),
         );
       },
     );
@@ -202,13 +200,13 @@ class ConfirmView extends StatelessWidget {
   _buildTableCellTextCenter(String text,
       {EdgeInsetsGeometry padding =
           const EdgeInsets.only(top: 15.0, bottom: 15.0)}) {
-    return Center(
-      child: TableCell(
-        child: Padding(
-          padding: padding,
-          child: Text(text, style: const TextStyle(fontSize: 20)),
+    return TableCell(
+        child: Center(
+          child: Padding(
+            padding: padding,
+            child: Text(text, style: const TextStyle(fontSize: 20)),
+          ),
         ),
-      ),
     );
   }
 
