@@ -30,6 +30,8 @@ dependencies:
   auto_size_text: ^3.0.0
   numberpicker: ^2.1.2
   awesome_number_picker: ^0.0.4
+  workmanager: ^0.5.2
+  provider: ^6.0.5
 
 dev_dependencies:
   flutter_test:

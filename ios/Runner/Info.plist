@@ -39,6 +39,10 @@
 	<string>Main</string>
 	<key>UIStatusBarHidden</key>
 	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+	<string>fetch</string>
+	</array>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationLandscapeLeft</string>

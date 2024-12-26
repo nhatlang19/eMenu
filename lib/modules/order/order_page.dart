@@ -1,4 +1,5 @@
 import 'package:emenu/config/themes/app_colors.dart';
+import 'package:emenu/constants/table.dart';
 import 'package:emenu/modules/order/bloc/menu_bloc.dart';
 import 'package:emenu/modules/order/bloc/order_bloc.dart';
 import 'package:emenu/modules/order/bloc/submenu_bloc.dart';
@@ -10,9 +11,14 @@ import 'package:emenu/repositories/menu_repository.dart';
 import 'package:emenu/repositories/order_repository.dart';
 import 'package:emenu/repositories/section_repository.dart';
 import 'package:emenu/repositories/table_repository.dart';
+import 'package:emenu/utils/global.dart';
 import 'package:emenu/utils/settings.dart';
+import 'package:emenu/utils/table.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:emenu/models/table.dart' as table_model;
+import 'package:uuid/uuid.dart';
+import 'package:workmanager/workmanager.dart';
 
 class OrderPage extends StatefulWidget {
   final Map args;
@@ -23,12 +29,14 @@ class OrderPage extends StatefulWidget {
   State<OrderPage> createState() => _OrderPageState();
 }
 
-class _OrderPageState extends State<OrderPage> {
+class _OrderPageState extends State<OrderPage> with WidgetsBindingObserver {
   late final MenuRepository menuRepository;
   late final ItemRepository itemRepository;
   late final OrderRepository orderRepository;
   late final SectionRepository sectionRepository;
   late final TableRepository tableRepository;
+  late table_model.Table table;
+  late BuildContext myContext;
 
   late Map args;
   @override
@@ -40,6 +48,52 @@ class _OrderPageState extends State<OrderPage> {
     orderRepository = OrderRepository();
     sectionRepository = SectionRepository();
     tableRepository = TableRepository();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
+    super.didChangeAppLifecycleState(state);
+    var cashier = await Global.getCashier();
+    try {
+      switch(state) {
+        case AppLifecycleState.resumed:
+          var res = await tableRepository.updateTableStatus(
+                status: TableConstant.STATUS_OPEN, 
+                cashierId: cashier.cashierID ?? '',
+                currentTable: table.TableNo);
+          print("BBB ${res}");
+          break;
+        case AppLifecycleState.detached:
+        case AppLifecycleState.inactive:
+        case AppLifecycleState.hidden:
+        case AppLifecycleState.paused:
+           var res = await tableRepository.updateTableStatus(
+                status: TableConstant.STATUS_CLOSE, 
+                cashierId: cashier.cashierID ?? '',
+                currentTable: table.TableNo);
+          print("AAAAA ${res}");
+          // Workmanager().registerOneOffTask(
+      //   const Uuid().v4(),
+      //   'updateTableStatus',
+      //   inputData: <String, dynamic>{'cashierID': cashier.cashierID ?? '', 'tableNo': table.TableNo},
+      //   initialDelay: Duration(seconds: 10), // delay for 10 seconds
+      //   constraints: Constraints(
+      //     networkType: NetworkType.connected, // Only run when connected to a network
+      //     requiresCharging: true, // Only run when the device is charging
+      //   ),
+      // );
+          break;
+      }
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   Future<String> _getSettings() async {
@@ -63,6 +117,8 @@ class _OrderPageState extends State<OrderPage> {
               future: _getSettings(),
               builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
                 if (snapshot.hasData) {
+                  table = args["selectedTable"];
+                  myContext = context;
                   return MultiBlocProvider(providers: [
                     BlocProvider<OrderBloc>(
                       create: (BuildContext context) => OrderBloc(orderRepository: orderRepository)

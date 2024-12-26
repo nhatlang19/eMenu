@@ -28,7 +28,7 @@ class MenuGridRight extends StatefulWidget {
 class _MenuGridRightState extends State<MenuGridRight> {
   @override
   Widget build(BuildContext context) {
-    late OverlayEntry overlayEntry;
+    late OverlayEntry? overlayEntry;
     return MultiBlocListener(
       listeners: [
         BlocListener<OrderBloc, OrderState>(
@@ -64,6 +64,10 @@ class _MenuGridRightState extends State<MenuGridRight> {
                               // splashColor: Colors.green, // splash color
                               onTapDown: (details) {
                                 OverlayState overlayState = Overlay.of(context);
+                                try {
+                                  overlayEntry!.remove();
+                                  overlayEntry = null;
+                                } catch (_) {}
                                 overlayEntry = OverlayEntry(builder: (context) {
                                   return Stack(
                                     children: [
@@ -86,7 +90,7 @@ class _MenuGridRightState extends State<MenuGridRight> {
                                                   },
                                                   onClose: () {
                                                     try {
-                                                      overlayEntry.remove();
+                                                      overlayEntry!.remove();
                                                     } catch (_) {}
                                                   },
                                                 ),
@@ -98,7 +102,7 @@ class _MenuGridRightState extends State<MenuGridRight> {
                                     ],
                                   );
                                 });
-                                overlayState.insert(overlayEntry);
+                                overlayState.insert(overlayEntry!);
                               }, // button pressed
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,

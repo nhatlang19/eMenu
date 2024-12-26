@@ -235,9 +235,9 @@ class _TableGridState extends State<TableGrid> {
                   style: AppTextStyles.dialogTitle,
                 ),
                 const SizedBox(height: 16),
-                BlocProvider.value(
-                    value: BlocProvider.of<TableBloc>(parentContext),
-                    child: const GroupDropdown()),
+                // BlocProvider.value(
+                //     value: BlocProvider.of<TableBloc>(parentContext),
+                //     child: const GroupDropdown()),
                 BlocProvider.value(
                     value: BlocProvider.of<SalesCodeBloc>(parentContext),
                     child: const SalesCodeDropdown()),
@@ -245,22 +245,22 @@ class _TableGridState extends State<TableGrid> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        style: !isAddNew
-                            ? AppButtonStyles.btnSaveEnabled
-                            : AppButtonStyles.btnSaveDisabled,
-                        onPressed: () {
-                          if (!isAddNew) {
-                            Navigator.of(context).pop();
-                          }
-                        },
-                        child: const Text('Save'),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
+                    // Expanded(
+                    //   child: ElevatedButton(
+                    //     style: !isAddNew
+                    //         ? AppButtonStyles.btnSaveEnabled
+                    //         : AppButtonStyles.btnSaveDisabled,
+                    //     onPressed: () {
+                    //       if (!isAddNew) {
+                    //         Navigator.of(context).pop();
+                    //       }
+                    //     },
+                    //     child: const Text('Save'),
+                    //   ),
+                    // ),
+                    // const SizedBox(
+                    //   width: 10,
+                    // ),
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () async {

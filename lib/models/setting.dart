@@ -18,11 +18,12 @@ class Setting {
   final String vat;
   @JsonKey(name: 'exitMode')
   final String exitMode;
-
+  @JsonKey(name: 'logoName')
+  final String logoName;
 
   @override
   List<Object> get props =>
-      [serverIP, posGroup, posId, type, storeNo, vat, exitMode];
+      [serverIP, posGroup, posId, type, storeNo, vat, exitMode, logoName];
 
   const Setting(
       {required this.serverIP,
@@ -31,14 +32,15 @@ class Setting {
       required this.type,
       required this.storeNo,
       required this.vat,
-      required this.exitMode
+      required this.exitMode,
+      required this.logoName,
   });
 
   static const empty = Setting(serverIP: '',
       posGroup: '',
       posId: '',
       type: '',
-      storeNo: '', vat: '', exitMode: '0');
+      storeNo: '', vat: '', exitMode: '0', logoName: '111.png');
 
   factory Setting.fromJson(Map<String, dynamic> json) =>
       _$SettingFromJson(json);
@@ -50,6 +52,7 @@ class Setting {
         'type': type,
         'storeNo': storeNo,
         'vat': vat,
-        'exitMode': exitMode
+        'exitMode': exitMode,
+        'logoName': logoName,
       };
 }

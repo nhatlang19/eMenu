@@ -1,8 +1,10 @@
 import 'package:bloc/bloc.dart';
+import 'package:emenu/models/setting.dart';
 import 'package:emenu/models/user.dart';
 import 'package:emenu/modules/auth/models/password.dart';
 import 'package:emenu/modules/auth/models/username.dart';
 import 'package:emenu/repositories/auth_repository.dart';
+import 'package:emenu/utils/settings.dart';
 import 'package:equatable/equatable.dart';
 import 'package:formz/formz.dart';
 
@@ -19,6 +21,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     on<LoginSubmitted>(_onSubmitted);
     on<LoginConfirmed>(_onLoginConfirmed);
     on<LogoutSubmitted>(_onLogout);
+    on<RefreshLogo>(_onRefreshLogo);
   }
 
   final AuthRepository _authenticationRepository;
@@ -90,10 +93,14 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     }
   }
 
-  
-
   void _onLogout(LogoutSubmitted event, Emitter<LoginState> emit) {
     _authenticationRepository.logOut();
     emit(state.copyWith(status: FormzSubmissionStatus.initial));
+  }
+
+  Future<void> _onRefreshLogo(RefreshLogo event, Emitter<LoginState> emit) async {
+    var settings = Settings();
+    var setting = await settings.read();
+    emit(state.copyWith(refreshLogo: !state.refreshLogo, setting: setting));
   }
 }

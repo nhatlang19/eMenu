@@ -4,10 +4,13 @@ import 'package:emenu/bloc/add_to_cart_bloc/cart_bloc.dart';
 import 'package:emenu/config/routes/router.dart' as router;
 import 'package:emenu/config/routes/routes.dart';
 import 'package:emenu/config/themes/app_colors.dart';
+import 'package:emenu/constants/table.dart';
 import 'package:emenu/modules/auth/bloc/auth_bloc.dart';
+import 'package:emenu/modules/auth/bloc/login_bloc.dart';
 import 'package:emenu/repositories/auth_repository.dart';
 import 'package:emenu/repositories/cart_repository.dart';
 import 'package:emenu/repositories/item_repository.dart';
+import 'package:emenu/repositories/table_repository.dart';
 import 'package:emenu/repositories/user_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +18,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:workmanager/workmanager.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
@@ -31,10 +35,31 @@ void main() async {
     DeviceOrientation.landscapeRight,
   ]);
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky); // Hide both the status bar and navigation bar.
+  Workmanager().initialize(callbackDispatcher);
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   runApp(const MainApp());
   FlutterNativeSplash.remove();
+}
+
+void callbackDispatcher() {
+  Workmanager().executeTask((task, inputData) {
+    print("aaaa ${task}");
+    switch(task) {
+      case "updateTableStatus":
+        print("aaaa ${task}");
+        final inputDataMap = inputData as Map<String, dynamic>;
+        final cashierID = inputDataMap["cashierID"];
+        final tableNo = inputDataMap["tableNo"];
+        var tableRepository = TableRepository();
+        tableRepository.updateTableStatus(
+              status: TableConstant.STATUS_CLOSE, 
+              cashierId: cashierID,
+              currentTable: tableNo);
+        break;
+    }
+    return Future.value(true);
+  });
 }
 
 class MainApp extends StatefulWidget {
@@ -79,6 +104,14 @@ class _MainAppState extends State<MainApp> {
           BlocProvider<CartBloc>(
             create: (BuildContext context) =>
                 CartBloc(itemRepository: _itemRepository, cartRepository: _cartRepository),
+          ),
+          BlocProvider(
+            create: (BuildContext context) {
+              return LoginBloc(
+                authenticationRepository: 
+                    RepositoryProvider.of<AuthRepository>(context),
+              );
+            }
           ),
         ], child: const AppView()));
   }
