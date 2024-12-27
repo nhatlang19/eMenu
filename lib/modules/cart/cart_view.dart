@@ -1,9 +1,7 @@
-import 'dart:io';
 
 import 'package:emenu/bloc/add_to_cart_bloc/cart_bloc.dart';
 import 'package:emenu/bloc/add_to_cart_bloc/dto/cart_item.dart';
 import 'package:emenu/config/themes/app_colors.dart';
-import 'package:emenu/models/item.dart';
 import 'package:emenu/modules/confirm/confirm_page.dart';
 import 'package:emenu/modules/order/bloc/order_bloc.dart';
 import 'package:emenu/utils/screen_util.dart';
@@ -52,11 +50,11 @@ class _CartViewState extends State<CartView> {
                         child: Table(
                           // border: TableBorder, // Adds borders to the table
                           columnWidths: const {
-                            0: const FlexColumnWidth(1.5), // Column 0 will take twice the space of column 1
-                            1: const FlexColumnWidth(0.5), 
-                            2: const FlexColumnWidth(1), 
-                            3: const FlexColumnWidth(1), 
-                            4: const FlexColumnWidth(1), 
+                            0: FlexColumnWidth(1.5),
+                            1: FlexColumnWidth(0.5),
+                            2: FlexColumnWidth(1),
+                            3: FlexColumnWidth(1),
+                            4: FlexColumnWidth(1), 
                           },
                           children: [
                             _buildHeaderTable(),
@@ -71,11 +69,11 @@ class _CartViewState extends State<CartView> {
                               child: Table(
                                 // border: TableBorder, // Adds borders to the table
                                 columnWidths: const {
-                                  0: const FlexColumnWidth(1.5), // Column 0 will take twice the space of column 1
-                                  1: const FlexColumnWidth(0.5), 
-                                  2: const FlexColumnWidth(1), 
-                                  3: const FlexColumnWidth(1), 
-                                  4: const FlexColumnWidth(1), 
+                                  0: FlexColumnWidth(1.5), // Column 0 will take twice the space of column 1
+                                  1: FlexColumnWidth(0.5), 
+                                  2: FlexColumnWidth(1), 
+                                  3: FlexColumnWidth(1), 
+                                  4: FlexColumnWidth(1), 
                                 },
                                 children: [
                                   ...state.cartItems.asMap().entries.map((entry) {

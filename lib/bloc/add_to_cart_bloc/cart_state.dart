@@ -54,13 +54,13 @@ class CartState extends Equatable {
       this.customQuantity = "0",
       this.noGuest = 2,
       }) {
-        this.cartItemTmp = CartItem.empty;
+        cartItemTmp = CartItem.empty;
       }
 
   CartState copyWith({
     CartStatus? status,
     List<CartItem>? cartItems,
-    dynamic? total,
+    dynamic total,
     bool? toogle,
     ShowCombo? showCombo,
     ShowOpenItem? showOpenItem,

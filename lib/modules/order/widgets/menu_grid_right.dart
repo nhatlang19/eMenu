@@ -2,13 +2,13 @@ import 'package:awesome_number_picker/awesome_number_picker.dart';
 import 'package:emenu/bloc/add_to_cart_bloc/cart_bloc.dart';
 import 'package:emenu/config/themes/app_colors.dart';
 import 'package:emenu/config/themes/app_text_styles.dart';
-import 'package:emenu/constants/order.dart';
 import 'package:emenu/modules/auth/bloc/login_bloc.dart';
 import 'package:emenu/modules/cart/cart_view_drawer.dart';
 import 'package:emenu/modules/order/bloc/menu_bloc.dart';
 import 'package:emenu/modules/order/bloc/order_bloc.dart';
 import 'package:emenu/modules/order/bloc/submenu_bloc.dart';
 import 'package:emenu/modules/order/widgets/grid_item.dart';
+import 'package:emenu/modules/order/widgets/table_dropdown.dart';
 import 'package:emenu/repositories/auth_repository.dart';
 import 'package:emenu/utils/screen_util.dart';
 import 'package:emenu/utils/settings.dart';
@@ -34,7 +34,7 @@ class _MenuGridRightState extends State<MenuGridRight> {
         BlocListener<OrderBloc, OrderState>(
           listener: (context, state) {
             if (state.status == OrderStatus.initOrder && state.isAddNew) {
-               WidgetsBinding.instance.addPostFrameCallback((_) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
                 showSetPeopleV2(context);
               });
             }
@@ -137,12 +137,15 @@ class _MenuGridRightState extends State<MenuGridRight> {
                         children: [
                           BlocBuilder<OrderBloc, OrderState>(
                             builder: (context, state) {
-                              return Text(
-                                  "Bàn ${state.selectedTable.TableNo.trim()}",
-                                  style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold));
+                              return InkWell(
+                                onTap: () => _showMoveTableDialog(context),
+                                child: Text(
+                                    "Bàn ${(state.selectedTable.TableNo ?? '').trim()}",
+                                    style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold)),
+                              );
                             },
                           ),
                           const Padding(
@@ -162,7 +165,7 @@ class _MenuGridRightState extends State<MenuGridRight> {
                               var setting = await settings.read();
                               if (setting.exitMode == "1") {
                                 // ignore: use_build_context_synchronously
-                                _showCustomDialog(context);
+                                _showLoginDialog(context);
                               } else {
                                 // ignore: use_build_context_synchronously
                                 context.read<CartBloc>().add(const ResetCart());
@@ -264,7 +267,8 @@ class _MenuGridRightState extends State<MenuGridRight> {
                                         CartStatus.updatedQuantity ||
                                     current.status == CartStatus.success,
                                 builder: (context, state) {
-                                  var total = ScreenUtil.formatPrice(state.total);
+                                  var total =
+                                      ScreenUtil.formatPrice(state.total);
                                   return Padding(
                                     padding: const EdgeInsets.only(right: 40.0),
                                     child: Text('Tạm tính: $total đ',
@@ -290,7 +294,8 @@ class _MenuGridRightState extends State<MenuGridRight> {
                                                 current.cartItems.length ||
                                             current.status ==
                                                 CartStatus.updatedQuantity ||
-                                            current.status == CartStatus.success,
+                                            current.status ==
+                                                CartStatus.success,
                                         builder: (context, state) {
                                           final cartItemCount =
                                               state.cartItems.length;
@@ -306,8 +311,10 @@ class _MenuGridRightState extends State<MenuGridRight> {
                                             badgeStyle: const badges.BadgeStyle(
                                               badgeColor: Colors.red,
                                             ),
-                                            child: const Icon(Icons.shopping_cart,
-                                                color: Colors.white, size: 50.0),
+                                            child: const Icon(
+                                                Icons.shopping_cart,
+                                                color: Colors.white,
+                                                size: 50.0),
                                           );
                                         }),
                                   ),
@@ -340,7 +347,7 @@ class _MenuGridRightState extends State<MenuGridRight> {
     );
   }
 
-  void _showCustomDialog(BuildContext parentContext) {
+  void _showLoginDialog(BuildContext parentContext) {
     showDialog(
       context: parentContext,
       useRootNavigator: false,
@@ -464,6 +471,86 @@ class _MenuGridRightState extends State<MenuGridRight> {
     );
   }
 
+  void _showMoveTableDialog(BuildContext parentContext) {
+    showDialog(
+      context: parentContext,
+      useRootNavigator: false,
+      builder: (BuildContext context) {
+        return BlocProvider.value(
+          value: BlocProvider.of<OrderBloc>(parentContext),
+          child: BlocListener<OrderBloc, OrderState>(
+            listener: (context, state) {
+              if (state.status == OrderStatus.movedTableSuccess) {
+                ScaffoldMessenger.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(
+                    SnackBar(content: Text(state.successMessageMoveTable)),
+                  );
+                Navigator.pop(context);
+              } else if (state.status == OrderStatus.movedTableFailed) {
+                ScaffoldMessenger.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(
+                    SnackBar(content: Text(state.errorMessageMoveTable)),
+                  );
+              }
+            },
+            child: Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.5, // Custom width
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      'Move Table',
+                      style: AppTextStyles.dialogTitle,
+                    ),
+                    TableDropdown(),
+                    const SizedBox(height: 24),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('Close'),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          child: BlocBuilder<OrderBloc, OrderState>(
+                            builder: (context, state) {
+                              return ElevatedButton(
+                                onPressed: () {
+                                  context
+                                      .read<OrderBloc>()
+                                      .add(const ConfirmMoveTable());
+                                },
+                                child: const Text('OK'),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Future<void> displaySetPeople(BuildContext parentContext) async {
     var settings = Settings();
     var setting = await settings.read();
@@ -524,58 +611,58 @@ class _MenuGridRightState extends State<MenuGridRight> {
             padding: const EdgeInsets.all(16.0),
             child: SizedBox(
               width: MediaQuery.of(context).size.width / 4,
-              child: BlocBuilder<CartBloc, CartState>(
-                builder: (context, state) {
-                  currentValue = state.noGuest;
-                  return StatefulBuilder(
-                    builder: (BuildContext context, StateSetter setState) {
-                      return Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              TextButton(
-                                onPressed: () {
-                                  context
-                                      .read<CartBloc>()
-                                      .add(UpdateNoGuest(noGuest: currentValue));
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text('Chọn'),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 20),
-                          NumberPicker(
-                              minValue: 1,
-                              maxValue: 30,
-                              value: currentValue,
-                              onChanged: (int newValue) {
-                                setState(() {
-                                  currentValue = newValue;
-                                });
+              child:
+                  BlocBuilder<CartBloc, CartState>(builder: (context, state) {
+                currentValue = state.noGuest;
+                return StatefulBuilder(
+                  builder: (BuildContext context, StateSetter setState) {
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                context
+                                    .read<CartBloc>()
+                                    .add(UpdateNoGuest(noGuest: currentValue));
+                                Navigator.of(context).pop();
                               },
-                              itemWidth: MediaQuery.of(context).size.width / 2,
-                              itemCount: 5,
-                              textStyle: const TextStyle(color: Colors.black),
-                              selectedTextStyle: const TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                              decoration: BoxDecoration(
-                                color: const Color.fromARGB(100, 146, 146, 146), // Custom background color
-                                borderRadius: BorderRadius.circular(10),
-                              ),
+                              child: const Text('Chọn'),
                             ),
-                        ],
-                      );
-                      },
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        NumberPicker(
+                          minValue: 1,
+                          maxValue: 30,
+                          value: currentValue,
+                          onChanged: (int newValue) {
+                            setState(() {
+                              currentValue = newValue;
+                            });
+                          },
+                          itemWidth: MediaQuery.of(context).size.width / 2,
+                          itemCount: 5,
+                          textStyle: const TextStyle(color: Colors.black),
+                          selectedTextStyle: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color.fromARGB(
+                                100, 146, 146, 146), // Custom background color
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ],
                     );
-                }),
-            )
-          );
+                  },
+                );
+              }),
+            ));
       },
     );
   }

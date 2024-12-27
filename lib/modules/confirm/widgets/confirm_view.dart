@@ -37,7 +37,7 @@ class ConfirmView extends StatelessWidget {
           //                   orderNo: state.order.getOrd(),
           //                   extNo: state.order.getExt(),
           //                   posNo: state.order.getPos()));
-          await fetchOrders(context, orderState.selectedTable.TableNo);
+          await fetchOrders(context, orderState.selectedTable.TableNo ?? '');
           await Future.delayed(const Duration(milliseconds: 500));
           await loadItems(context);
 
@@ -108,7 +108,7 @@ class ConfirmView extends StatelessWidget {
       builder: (context, state) {
         return Center(
           child: Text(
-            'Bàn ${state.selectedTable.TableNo.trim()} | Xác nhận món đã đặt',
+            'Bàn ${(state.selectedTable.TableNo ?? '').trim()} | Xác nhận món đã đặt',
             style: const TextStyle(fontSize: 30),
           ),
         );
@@ -241,8 +241,8 @@ class ConfirmView extends StatelessWidget {
                       order: orderState.order,
                       isAddNew: orderState.isAddNew,
                       typeLoad: orderState.isAddNew ? "NewOrder" : "EditOrder",
-                      currTable: orderState.selectedTable.TableNo,
-                      currTableGroup: orderState.selectedForGroup.TableNo,
+                      currTable: orderState.selectedTable.TableNo ?? '',
+                      currTableGroup: orderState.selectedForGroup.TableNo ?? '',
                       noOfPerson: state.noGuest.toString(),
                       salesCode: orderState.selectedCode.code,
                       POSBizDate: ScreenUtil.getCurrentDate('yyyyMMdd')));

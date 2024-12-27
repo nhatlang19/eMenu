@@ -1,19 +1,16 @@
-import 'package:emenu/config/themes/app_button_styles.dart';
 import 'package:emenu/config/themes/app_text_styles.dart';
 import 'package:emenu/constants/table.dart';
 import 'package:emenu/modules/order/bloc/order_bloc.dart';
 import 'package:emenu/modules/table/bloc/salescode_bloc.dart';
 import 'package:emenu/modules/table/bloc/table_bloc.dart';
 import 'package:emenu/modules/table/widgets/bill_dropdown.dart';
-import 'package:emenu/modules/table/widgets/group_dropdown.dart';
 import 'package:emenu/modules/table/widgets/sales_code_dropdown.dart';
 import 'package:emenu/utils/global.dart';
 import 'package:emenu/utils/screen_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:emenu/models/table.dart' as MyTable;
-import 'package:numberpicker/numberpicker.dart';
+import 'package:emenu/models/table.dart' as my_table;
 
 class TableGrid extends StatefulWidget {
   const TableGrid({super.key});
@@ -54,10 +51,10 @@ class _TableGridState extends State<TableGrid> {
         BlocListener<TableBloc, TableState>(
           listener: (context, state) {
             if (state.status == TableStatus.repeat) {
-              MyTable.Table table = state.tables.elementAt(state.selectedTableIndex);
+              my_table.Table table = state.tables.elementAt(state.selectedTableIndex);
               doShowDialog(context, table);
             } else if (state.status == TableStatus.updateStatusSuccess) {
-              MyTable.Table table = state.tables.elementAt(state.selectedTableIndex);
+              my_table.Table table = state.tables.elementAt(state.selectedTableIndex);
               var isAddNew = (table.Status == "A" || table.Status == "B");
               context
                 .read<TableBloc>()
@@ -108,7 +105,7 @@ class _TableGridState extends State<TableGrid> {
                             elevation: 5,
                             child: Center(
                               child: Text(
-                                table.TableNo.trim(),
+                                table.TableNo ?? ''.trim(),
                                 style: AppTextStyles.tableTitle,
                               ),
                             ),
@@ -120,7 +117,7 @@ class _TableGridState extends State<TableGrid> {
     );
   }
 
-  void doShowDialog(BuildContext parentContext, MyTable.Table table) async {
+  void doShowDialog(BuildContext parentContext, my_table.Table table) async {
     var cashier = await Global.getCashier();
     var openBy = table.OpenBy.toString();
     switch (table.Status) {
@@ -130,14 +127,14 @@ class _TableGridState extends State<TableGrid> {
           parentContext.read<TableBloc>().add(UpdateTableStatus(
             status: TableConstant.STATUS_OPEN
             , cashierId: cashier.cashierID ?? ''
-            , tableNo: table.TableNo));
+            , tableNo: table.TableNo ?? ''));
         } else {
           ScaffoldMessenger.of(parentContext)
             ..hideCurrentSnackBar()
             ..showSnackBar(
               SnackBar(
                   content: Text(
-                      'Bàn ${table.TableNo.trim()} đang được order bởi cashier ${openBy.trim()}')),
+                      'Bàn ${table.TableNo ?? ''.trim()} đang được order bởi cashier ${openBy.trim()}')),
             );
         }
         break;
@@ -146,14 +143,14 @@ class _TableGridState extends State<TableGrid> {
            parentContext.read<TableBloc>().add(UpdateTableStatus(
             status: TableConstant.STATUS_OPEN
             , cashierId: cashier.cashierID ?? ''
-            , tableNo: table.TableNo));
+            , tableNo: table.TableNo ?? ''));
         } else {
           ScaffoldMessenger.of(parentContext)
             ..hideCurrentSnackBar()
             ..showSnackBar(
               SnackBar(
                   content: Text(
-                      'Bàn ${table.TableNo.trim()} đang được order bởi cashier $openBy')),
+                      'Bàn ${table.TableNo ?? ''.trim()} đang được order bởi cashier $openBy')),
             );
         }
         break;
@@ -163,7 +160,7 @@ class _TableGridState extends State<TableGrid> {
     }
   }
 
-  void _showSelectBillDialog(BuildContext parentContext, MyTable.Table table) {
+  void _showSelectBillDialog(BuildContext parentContext, my_table.Table table) {
     showDialog(
       context: parentContext,
       useRootNavigator: false,
@@ -214,7 +211,7 @@ class _TableGridState extends State<TableGrid> {
     );
   }
 
-  void _showCustomDialog(BuildContext parentContext, MyTable.Table table,
+  void _showCustomDialog(BuildContext parentContext, my_table.Table table,
       {isAddNew = false}) {
     showDialog(
       context: parentContext,
@@ -231,7 +228,7 @@ class _TableGridState extends State<TableGrid> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Table: ${table.TableNo.trim()} => ${!isAddNew ? "Edit Order" : "New Order"}',
+                  'Table: ${table.TableNo ?? ''.trim()} => ${!isAddNew ? "Edit Order" : "New Order"}',
                   style: AppTextStyles.dialogTitle,
                 ),
                 const SizedBox(height: 16),
@@ -270,7 +267,7 @@ class _TableGridState extends State<TableGrid> {
                           parentContext.read<TableBloc>().add(UpdateTableStatus(
                               status: TableConstant.STATUS_CLOSE
                               , cashierId: cashier.cashierID ?? ''
-                              , tableNo: tableState.table.TableNo));
+                              , tableNo: tableState.table.TableNo ?? ''));
                           Navigator.of(parentContext).pop();
                         },
                         child: const Text('Close'),
@@ -299,7 +296,7 @@ class _TableGridState extends State<TableGrid> {
                             parentContext.read<TableBloc>().add(const RestoreStatus());
                             parentContext.read<OrderBloc>().add(FetchOrders(
                                 posBizDate: posBizDate,
-                                currentTable: tableState.table.TableNo));
+                                currentTable: tableState.table.TableNo ?? ''));
                             Navigator.of(parentContext).pop();
                           }
                         },
@@ -334,7 +331,7 @@ class _TableGridState extends State<TableGrid> {
         tableBloc.add(UpdateTableStatus(
             status: TableConstant.STATUS_CLOSE
             , cashierId: cashier.cashierID ?? ''
-            , tableNo: tableState.table.TableNo));
+            , tableNo: tableState.table.TableNo ?? ''));
         tableBloc.add(const RefreshFetchTable());
       }
     }

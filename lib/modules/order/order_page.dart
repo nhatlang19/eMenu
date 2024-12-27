@@ -59,7 +59,7 @@ class _OrderPageState extends State<OrderPage> with WidgetsBindingObserver {
     var res = await tableRepository.updateTableStatus(
                 status: status, 
                 cashierId: cashier.cashierID ?? '',
-                currentTable: table.TableNo);
+                currentTable: table.TableNo ?? '');
     print("[doCallUpdateTableStatus] ${status} ${res}");
   }
 
@@ -109,7 +109,7 @@ class _OrderPageState extends State<OrderPage> with WidgetsBindingObserver {
                   myContext = context;
                   return MultiBlocProvider(providers: [
                     BlocProvider<OrderBloc>(
-                      create: (BuildContext context) => OrderBloc(orderRepository: orderRepository)
+                      create: (BuildContext context) => OrderBloc(orderRepository: orderRepository, tableRepository: tableRepository)
                         ..add(OrderInitPage(
                             selectedForGroup: args["tableGroup"],
                             isAddNew: args["tableStatus"],

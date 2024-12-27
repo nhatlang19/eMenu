@@ -80,7 +80,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     if (state.isValid) {
       emit(state.copyWith(confirmStatus: ConfirmStatus.initial));
       try {
-        User user = await _authenticationRepository.logIn(
+        await _authenticationRepository.logIn(
           username: state.username.value,
           password: state.password.value,
         );

@@ -1,5 +1,4 @@
 import 'package:emenu/config/themes/app_text_styles.dart';
-import 'package:emenu/main.dart';
 import 'package:emenu/models/setting.dart';
 import 'package:emenu/modules/auth/bloc/login_bloc.dart';
 import 'package:emenu/repositories/connection_repository.dart';
@@ -122,7 +121,6 @@ class _SettingPageState extends State<SettingPage> {
       ),
       body: BlocListener<LoginBloc, LoginState>(
         listener: (context, state) {
-          // TODO: implement listener
         },
         child: Padding(
           padding: EdgeInsets.only(left: width, right: width, top: 20),

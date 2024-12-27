@@ -1,6 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:emenu/bloc/add_to_cart_bloc/cart_bloc.dart';
-import 'package:emenu/config/themes/app_text_styles.dart';
 import 'package:emenu/widgets/number_keyboards.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

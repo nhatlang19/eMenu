@@ -1,10 +1,8 @@
 import 'package:emenu/models/sales_code.dart';
 import 'package:emenu/modules/table/bloc/salescode_bloc.dart';
-import 'package:emenu/modules/table/bloc/table_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:emenu/models/table.dart' as MyTable;
 
 class SalesCodeDropdown extends StatelessWidget {
   const SalesCodeDropdown({super.key});

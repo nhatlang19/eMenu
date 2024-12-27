@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:emenu/models/order.dart';
+import 'package:emenu/providers/cart_provider.dart';
 import 'package:emenu/providers/order_provider.dart';
 
 
@@ -17,5 +18,15 @@ class OrderRepository {
     }
      
     return result;
+  }
+
+  Future<String> getNewOrderNumberByPOS(String posNo) async {
+    final provider = CartProvider();
+
+    final response = await provider.getNewOrderNumberByPOS(posNo);
+    if (response != null) {
+      return response + "";
+    }
+    return "";
   }
 }

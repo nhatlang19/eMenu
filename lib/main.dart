@@ -1,16 +1,12 @@
-import 'dart:io';
-
 import 'package:emenu/bloc/add_to_cart_bloc/cart_bloc.dart';
 import 'package:emenu/config/routes/router.dart' as router;
 import 'package:emenu/config/routes/routes.dart';
 import 'package:emenu/config/themes/app_colors.dart';
-import 'package:emenu/constants/table.dart';
 import 'package:emenu/modules/auth/bloc/auth_bloc.dart';
 import 'package:emenu/modules/auth/bloc/login_bloc.dart';
 import 'package:emenu/repositories/auth_repository.dart';
 import 'package:emenu/repositories/cart_repository.dart';
 import 'package:emenu/repositories/item_repository.dart';
-import 'package:emenu/repositories/table_repository.dart';
 import 'package:emenu/repositories/user_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -24,8 +20,8 @@ void main() async {
   FlutterError.onError = (details) {
     FlutterError.presentError(details);
     if (kReleaseMode) {
-      print(details);
-    };
+      // print(details);
+    }
   };
 
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -105,7 +101,7 @@ class AppView extends StatefulWidget {
 class _AppViewState extends State<AppView> {
   final _navigatorKey = GlobalKey<NavigatorState>();
 
-  NavigatorState get _navigator => _navigatorKey.currentState!;
+  // NavigatorState get _navigator => _navigatorKey.currentState!;
   @override
   Widget build(BuildContext context) {
     // _splashAction();

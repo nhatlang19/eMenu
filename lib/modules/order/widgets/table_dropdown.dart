@@ -1,17 +1,22 @@
+import 'package:emenu/modules/order/bloc/order_bloc.dart';
 import 'package:emenu/modules/table/bloc/table_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:emenu/models/table.dart' as MyTable;
+import 'package:emenu/models/table.dart' as my_table;
 
-class GroupDropdown extends StatelessWidget {
-  const GroupDropdown({super.key});
+class TableDropdown extends StatefulWidget {
+  const TableDropdown({super.key});
 
   @override
+  State<TableDropdown> createState() => _TableDropdownState();
+}
+
+class _TableDropdownState extends State<TableDropdown> {
+  @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TableBloc, TableState>(
-      buildWhen: (previous, current) =>
-          previous.selectedForGroup.TableNo != current.selectedForGroup.TableNo,
+    return BlocBuilder<OrderBloc, OrderState>(
+      // buildWhen: (previous, current) => previous.selectedForGroup.TableNo != current.selectedForGroup.TableNo,
       builder: (context, state) {
         return Padding(
             padding: const EdgeInsets.all(8.0),
@@ -20,7 +25,7 @@ class GroupDropdown extends StatelessWidget {
                 const Expanded(
                     flex: 1,
                     child: Text(
-                      'Group: ',
+                      'Bàn: ',
                     )),
                 Expanded(
                   flex: 4,
@@ -31,13 +36,13 @@ class GroupDropdown extends StatelessWidget {
                       ),
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       child: DropdownButtonHideUnderline(
-                          child: DropdownButton<MyTable.Table>(
-                        value: state.selectedForGroup.TableNo == '' ? null : state.selectedForGroup,
-                        onChanged: (MyTable.Table? newValue) {
-                          context.read<TableBloc>().add(ChangeSelectGroup(group: newValue ?? state.selectedForGroup));
+                          child: DropdownButton<my_table.Table>(
+                        value: state.moveTable.TableNo == '' ? null : state.moveTable,
+                        onChanged: (my_table.Table? newValue) {
+                          context.read<OrderBloc>().add(ChangeSelectedTable(table: newValue ?? state.selectedTable));
                         },
-                        items: state.tables.map<DropdownMenuItem<MyTable.Table>>((MyTable.Table table) {
-                          return DropdownMenuItem<MyTable.Table>(
+                        items: state.tableAllSection.map<DropdownMenuItem<my_table.Table>>((my_table.Table table) {
+                          return DropdownMenuItem<my_table.Table>(
                             value: table,
                             child: Text(table.TableNo ?? ''),
                           );

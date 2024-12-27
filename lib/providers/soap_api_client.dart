@@ -4,7 +4,6 @@ import 'package:emenu/utils/global.dart';
 import 'package:emenu/utils/settings.dart';
 import 'package:http/http.dart' as http;
 import 'package:xml/xml.dart' as xml;
-import 'package:dio/dio.dart';
 import 'package:xml2json/xml2json.dart';
 
 abstract class SoapApiClient {

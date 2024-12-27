@@ -2,14 +2,12 @@ import 'package:emenu/modules/order/bloc/order_bloc.dart';
 import 'package:emenu/modules/table/bloc/salescode_bloc.dart';
 import 'package:emenu/modules/table/bloc/section_bloc.dart';
 import 'package:emenu/modules/table/bloc/table_bloc.dart';
-import 'package:emenu/modules/table/bloc/user_bloc.dart';
 import 'package:emenu/modules/table/widgets/table_view.dart';
 import 'package:emenu/repositories/order_repository.dart';
 import 'package:emenu/repositories/sales_code_repository.dart';
 import 'package:emenu/repositories/section_repository.dart';
 import 'package:emenu/repositories/table_repository.dart';
 import 'package:emenu/repositories/user_repository.dart';
-import 'package:emenu/utils/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -59,7 +57,7 @@ class _TablePageState extends State<TablePage> {
                         create: (BuildContext context) => SalesCodeBloc(salesCodeRepository: salesCodeRepository)..add(const FetchSalesCode()),
                       ),
                       BlocProvider<OrderBloc>(
-                        create: (BuildContext context) => OrderBloc(orderRepository: orderRepository),
+                        create: (BuildContext context) => OrderBloc(orderRepository: orderRepository, tableRepository: tableRepository),
                       ),
                     ],
                     child: const TableView()
