@@ -82,6 +82,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
           priceLevel: "");
 
       if (item.getComboPack() == ItemComboPack.N ||
+          item.getComboPack() == ItemComboPack.P ||
           item.getComboPack() == ItemComboPack.R) {
         var list = List<CartItem>.from(state.cartItems);
 
