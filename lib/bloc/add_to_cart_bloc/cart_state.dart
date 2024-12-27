@@ -21,6 +21,12 @@ enum ShowCombo {
   skip
 }
 
+enum ShowOpenItem {
+  hide,
+  show,
+  skip
+}
+
 // ignore: must_be_immutable
 class CartState extends Equatable {
   final List<CartItem> cartItems;
@@ -29,6 +35,7 @@ class CartState extends Equatable {
   final bool toogle;
   final String customQuantity;
   final ShowCombo showCombo;
+  final ShowOpenItem showOpenItem;
   late CartItem cartItemTmp;
   final String errorMessage;
   final Table selectedTable;
@@ -42,6 +49,7 @@ class CartState extends Equatable {
       this.total = 0,
       this.toogle = false,
       this.showCombo = ShowCombo.hide,
+      this.showOpenItem = ShowOpenItem.hide,
       this.errorMessage = '',
       this.customQuantity = "0",
       this.noGuest = 2,
@@ -55,6 +63,7 @@ class CartState extends Equatable {
     dynamic? total,
     bool? toogle,
     ShowCombo? showCombo,
+    ShowOpenItem? showOpenItem,
     String? customQuantity,
     CartItem? cartItemTmp,
     String? errorMessage,
@@ -67,6 +76,7 @@ class CartState extends Equatable {
         total: total ?? this.total,
         toogle: toogle ?? this.toogle,
         showCombo: showCombo ?? this.showCombo,
+        showOpenItem: showOpenItem ?? this.showOpenItem,
         selectedTable: selectedTable ?? this.selectedTable,
         errorMessage: errorMessage ?? this.errorMessage,
         customQuantity: customQuantity ?? this.customQuantity,
@@ -132,6 +142,7 @@ class CartState extends Equatable {
         toogle,
         customQuantity,
         showCombo,
+        showOpenItem,
         cartItemTmp,
         errorMessage,
         selectedTable,

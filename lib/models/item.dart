@@ -152,6 +152,61 @@ class Item extends Equatable {
 
   factory Item.fromJson(Map<String, dynamic> json) => _$ItemFromJson(json);
 
+  Item copyWith({
+    String? itemCode,
+    String? itemType,
+    String? recptDesc,
+    String? unitSellPrice,
+    String? comboPack,
+    String? weightItem,
+    String? onPromotion,
+    String? promoPrice,
+    String? discountable,
+    String? modifierInt,
+    String? masterCode,
+    String? hidden,
+    String? promoCode,
+    String? promoClass,
+    String? pkgPrice,
+    String? pkgQty,
+    String? pkgItems,
+    String? blanket,
+    String? tax,
+    String? printStatus,
+    String? qty,
+    String? splited,
+    String? seqNo,
+    String? orgPrice,
+    String? comboClass}) {
+    return Item(
+      itemCode: itemCode ?? this.itemCode,
+      itemType: itemType ?? this.itemType,
+      recptDesc: recptDesc ?? this.recptDesc,
+      unitSellPrice: unitSellPrice ?? this.unitSellPrice,
+      comboPack: comboPack ?? this.comboPack,
+      weightItem: weightItem ?? this.weightItem,
+      onPromotion: onPromotion ?? this.onPromotion,
+      promoPrice: promoPrice ?? this.promoPrice,
+      discountable: discountable ?? this.discountable,
+      modifierInt: modifierInt ?? this.modifierInt,
+      masterCode: masterCode ?? this.masterCode,
+      hidden: hidden ?? this.hidden,
+      promoCode: promoCode ?? this.promoCode,
+      promoClass: promoClass ?? this.promoClass,
+      pkgPrice: pkgPrice ?? this.pkgPrice,
+      pkgQty: pkgQty ?? this.pkgQty,
+      pkgItems: pkgItems ?? this.pkgItems,
+      blanket: blanket ?? this.blanket,
+      tax: tax ?? this.tax,
+      printStatus: printStatus ?? this.printStatus,
+      qty: qty ?? this.qty,
+      splited: splited ?? this.splited,
+      seqNo: seqNo ?? this.seqNo,
+      orgPrice: orgPrice ?? this.orgPrice,
+      comboClass: comboClass ?? this.comboClass
+    );
+  }
+
   String getOrgPrice() {
     if (orgPrice != '0') {
       return orgPrice ?? '0';

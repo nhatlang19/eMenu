@@ -93,7 +93,7 @@ class GridItem extends StatelessWidget {
                                         child: Column(
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           children: <Widget>[
-                                          Text("$quanlity",
+                                          AutoSizeText("$quanlity", maxLines: 1, 
                                                 style: const TextStyle(
                                                     color: Colors.white, fontSize: 20))
                                               // text

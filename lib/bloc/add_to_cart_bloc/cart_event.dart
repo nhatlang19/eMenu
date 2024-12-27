@@ -26,6 +26,16 @@ class AddToCart extends CartEvent {
   List<Object> get props => [currSubItem, qty, priceLevel!];
 }
 
+class AddToCartWithOpenItem extends CartEvent {
+  final String qty;
+  final String price;
+  final Function callback;
+  const AddToCartWithOpenItem({required this.qty, required this.price, required this.callback});
+
+  @override
+  List<Object> get props => [qty, price, callback];
+}
+
 class AddToCartWithCombo extends CartEvent {
   final Function callback;
   const AddToCartWithCombo({required this.callback});
@@ -124,6 +134,20 @@ class SendOrder extends CartEvent {
 
 class HideShowCombo extends CartEvent {
   const HideShowCombo();
+
+  @override
+  List<Object> get props => [];
+}
+
+class HideShowOpenItem extends CartEvent {
+  const HideShowOpenItem();
+
+  @override
+  List<Object> get props => [];
+}
+
+class SkipShowOpenItem extends CartEvent {
+  const SkipShowOpenItem();
 
   @override
   List<Object> get props => [];
