@@ -7,7 +7,7 @@ part 'table.g.dart';
 @JsonSerializable(includeIfNull: false)
 class Table extends Equatable {
   @JsonKey(name: 'TableNo')
-  final String TableNo;
+  final String? TableNo;
   @JsonKey(name: 'Status')
   final String? Status;
   @JsonKey(name: 'OpenBy')
@@ -19,14 +19,14 @@ class Table extends Equatable {
 
   @override
   List<Object> get props =>
-      [TableNo, Status ?? '', OpenBy ?? '', Desciption ?? '', SalesCode ?? ''];
+      [TableNo ?? '', Status ?? '', OpenBy ?? '', Desciption ?? '', SalesCode ?? ''];
 
   static const empty = Table(
       TableNo: '', Status: '', OpenBy: null, Desciption: '', SalesCode: '');
       
       
   const Table(
-      {required this.TableNo,
+      {this.TableNo,
       this.Status,
       this.OpenBy,
       this.Desciption,

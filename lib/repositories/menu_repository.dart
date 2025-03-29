@@ -15,9 +15,9 @@ class MenuRepository {
 
     var json = await provider.getPosMenu(posGroup);
     final List<Menu> result = [];
-    json.forEach((data) {
+    for (var data in json) {
       result.add(Menu.fromJson(data['Table'] as Map<String, dynamic>));
-    });
+    }
      
     return result;
   }
@@ -29,9 +29,9 @@ class MenuRepository {
 
     var json = await provider.getSubMenu(selectedPosMenu, posGroup);
     final List<Submenu> result = [];
-    json.forEach((data) {
+    for (var data in json) {
       result.add(Submenu.fromJson(data['Table'] as Map<String, dynamic>));
-    });
+    }
      
     return result;
   }

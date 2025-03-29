@@ -19,6 +19,8 @@ Setting _$SettingFromJson(Map<String, dynamic> json) => $checkedCreate(
           type: $checkedConvert('type', (v) => v as String),
           storeNo: $checkedConvert('storeNo', (v) => v as String),
           vat: $checkedConvert('vat', (v) => v as String),
+          exitMode: $checkedConvert('exitMode', (v) => v as String),
+          logoName: $checkedConvert('logoName', (v) => v as String),
         );
         return val;
       },

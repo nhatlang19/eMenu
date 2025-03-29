@@ -3,6 +3,15 @@ import 'soap_api_client.dart';
 class CartProvider extends SoapApiClient {
   CartProvider();
 
+  String escapeXml(String input) {
+  return input
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&apos;');
+}
+
   Future<bool> sendOrder(
       String dataTableString, String sendNewOrder, String reSendOrder, String typeLoad,
       String posNo, String orderNo, String extNo, String splited, String currTable,
@@ -10,7 +19,7 @@ class CartProvider extends SoapApiClient {
     const String soapAction = 'http://tempuri.org/SendOrder';
     final String soapBody =
         '''<SendOrder xmlns="http://tempuri.org/">
-            <dataTableString>$dataTableString</dataTableString>
+            <dataTableString>${escapeXml(dataTableString)}</dataTableString>
             <SendNewOrder>$sendNewOrder</SendNewOrder>
             <ReSendOrder>$reSendOrder</ReSendOrder>
             <typeLoad>$typeLoad</typeLoad>
@@ -26,14 +35,14 @@ class CartProvider extends SoapApiClient {
             <cashierID>$cashierID</cashierID>
           </SendOrder>''';
 
-    final response = await callSoapService(soapAction, soapBody);
+    final response = await callSoapServiceLargeData(soapAction, soapBody);
     if (response != null) {
       return parseSoapResponseToOneValue(response, element: "SendOrderResult") == 'true';
     }
     return false;
   }
 
-  Future<dynamic?> getNewOrderNumberByPOS(String posNo) async {
+  Future<dynamic> getNewOrderNumberByPOS(String posNo) async {
     const String soapAction = 'http://tempuri.org/GetNewOrderNumberByPOS';
     final String soapBody =
         '''<GetNewOrderNumberByPOS xmlns="http://tempuri.org/">
@@ -47,7 +56,7 @@ class CartProvider extends SoapApiClient {
     return null;
   }
 
-    Future<List<dynamic>> getEditOrderNumberByPOS(String orderNo, String posNo, String extNo) async {
+  Future<List<dynamic>> getEditOrderNumberByPOS(String orderNo, String posNo, String extNo) async {
     const String soapAction = 'http://tempuri.org/GetEditOrderNumberByPOS';
     final String soapBody = '''<GetEditOrderNumberByPOS xmlns="http://tempuri.org/">
                                 <orderNo>$orderNo</orderNo>
@@ -56,7 +65,6 @@ class CartProvider extends SoapApiClient {
                               </GetEditOrderNumberByPOS>''';
 
     final response = await callSoapService(soapAction, soapBody);
-    print(response);
     if (response != null) {
       return parseSoapResponseToJson(response);
     }

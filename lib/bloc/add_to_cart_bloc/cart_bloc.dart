@@ -9,6 +9,7 @@ import 'package:emenu/models/item.dart';
 import 'package:emenu/models/item_combo.dart';
 import 'package:emenu/models/item_modifier.dart';
 import 'package:emenu/models/submenu.dart';
+import 'package:emenu/models/table.dart';
 import 'package:emenu/repositories/cart_repository.dart';
 import 'package:emenu/repositories/item_repository.dart';
 import 'package:emenu/utils/global.dart';
@@ -30,26 +31,33 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         super(CartState()) {
     on<AddToCart>(_onAddToCart);
     on<AddToCartWithCombo>(_onAddToCartWithCombo);
+    on<AddToCartWithOpenItem>(_onAddToCartWithOpenItem);
+    on<HideShowOpenItem>(_onHideShowOpenItem);
+    on<SkipShowOpenItem>(_onSkipShowOpenItem);
     on<HideShowCombo>(_onHideShowCombo);
     on<SkipShowCombo>(_onSkipShowCombo);
     on<Increase>(_onIncrease);
     on<Decrease>(_onDecrease);
     on<UpdateQuantity>(_onUpdateQuantity);
     on<Toogle>(_onToogle);
-    on<UpdateNoPeople>(_onUpdateNoPeople);
+    on<Close>(_onClose);
+    on<UpdateCustomQuantity>(_onUpdateCustomQuantity);
     on<ResetCart>(_onResetCart);
     on<SendOrder>(_onSendOrder);
     on<UpdateQuantityCombo>(_onUpdateQuantityCombo);
     on<LoadItemsWhenEdit>(_onLoadItemsWhenEdit);
+    on<SetTable>(_onSetTable);
+    on<UpdateNoGuest>(_onUpdateNoGuest);
   }
 
   void _onResetCart(ResetCart event, Emitter<CartState> emit) {
     emit(state.copyWith(
         status: CartStatus.initial,
+        showOpenItem: ShowOpenItem.hide,
         cartItems: [],
         total: 0,
         toogle: false,
-        noPeople: "1"));
+        customQuantity: "1"));
   }
 
   Future<void> _onAddToCart(AddToCart event, Emitter<CartState> emit) async {
@@ -62,10 +70,10 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         qty = 1;
       }
 
-      if (state.noPeople == '0') {
+      if (state.customQuantity == '0') {
         qty = 1;
       } else {
-        qty = int.parse(state.noPeople);
+        qty = int.parse(state.customQuantity);
       }
 
       Item item = await _itemRepository.getItemBySubMenuSelected(
@@ -74,10 +82,12 @@ class CartBloc extends Bloc<CartEvent, CartState> {
           priceLevel: "");
 
       if (item.getComboPack() == ItemComboPack.N ||
+          item.getComboPack() == ItemComboPack.P ||
           item.getComboPack() == ItemComboPack.R) {
         var list = List<CartItem>.from(state.cartItems);
 
-        final index = list.indexWhere((element) => element.item.itemCode == item.itemCode);
+        final index = list.indexWhere((element) => element.item.itemCode == item.itemCode 
+                                                && element.item.getPrintStatusStr() == '');
         if (index >= 0) {
           state.cartItems[index].qty += 1;
           state.cartItems[index].updateData();
@@ -134,17 +144,21 @@ class CartBloc extends Bloc<CartEvent, CartState> {
           }
         }
         emit(state.copyWith(showCombo: ShowCombo.show));
+      } else if (item.getComboPack() == ItemComboPack.O) {
+        CartItem cartItem = CartItem(item: item, qty: 1, segNo: state.cartItems.length + 1);
+        cartItem.cartItemComboList = [];
+        emit(state.copyWith(cartItemTmp: cartItem, showOpenItem: ShowOpenItem.show));
       }
-      emit(state.copyWith(noPeople: "0", errorMessage: ''));
+      emit(state.copyWith(customQuantity: "0", errorMessage: ''));
     } catch (_) {
-      emit(state.copyWith(status: CartStatus.failure, noPeople: "0", errorMessage: ''));
+      emit(state.copyWith(status: CartStatus.failure, customQuantity: "0", errorMessage: ''));
     }
   }
 
   Future<void> _onLoadItemsWhenEdit(LoadItemsWhenEdit event, Emitter<CartState> emit) async {
     try {
       List<Item> items = await _cartRepository.getEditOrderNumberByPOS(orderNo: event.orderNo, posNo: event.posNo, extNo: event.extNo);
-      var list = List<CartItem>.from(state.cartItems);
+      var list = List<CartItem>.from([]);
       // @TODO: need to handle for combo
       for (var item in items) {
         list.add(CartItem(item: item, qty: int.parse(item.qty ?? '0'), segNo: int.parse(item.seqNo ?? '0')));
@@ -152,7 +166,36 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       double total = list.fold(0,(tot, item) => tot.toDouble() + (double.parse(item.item.getOrgPrice()) * item.qty - double.parse(item.item.promoPrice)));
       emit(state.copyWith(cartItems: list, status: CartStatus.success, total: total));
     } catch(e) {
-      emit(state.copyWith(status: CartStatus.failure, noPeople: "0", errorMessage: ''));
+      emit(state.copyWith(status: CartStatus.failure, customQuantity: "0", errorMessage: ''));
+    }
+  }
+
+  Future<void> _onAddToCartWithOpenItem(AddToCartWithOpenItem event, Emitter<CartState> emit) async {
+    try {
+      emit(state.copyWith(status: CartStatus.initial));
+      CartItem cartItemTmp = state.cartItemTmp;
+      cartItemTmp.segNo = state.cartItems.length + 1;
+      cartItemTmp.item = cartItemTmp.item.copyWith(orgPrice: event.price);
+      cartItemTmp.qty = int.parse(event.qty);
+      cartItemTmp.cartItemComboList = [];
+
+      final lists = List<CartItem>.from(state.cartItems);
+      lists.add(cartItemTmp);
+
+      double total = lists.fold(0,(tot, item) => tot.toDouble() + (double.parse(item.item.getOrgPrice()) * item.qty - double.parse(item.item.promoPrice)));
+      emit(state.copyWith(
+          cartItemTmp: CartItem.empty,
+          cartItems: lists,
+          errorMessage: '',
+          status: CartStatus.success,
+          total: total,
+          customQuantity: "0",
+          showOpenItem: ShowOpenItem.hide));
+
+      event.callback();
+    } catch (_) {
+      emit(state.copyWith(status: CartStatus.failure, customQuantity: "0", showOpenItem: ShowOpenItem.hide, errorMessage: ''));
+      event.callback();
     }
   }
 
@@ -176,9 +219,16 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       } else {
         CartItem cartItemTmp = state.cartItemTmp;
         cartItemTmp.segNo = state.cartItems.length + 1;
+        var childCartItems = cartItemTmp.convertChildToCartItems();
+        cartItemTmp.cartItemComboList = [];
 
-        final data = List<CartItem>.from(state.cartItems)..add(cartItemTmp);
-        double total = data.fold(
+        final lists = List<CartItem>.from(state.cartItems);
+        lists.add(cartItemTmp);
+        for (CartItem child in childCartItems) {
+          lists.add(child);
+        }
+        // final data = List<CartItem>.from(state.cartItems)..add(cartItemTmp);
+        double total = lists.fold(
             0,
             (tot, item) =>
                 tot.toDouble() +
@@ -186,20 +236,28 @@ class CartBloc extends Bloc<CartEvent, CartState> {
                     double.parse(item.item.promoPrice)));
         emit(state.copyWith(
             cartItemTmp: CartItem.empty,
-            cartItems: data,
+            cartItems: lists,
             errorMessage: '',
             status: CartStatus.success,
             total: total,
-            noPeople: "0",
+            customQuantity: "0",
             showCombo: ShowCombo.hide));
 
         event.callback();
       }
     } catch (_) {
       emit(state.copyWith(
-          status: CartStatus.failure, noPeople: "0", showCombo: ShowCombo.hide, errorMessage: ''));
+          status: CartStatus.failure, customQuantity: "0", showCombo: ShowCombo.hide, errorMessage: ''));
       event.callback();
     }
+  }
+
+  void _onHideShowOpenItem(HideShowOpenItem event, Emitter<CartState> emit) {
+    emit(state.copyWith(showOpenItem: ShowOpenItem.hide, cartItemTmp: CartItem.empty));
+  }
+
+  void _onSkipShowOpenItem(SkipShowOpenItem event, Emitter<CartState> emit) {
+    emit(state.copyWith(showOpenItem: ShowOpenItem.skip));
   }
 
   void _onHideShowCombo(HideShowCombo event, Emitter<CartState> emit) {
@@ -229,12 +287,24 @@ class CartBloc extends Bloc<CartEvent, CartState> {
 
   void _onDecrease(Decrease event, Emitter<CartState> emit) {
     emit(state.copyWith(status: CartStatus.initial));
-    var item = state.cartItems[event.position];
+    final lists = state.cartItems;
+    var item = lists[event.position];
     if (item.qty > 1) {
-      state.cartItems[event.position].qty -= 1;
-      state.cartItems[event.position].updateData();
+      lists[event.position].qty -= 1;
+      lists[event.position].updateData();
     } else {
-      state.cartItems.removeAt(event.position);
+      final isCombo = lists[event.position].item.comboPack == "C";
+      lists.removeAt(event.position);
+      if (isCombo) {
+        var position = event.position;
+        do {
+          if (position < lists.length && lists[position].item.getItemType() == "M") {
+            lists.removeAt(position);
+          } else {
+            break;
+          }
+        } while (true);
+      }
     }
     double total = state.cartItems.fold(
         0,
@@ -243,7 +313,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
             (double.parse(item.item.getOrgPrice()) * item.qty -
                 double.parse(item.item.promoPrice)));
     emit(state.copyWith(
-        cartItems: state.cartItems,
+        cartItems: lists,
         status: CartStatus.updatedQuantity,
         total: total));
     emit(state.copyWith(status: CartStatus.initial));
@@ -277,27 +347,39 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     emit(state.copyWith(cartItemTmp: state.cartItemTmp, status: CartStatus.updatedQuantityCombo));
   }
 
+  void _onUpdateNoGuest(UpdateNoGuest event, Emitter<CartState> emit) {
+    emit(state.copyWith(noGuest: event.noGuest, status: CartStatus.updatedNoGuest));
+  }
+
   void _onToogle(Toogle event, Emitter<CartState> emit) {
     emit(state.copyWith(toogle: !state.toogle));
   }
 
-  void _onUpdateNoPeople(UpdateNoPeople event, Emitter<CartState> emit) {
+   void _onClose(Close event, Emitter<CartState> emit) {
+    emit(state.copyWith(toogle: false));
+  }
+
+  void _onSetTable(SetTable event, Emitter<CartState> emit) {
+    emit(state.copyWith(selectedTable: event.table));
+  }
+
+  void _onUpdateCustomQuantity(UpdateCustomQuantity event, Emitter<CartState> emit) {
     if (event.value == 'C') {
-      emit(state.copyWith(noPeople: "1"));
+      emit(state.copyWith(customQuantity: "1"));
     } else if (event.value == '←') {
-      if (state.noPeople.length == 1) {
-        emit(state.copyWith(noPeople: "0"));
+      if (state.customQuantity.length == 1) {
+        emit(state.copyWith(customQuantity: "0"));
       } else {
         emit(state.copyWith(
-            noPeople: state.noPeople.substring(0, state.noPeople.length - 1)));
+            customQuantity: state.customQuantity.substring(0, state.customQuantity.length - 1)));
       }
     } else {
-      if (state.noPeople == '0') {
-        emit(state.copyWith(noPeople: event.value));
+      if (state.customQuantity == '0') {
+        emit(state.copyWith(customQuantity: event.value));
       } else {
-        var newValue = state.noPeople + event.value;
+        var newValue = state.customQuantity + event.value;
         if (newValue.isNotEmpty && newValue.length <= 2) {
-          emit(state.copyWith(noPeople: newValue));
+          emit(state.copyWith(customQuantity: newValue));
         }
       }
     }

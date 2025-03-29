@@ -29,6 +29,14 @@ final class LoginSubmitted extends LoginEvent {
   const LoginSubmitted();
 }
 
+final class LoginConfirmed extends LoginEvent {
+  const LoginConfirmed();
+}
+
 final class LogoutSubmitted extends LoginEvent {
   const LogoutSubmitted();
+}
+
+final class RefreshLogo extends LoginEvent {
+  const RefreshLogo();
 }

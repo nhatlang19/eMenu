@@ -20,9 +20,9 @@ class UserRepository {
     var json = await provider.getUserList();
 
     final List<User> result = [];
-    json.forEach((data) {
+    for (var data in json) {
       result.add(User.fromJson(data['Table'] as Map<String, dynamic>));
-    });
+    }
      
     return result;
   }

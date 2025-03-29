@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class UsernameInput extends StatelessWidget {
+  const UsernameInput({super.key});
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<LoginBloc, LoginState>(
-      buildWhen: (previous, current) => previous.username != current.username,
+      buildWhen: (previous, current) => previous.username != current.username || previous.password != current.password,
       builder: (context, state) {
         return TextFormField(
           key: const Key('loginForm_usernameInput_textField'),
@@ -17,8 +19,8 @@ class UsernameInput extends StatelessWidget {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(0),
             ),
-            errorText:
-                state.username.displayError != null ? 'invalid username' : null,
+            // errorText:
+            //     state.username.displayError != null ? 'invalid username' : (state.password.displayError != null ? 'invalid password' : null),
           ),
         );
       },

@@ -3,19 +3,33 @@ import 'package:emenu/config/routes/router.dart' as router;
 import 'package:emenu/config/routes/routes.dart';
 import 'package:emenu/config/themes/app_colors.dart';
 import 'package:emenu/modules/auth/bloc/auth_bloc.dart';
+import 'package:emenu/modules/auth/bloc/login_bloc.dart';
 import 'package:emenu/repositories/auth_repository.dart';
 import 'package:emenu/repositories/cart_repository.dart';
 import 'package:emenu/repositories/item_repository.dart';
 import 'package:emenu/repositories/user_repository.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
+  FlutterError.onError = (details) {
+    FlutterError.presentError(details);
+    if (kReleaseMode) {
+      // print(details);
+    }
+  };
 
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.landscapeLeft,
+    DeviceOrientation.landscapeRight,
+  ]);
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky); // Hide both the status bar and navigation bar.
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   runApp(const MainApp());
@@ -65,6 +79,14 @@ class _MainAppState extends State<MainApp> {
             create: (BuildContext context) =>
                 CartBloc(itemRepository: _itemRepository, cartRepository: _cartRepository),
           ),
+          BlocProvider(
+            create: (BuildContext context) {
+              return LoginBloc(
+                authenticationRepository: 
+                    RepositoryProvider.of<AuthRepository>(context),
+              );
+            }
+          ),
         ], child: const AppView()));
   }
 }
@@ -79,7 +101,7 @@ class AppView extends StatefulWidget {
 class _AppViewState extends State<AppView> {
   final _navigatorKey = GlobalKey<NavigatorState>();
 
-  NavigatorState get _navigator => _navigatorKey.currentState!;
+  // NavigatorState get _navigator => _navigatorKey.currentState!;
   @override
   Widget build(BuildContext context) {
     // _splashAction();

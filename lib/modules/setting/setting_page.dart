@@ -1,6 +1,12 @@
+import 'package:emenu/config/themes/app_text_styles.dart';
 import 'package:emenu/models/setting.dart';
+import 'package:emenu/modules/auth/bloc/login_bloc.dart';
+import 'package:emenu/repositories/connection_repository.dart';
+import 'package:emenu/utils/global.dart';
+import 'package:emenu/utils/screen_util.dart';
 import 'package:emenu/utils/settings.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SettingPage extends StatefulWidget {
   const SettingPage({super.key});
@@ -17,8 +23,13 @@ class _SettingPageState extends State<SettingPage> {
   final _posGroupController = TextEditingController();
   final _posIdController = TextEditingController();
   final _vatController = TextEditingController();
+  final _exitModeController = TextEditingController();
   final _typeController = TextEditingController();
   final _sectionController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _logoNameController = TextEditingController();
+
+  final _connectionRepository = ConnectionRepository();
 
   late final Setting setting;
 
@@ -31,6 +42,9 @@ class _SettingPageState extends State<SettingPage> {
     _sectionController.dispose();
     _storeNoController.dispose();
     _vatController.dispose();
+    _exitModeController.dispose();
+    _passwordController.dispose();
+    _logoNameController.dispose();
     super.dispose();
   }
 
@@ -51,9 +65,11 @@ class _SettingPageState extends State<SettingPage> {
     _typeController.text = setting.type;
     _storeNoController.text = setting.storeNo;
     _vatController.text = setting.vat;
+    _exitModeController.text = setting.exitMode;
+    _logoNameController.text = setting.logoName;
   }
 
-  void _save() async {
+  void _save(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       // Perform registration logic
 
@@ -63,9 +79,17 @@ class _SettingPageState extends State<SettingPage> {
           posId: _posIdController.text,
           type: _typeController.text,
           storeNo: _storeNoController.text,
-          vat: _vatController.text);
+          vat: _vatController.text,
+          exitMode: _exitModeController.text,
+          logoName: _logoNameController.text);
       var settings = Settings();
       await settings.write(setting);
+
+      _passwordController.text = "";
+
+      context.read<LoginBloc>().add(const RefreshLogo());
+
+      Navigator.of(context).pop();
 
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
@@ -75,69 +99,218 @@ class _SettingPageState extends State<SettingPage> {
     }
   }
 
+  void _testConnection() async {
+    var serverIp = _serverIpController.text;
+    bool isConnected = await _connectionRepository
+        .checkConnection(Global.serviceUrl(serverIp));
+
+    String message = isConnected ? 'Connection OK' : 'Connection FAILED';
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+  }
+
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width / 4;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Settings'),
+        title: const Text('Settings'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: <Widget>[
-              TextFormField(
-                controller: _serverIpController,
-                decoration: InputDecoration(labelText: 'Server IP'),
-                validator: (value) {
-                  return null;
-                },
-              ),
-               TextFormField(
-                controller: _storeNoController,
-                decoration: InputDecoration(labelText: 'StoreNo'),
-                validator: (value) {
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _posGroupController,
-                decoration: InputDecoration(labelText: 'POS Group'),
-                validator: (value) {
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _posIdController,
-                decoration: InputDecoration(labelText: 'POS ID'),
-                validator: (value) {
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _typeController,
-                decoration: InputDecoration(labelText: 'Type'),
-                validator: (value) {
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _vatController,
-                decoration: InputDecoration(labelText: 'VAT'),
-                validator: (value) {
-                  return null;
-                },
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _save,
-                child: Text('Save'),
-              ),
-            ],
+      body: BlocListener<LoginBloc, LoginState>(
+        listener: (context, state) {
+        },
+        child: Padding(
+          padding: EdgeInsets.only(left: width, right: width, top: 20),
+          child: Form(
+            key: _formKey,
+            child: ListView(
+              children: <Widget>[
+                TextFormField(
+                  controller: _serverIpController,
+                  decoration: const InputDecoration(
+                    labelText: 'Server IP',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _storeNoController,
+                  decoration: const InputDecoration(
+                    labelText: 'StoreNo',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _posGroupController,
+                  decoration: const InputDecoration(
+                    labelText: 'POS Group',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _posIdController,
+                  decoration: const InputDecoration(
+                    labelText: 'POS ID',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _typeController,
+                  decoration: const InputDecoration(
+                    labelText: 'Type',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _vatController,
+                  decoration: const InputDecoration(
+                    labelText: 'VAT',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _exitModeController,
+                  decoration: const InputDecoration(
+                    labelText: 'Exit Mode',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _logoNameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Logo',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: _testConnection,
+                        child: const Text('Test Connection'),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          _showCustomDialog(context);
+                        },
+                        child: const Text('Save'),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
+    );
+  }
+
+  void _showCustomDialog(BuildContext parentContext) {
+    showDialog(
+      context: parentContext,
+      useRootNavigator: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          child: Container(
+            width: MediaQuery.of(context).size.width * 0.5, // Custom width
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'Password',
+                  style: AppTextStyles.dialogTitle,
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _passwordController,
+                  decoration: const InputDecoration(labelText: 'Password'),
+                  validator: (value) {
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('Close'),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Expanded(
+                        child: ElevatedButton(
+                      onPressed: () {
+                        if (_passwordController.text ==
+                            ScreenUtil.getCurrentDate('ddMMyy')) {
+                          _save(context);
+                        } else {
+                          ScaffoldMessenger.of(context)
+                            ..hideCurrentSnackBar()
+                            ..showSnackBar(
+                              const SnackBar(content: Text('Invalid password')),
+                            );
+                        }
+                      },
+                      child: const Text('OK'),
+                    )),
+                  ],
+                )
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

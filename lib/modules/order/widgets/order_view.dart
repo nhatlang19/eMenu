@@ -5,6 +5,7 @@ import 'package:emenu/modules/order/bloc/submenu_bloc.dart';
 import 'package:emenu/modules/order/widgets/combo_bottom.dart';
 import 'package:emenu/modules/order/widgets/menu_grid_right.dart';
 import 'package:emenu/modules/order/widgets/menu_left.dart';
+import 'package:emenu/modules/order/widgets/open_item.dart';
 import 'package:emenu/utils/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -49,16 +50,22 @@ class OrderView extends StatelessWidget {
                     listener: (context, state) {
                       if (state.showCombo == ShowCombo.show && state.errorMessage.isEmpty) {
                         showModalBottomSheet(
-                          isDismissible: false,
-                          enableDrag: false,
+                          // isDismissible: false,
+                          // enableDrag: false,
                           context: context,
                           isScrollControlled: true,
-                          useSafeArea: true,
+                          // useSafeArea: true,
                           builder: (context) {
                             context.read<CartBloc>().add(const SkipShowCombo());
                             return ComboBottom();
                           },
                         );
+                      } else if (state.showOpenItem == ShowOpenItem.show && state.errorMessage.isEmpty) {
+                        var cartState = BlocProvider.of<CartBloc>(context).state;
+                        if (cartState.showOpenItem == ShowOpenItem.show) {
+                          context.read<CartBloc>().add(const SkipShowOpenItem());
+                          _showOpenItemDialog(context);
+                        }
                       }
                     },
                   ),
@@ -71,5 +78,21 @@ class OrderView extends StatelessWidget {
           }
           return const CircularProgressIndicator();
         });
+  }
+
+  void _showOpenItemDialog(BuildContext parentContext) {
+    showDialog(
+      context: parentContext,
+      useRootNavigator: false,
+      builder: (BuildContext context) {
+        context.read<CartBloc>().add(const SkipShowOpenItem());
+        return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child: OpenItem(),
+            );
+      },
+    );
   }
 }

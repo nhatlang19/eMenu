@@ -42,3 +42,24 @@ class FetchOrders extends OrderEvent {
   @override
   List<Object> get props => [posBizDate, currentTable];
 }
+
+class FetchOrdersAfterSend extends OrderEvent {
+  final String posBizDate;
+  final String currentTable;
+
+  const FetchOrdersAfterSend(
+      {required this.posBizDate, required this.currentTable});
+
+  @override
+  List<Object> get props => [posBizDate, currentTable];
+}
+
+class ChangeSelectedTable extends OrderEvent {
+  final Table table;
+
+  const ChangeSelectedTable({required this.table});
+}
+
+class ConfirmMoveTable extends OrderEvent {
+  const ConfirmMoveTable();
+}

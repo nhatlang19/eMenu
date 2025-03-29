@@ -18,4 +18,12 @@ class Global {
     }
     return User.empty; 
   }
+
+  static String serviceUrl(String serverIp) {
+    return "http://$serverIp/V6BOService.asmx";
+  }
+
+   static String logoPath(String serverIp) {
+    return "http://$serverIp/Bitmap/";
+  }
 }

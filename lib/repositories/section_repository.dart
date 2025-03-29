@@ -10,9 +10,9 @@ class SectionRepository {
 
     var json = await provider.getSection();
     final List<Section> result = [];
-    json.forEach((json) {
+    for (var json in json) {
       result.add(Section.fromJson(json['Table'] as Map<String, dynamic>));
-    });
+    }
      
     return result;
   }

@@ -55,9 +55,9 @@ class CartRepository {
 
     var json = await provider.getEditOrderNumberByPOS(orderNo, posNo, extNo);
     final List<Item> result = [];
-    json.forEach((data) {
+    for (var data in json) {
       result.add(Item.fromJson(data['Table'] as Map<String, dynamic>));
-    });
+    }
      
     return result;
   }

@@ -35,18 +35,18 @@ class _TableViewState extends State<TableView> {
                 Expanded(flex: 1,
                   child: InkWell(
                     onTap: () {
-                      context.read<TableBloc>().add(RefreshFetchTable());
+                      context.read<TableBloc>().add(const RefreshFetchTable());
                     },
                     splashColor: Colors.blue, // splash color on tap
                     child: Container(
-                      padding: EdgeInsets.only(bottom: 14, top: 14),
+                      padding: const EdgeInsets.only(bottom: 14, top: 14),
                       decoration: BoxDecoration(
                         border: Border.all(color: Colors.blue),
                         borderRadius:
                             BorderRadius.circular(8), // button border radius
                         color: Colors.blueAccent, // button background color
                       ),
-                      child: Text(
+                      child: const Text(
                         textAlign: TextAlign.center,
                         'Refresh',
                         style: TextStyle(color: Colors.white, fontSize: 20),
@@ -54,7 +54,7 @@ class _TableViewState extends State<TableView> {
                     ),
                   ),
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 Expanded(
                   flex: 1,
                   child: InkWell(
@@ -63,14 +63,14 @@ class _TableViewState extends State<TableView> {
                     },
                     splashColor: Colors.red, // splash color on tap
                     child: Container(
-                      padding: EdgeInsets.only(bottom: 14, top: 14),
+                      padding: const EdgeInsets.only(bottom: 14, top: 14),
                       decoration: BoxDecoration(
                         border: Border.all(color: Colors.red),
                         borderRadius:
                             BorderRadius.circular(8), // button border radius
                         color: Colors.redAccent, // button background color
                       ),
-                      child: Text(
+                      child: const Text(
                         textAlign: TextAlign.center,
                         'Exit',
                         style: TextStyle(color: Colors.white, fontSize: 20),
@@ -78,10 +78,10 @@ class _TableViewState extends State<TableView> {
                     ),
                   ),
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
               ],
             ),
-            TableGrid()
+            const TableGrid()
           ],
         ));
   }

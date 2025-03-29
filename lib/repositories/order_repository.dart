@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:emenu/models/order.dart';
+import 'package:emenu/providers/cart_provider.dart';
 import 'package:emenu/providers/order_provider.dart';
 
 
@@ -12,10 +13,20 @@ class OrderRepository {
 
     var json = await provider.getOrderEditType(posBizDate, currentTable);
     final List<Order> result = [];
-    json.forEach((data) {
+    for (var data in json) {
       result.add(Order.fromJson(data['Table'] as Map<String, dynamic>));
-    });
+    }
      
     return result;
+  }
+
+  Future<String> getNewOrderNumberByPOS(String posNo) async {
+    final provider = CartProvider();
+
+    final response = await provider.getNewOrderNumberByPOS(posNo);
+    if (response != null) {
+      return response + "";
+    }
+    return "";
   }
 }

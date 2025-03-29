@@ -10,9 +10,9 @@ class SalesCodeRepository {
 
     var json = await provider.getSalesCode();
     final List<SalesCode> result = [];
-    json.forEach((json) {
+    for (var json in json) {
       result.add(SalesCode.fromJson(json['Table'] as Map<String, dynamic>));
-    });
+    }
      
     return result;
   }
